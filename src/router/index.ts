@@ -1,14 +1,13 @@
-import { createRouter,createWebHashHistory} from "vue-router"
-import HelloWorldVue from "../components/HelloWorld.vue"
+import { createRouter, createWebHashHistory } from "vue-router"
 
 const routes = [
     {
-        path:"/",
-        component:HelloWorldVue
+        path: "/",
+        component: () => import("../components/Layout.vue")
     },
 ]
 
 export default createRouter({
-    history:createWebHashHistory(),
+    history: createWebHashHistory(),
     routes
 })
