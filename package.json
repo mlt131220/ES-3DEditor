@@ -7,7 +7,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.13"
+    "@types/node": "^16.10.1",
+    "@types/three": "^0.132.1",
+    "three": "^0.132.2",
+    "vue": "^3.2.13",
+    "vue-router": "4",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.0",
