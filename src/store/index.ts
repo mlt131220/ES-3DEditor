@@ -1,19 +1,18 @@
-import { InjectionKey } from 'vue'
-import { createStore, createLogger, useStore as baseUseStore, Store } from "vuex"
+import { InjectionKey } from 'vue';
+import { createStore, createLogger, useStore as baseUseStore, Store } from "vuex";
+import State from './state';
+import Mutations from './mutations'
+import { RootState } from "../type/store";
 
 const debug = process.env.NODE_ENV !== 'production'
 
-// 为 store state 声明类型
-export interface State {
-    count: number
-}
-
 // 定义 injection key
-export const key: InjectionKey<Store<State>> = Symbol()
+export const key: InjectionKey<Store<RootState>> = Symbol()
 
-export const store = createStore<State>({
-    modules: {},
-    strict: debug,
+export const store = createStore<RootState>({
+    state:State,
+    mutations:Mutations,
+    strict: debug, //严格模式
     plugins: debug ? [createLogger()] : []
 })
 

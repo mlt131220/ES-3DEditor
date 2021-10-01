@@ -9,14 +9,19 @@
   "dependencies": {
     "@types/node": "^16.10.1",
     "@types/three": "^0.132.1",
+    "@vicons/ionicons5": "^0.11.0",
     "three": "^0.132.2",
     "vue": "^3.2.13",
     "vue-router": "4",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@vicons/fa": "^0.11.0",
     "@vitejs/plugin-vue": "^1.9.0",
     "naive-ui": "^2.19.3",
+    "node-sass": "^6.0.1",
+    "sass": "^1.42.1",
+    "sass-loader": "^12.1.0",
     "typescript": "^4.4.3",
     "vfonts": "^0.1.0",
     "vite": "^2.5.10",

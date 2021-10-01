@@ -3,10 +3,11 @@
 ### 基于vue3.2与ThreeJs官方Editor重写。 
 <br/>
 
-## Languages
+## Used
 - [Vue3.2](https://v3.cn.vuejs.org/)
 - [TypeScript](https://www.naiveui.com/zh-CN/os-theme)
-- [Naive UI](https://www.naiveui.com/zh-CN/os-theme)    
+- [Naive UI](https://www.naiveui.com/zh-CN/os-theme)  
+- [xicons](https://www.xicons.org) @vicons/fa 系列图标
 <br/>
 
 ## Installation   
@@ -15,21 +16,32 @@
 ```   
 <br/>   
 
-## 项目结构
+## The project structure
 ```
 |-- .vscode                          // vscode配置文件
 |-- public                          
 |-- src                              // 源码目录               
 |   |-- assets                       // 资源文件目录
 |   |-- components                   // 组件
-|       |-- Layout.vue               // layout布局组件       
+|       |-- layout                   // views/Layout.vue页面相关组件 
+|           |-- Footer.vue            
+|           |-- Header.vue           //顶部菜单栏组件  
+|       |-- namespace                // 命名空间组件目录 
+|           |-- layout.ts            // views/Layout.vue页面相关组件命名空间
 |   |-- router                       // Vue 路由
 |       |-- index.ts
 |   |-- store                        // Vuex Store文件
-|       |-- modules                  // Vuex模块目录  
-|       |-- index.ts      
-|       |-- vuex.d.ts                // Vuex 类型声明文件        
-|   |-- utils                        // 全局公用函数目录                
+|       |-- actions.ts 
+|       |-- getting.ts 
+|       |-- index.ts  
+|       |-- mutations.ts               
+|       |-- state.ts          
+|       |-- vuex.d.ts                // Vuex 类型声明文件
+|   |-- type                         // 全局类型定义目录  
+|       |-- store.ts                 // Vuex 类型定义文件     
+|   |-- utils                        // 全局公用函数目录    
+|   |-- views                        // vue页面  
+|       |-- Layout.vue               // layout布局组件             
 |   |-- App.vue                      // App入口文件
 |   |-- env.d.ts                     // 类型声明文件
 |   |-- main.ts                      // 程序入口文件 
