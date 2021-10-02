@@ -24,7 +24,7 @@ const siderWidth = ref(300);
                 sider-placement="right"
                 position="absolute"
             >
-                <n-layout-content content-style="padding: 24px;">平山道</n-layout-content>
+                <n-layout-content content-style="padding: 1.2rem;">平山道</n-layout-content>
                 <n-layout-sider
                     collapse-mode="width"
                     :collapsed-width="0"
@@ -51,21 +51,24 @@ const siderWidth = ref(300);
 
     .n-layout {
         &-header{
-            height: 42px;
-            line-height: 42px;
-            position: relative;
-            padding: 0 20px;
+            height: 2.1rem;
+            line-height: 2.1rem;
+            display: flex;
+            padding: 0 1rem;
+            align-items: center;
         }
         &-center-layout {
-            top: 42px;
-            bottom: 64px;
+            top: 2.1rem;
+            bottom: 3.2rem;
             width: 100%;
         }
 
         &-footer {
-            height: 64px;
-            line-height: 64px;
-            padding: 0 24px;
+            height: 3.2rem;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
     }
 }

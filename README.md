@@ -28,6 +28,7 @@
 |           |-- Header.vue           //顶部菜单栏组件  
 |       |-- namespace                // 命名空间组件目录 
 |           |-- layout.ts            // views/Layout.vue页面相关组件命名空间
+|   |-- language                     // i18n 多语言配置文件夹
 |   |-- router                       // Vue 路由
 |       |-- index.ts
 |   |-- store                        // Vuex Store文件

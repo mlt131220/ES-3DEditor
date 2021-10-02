@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { h, ref } from 'vue'
+import { h, ref,inject } from 'vue'
 import { NIcon, NMenu, NSwitch, NGradientText,NPopover } from 'naive-ui'
 import {
   FileRegular as File,
@@ -12,252 +12,249 @@ function renderIcon(icon: any) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
+const t:any = inject("t");
 const menuOptions = ref([
   {
-    label: "文件",
+    label: t("layout.header.File"),
     key: 'tools-files',
     icon: renderIcon(File),
     children: [
       {
-        label: "新建(loading)",
+        label: t("layout.header.New") +"(loading)",
         key: "tools-files-new"
       },
       {
-        label: "导入(loading)",
+        label: t("layout.header.Import") +"(loading)",
         key: "tools-files-import"
       },
       {
-        label: "导出几何体(loading)",
+        label: t("layout.header['Export Geometry']") + "(loading)",
         key: "tools-files-export-geometry"
       },
       {
-        label: "导出物体(loading)",
+        label: t("layout.header['Export Object']") + "(loading)",
         key: "tools-files-export-object"
       },
       {
-        label: "导出场景(loading)",
+        label: t("layout.header['Export Scene']") + "(loading)",
         key: "tools-files-export-scene"
       },
       {
-        label: "导出DAE(loading)",
+        label: t("layout.header['Export DAE']") + "(loading)",
         key: "tools-files-export-dae"
       },
       {
-        label: "导出DRC(loading)",
+        label: t("layout.header['Export DRC']") + "(loading)",
         key: "tools-files-export-drc"
       },
       {
-        label: "导出GLB(loading)",
+        label: t("layout.header['Export GLB']") + "(loading)",
         key: "tools-files-export-glb"
       },
       {
-        label: "导出GLTF(loading)",
+        label: t("layout.header['Export GLTF']") + "(loading)",
         key: "tools-files-export-gltf"
       },
       {
-        label: "导出OBJ(loading)",
+        label: t("layout.header['Export OBJ']") + "(loading)",
         key: "tools-files-export-obj"
       },
       {
-        label: "导出PLY(loading)",
+        label: t("layout.header['Export PLY']") + "(loading)",
         key: "tools-files-export-ply"
       },
       {
-        label: "导出PLY(二进制)(loading)",
+        label: t("layout.header['Export PLY (Binary)']") + "(loading)",
         key: "tools-files-export-ply-binary"
       },
       {
-        label: "导出STL(loading)",
+        label: t("layout.header['Export STL']") + "(loading)",
         key: "tools-files-export-stl"
       },
       {
-        label: "导出STL(二进制)(loading)",
+        label: t("layout.header['Export STL (Binary)']") + "(loading)",
         key: "tools-files-export-stl-binary"
       },
       {
-        label: "发布(loading)",
+        label: t("layout.header.Publish") + "(loading)",
         key: "tools-files-release"
       },
       {
-        label: "保存所选源模型(loading)",
+        label: t("layout.header['Save The Selected Source Model']") + "(loading)",
         key: "tools-files-save-select-model"
       },
       {
-        label: "更新源模型(loading)",
+        label: t("layout.header['Update Source Model']") + "(loading)",
         key: "tools-files-update-model"
       },
       {
-        label: "从服务器获取源模型(loading)",
+        label: t("layout.header['Get The Source Model From The Server']") + "(loading)",
         key: "tools-files-get-model-for-server"
       },
       {
-        label: "作为新工程保存至服务器(loading)",
+        label: t("layout.header['Save To The Server As A New Project']") + "(loading)",
         key: "tools-files-save-new-project-to-server"
       },
       {
-        label: "从服务器获取工程(loading)",
+        label: t("layout.header['Get The Peoject From The Server']") + "(loading)",
         key: "tools-files-get-project-for-server"
       },
       {
-        label: "更新工程至服务器(loading)",
+        label: t("layout.header['Update Project To Server']") + "(loading)",
         key: "tools-files-update-project-to-server"
       }
     ]
   },
   {
-    label: '编辑',
+    label: t("layout.header.Edit"),
     key: 'tools-edit',
     icon: renderIcon(Edit),
     children: [
       {
-        label: '撤销(Ctrl+Z)(loading)',
+        label: t("layout.header['Undo(Ctrl+Z)']") + '(loading)',
         key: 'tools-edit-undo'
       },
       {
-        label: '重做(Ctrl+Y)(loading)',
+        label: t("layout.header['Redo(Ctrl+Y)']") + '(loading)',
         key: 'tools-edit-redo',
         disabled: true
       },
       {
-        label: '清空历史记录(loading)',
+        label: t("layout.header['Clear History']") + '(loading)',
         key: 'tools-edit-clear-history'
       },
       {
-        label: '拷贝(loading)',
+        label:  t("layout.header.Clone") + '(loading)',
         key: 'tools-edit-copy'
       },
       {
-        label: '删除(Del)(loading)',
+        label: t("layout.header['Delete(Del)']") + '(loading)',
         key: 'tools-edit-delete'
       },
       {
-        label: '修复颜色贴图(loading)',
+        label: t("layout.header['Fix Color Maps]") + '(loading)',
         key: 'tools-edit-fix-color-maps'
       },
     ]
   },
   {
-    label: '添加',
+    label: t("layout.header.Add"),
     key: 'tools-add',
     icon: renderIcon(Add),
     children: [
       {
-        label: "组(loading)",
+        label: t("layout.header.Group") + "(loading)",
         key: "tools-add-group"
       },
       {
-        label: "正方体(loading)",
+        label: t("layout.header.Box") + "(loading)",
         key: "tools-add-box"
       },
       {
-        label: "圆(loading)",
+        label: t("layout.header.Circle") + "(loading)",
         key: "tools-add-circle"
       },
       {
-        label: "圆柱体(loading)",
+        label: t("layout.header.Cylinder") + "(loading)",
         key: "tools-add-cylinder"
       },
       {
-        label: "十二面体(loading)",
+        label: t("layout.header.Dodecahedron") + "(loading)",
         key: "tools-add-dodecahedron"
       },
       {
-        label: "二十面体(loading)",
+        label: t("layout.header.Icosahedron") + "(loading)",
         key: "tools-add-icosahedron"
       },
       {
-        label: "酒杯(loading)",
+        label: t("layout.header.Lathe") + "(loading)",
         key: "tools-add-lathe"
       },
       {
-        label: "八面体(loading)",
+        label: t("layout.header.Octahedron") + "(loading)",
         key: "tools-add-octahedron"
       },
       {
-        label: "平面(loading)",
+        label: t("layout.header.Plane") + "(loading)",
         key: "tools-add-plane"
       },
       {
-        label: "环(loading)",
+        label: t("layout.header.Ring") + "(loading)",
         key: "tools-add-ring"
       },
       {
-        label: "球体(loading)",
+        label: t("layout.header.Sphere") + "(loading)",
         key: "tools-add-sphere"
       },
       {
-        label: "精灵(loading)",
+        label: t("layout.header.Sprite") + "(loading)",
         key: "tools-add-sprite"
       },
       {
-        label: "四面体(loading)",
+        label: t("layout.header.Tetrahedron") + "(loading)",
         key: "tools-add-tetrahedron"
       },
       {
-        label: "圆环体(loading)",
+        label: t("layout.header.Torus") + "(loading)",
         key: "tools-add-torus"
       },
       {
-        label: "环面扭结体(loading)",
+        label: t("layout.header.TorusKnot") + "(loading)",
         key: "tools-add-torusKnot"
       },
       {
-        label: "管(loading)",
+        label: t("layout.header.Tube") + "(loading)",
         key: "tools-add-tube"
       },
       {
-        label: "管(loading)",
-        key: "tools-add-tube"
-      },
-      {
-        label: "环境光(loading)",
+        label: t("layout.header.AmbientLight") + "(loading)",
         key: "tools-add-ambientlight"
       },
       {
-        label: "平行光(loading)",
+        label: t("layout.header.DirectionalLight") + "(loading)",
         key: "tools-add-directionallight"
       },
       {
-        label: "半球光(loading)",
+        label: t("layout.header.HemisphereLight") + "(loading)",
         key: "tools-add-hemispherelight"
       },
       {
-        label: "点光源(loading)",
+        label: t("layout.header.PointLight") + "(loading)",
         key: "tools-add-pointlight"
       },
       {
-        label: "聚光灯(loading)",
+        label: t("layout.header.SpotLight") + "(loading)",
         key: "tools-add-spotlight"
       },
       {
-        label: "正交相机(loading)",
+        label: t("layout.header.OrthographicCamera") + "(loading)",
         key: "tools-add-orthographic-camera"
       },
       {
-        label: "透视相机(loading)",
+        label: t("layout.header.PerspectiveCamera") + "(loading)",
         key: "tools-add-perspective-camera"
       }
     ]
   },
   {
-    label: '帮助',
+    label: t("layout.header.Help"),
     key: 'tools-help',
     icon: renderIcon(Help),
     children: [
       {
-        label: () => h("a", { href: "https://threejs.org/docs/", target: "_blank" }, "three.js文档"),
+        label: () => h("a", { href: "https://threejs.org/docs/", target: "_blank" }, t("layout.header['Three.js Docs']")),
         key: 'tools-help-threejs-docs',
       },
       {
-        label: () => h('a', { href: "http://www.yanhuangxueyuan.com/Three.js/", target: '_blank' }, 'three.js电子书'),
+        label: () => h('a', { href: "http://www.yanhuangxueyuan.com/Three.js/", target: '_blank' }, t("layout.header['Threejs E Books']")),
         key: 'tools-help-threejs-e-books',
       },
       {
-        label: () => h('a', { href: "https://github.com/mlt131220", target: '_blank' }, '作者GitHub'),
+        label: () => h('a', { href: "https://github.com/mlt131220", target: '_blank' }, t("layout.header['Author GitHub']")),
         key: 'tools-help-author-github',
       },
       {
-        label: () => h('a', { href: "https://github.com/mlt131220/Vue3-ThreeJSEditor", target: '_blank' }, '本项目地址'),
+        label: () => h('a', { href: "https://github.com/mlt131220/Vue3-ThreeJSEditor", target: '_blank' }, t("layout.header['Project Link']")),
         key: 'tools-help-vue3-threejs-editor-git-link',
       }
     ]
@@ -282,8 +279,8 @@ const switchChange = (value: boolean) => {
   <n-menu v-model:value="activeKey" mode="horizontal" dropdown-placement="top-start" :options="menuOptions" />
 
   <n-switch v-model:value="switchActive" @update:value="switchChange">
-    <template #checked>自动保存</template>
-    <template #unchecked>自动保存</template>
+    <template #checked>{{t("layout.header.autosave")}}</template>
+    <template #unchecked>{{t("layout.header.autosave")}}</template>
   </n-switch>
   <n-gradient-text class="gradient-text" type="success">r132</n-gradient-text>
 </template>
@@ -291,16 +288,15 @@ const switchChange = (value: boolean) => {
 <style lang="scss" scoped>
 .n-menu.n-menu--horizontal {
   :deep(.n-menu-item-content) {
-    padding: 0 10px;
+    padding: 0 0.5rem;
   }
 }
 .n-switch,
 .gradient-text {
   position: absolute;
-  right: 10px;
+  right: 0.5rem;
 }
 .n-switch {
-  right: 60px;
-  top: 10px;
+  right: 3rem;
 }
 </style>

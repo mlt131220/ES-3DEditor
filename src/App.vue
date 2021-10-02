@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { NConfigProvider,darkTheme } from "naive-ui";
 import { ref,provide } from 'vue';
+import GlobalConfig from "./config/global";
 
-const theme:any = (!localStorage.getItem("theme") || localStorage.getItem("theme") === 'default') ? ref(null) : ref(darkTheme);
-const set_theme = (data:string) => {
+const theme:any = GlobalConfig.theme === 'default' ?  ref(null) : ref(darkTheme);
+const SET_THEME = (data:string) => {
     theme.value = data === 'darkTheme' ? darkTheme : null;
     localStorage.setItem("theme",data);
 }
 
-provide("theme",theme.value === null ? 'default' : 'darkTheme');
-provide('set_theme',set_theme);
+provide("theme",GlobalConfig.theme);
+provide('set_theme',SET_THEME);
 </script>
 
 <template>
