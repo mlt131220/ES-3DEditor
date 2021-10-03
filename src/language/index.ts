@@ -45,7 +45,6 @@ const getLangFiles = (langFilesList: LangFilesList, msg: Message) => {
                 recursionSetLeaf(enUSLangList);
                 localeObj['en-US'] = enUSLangList;
 
-                console.log("localeObj",localeObj)
                 // 合并
                 for (let i in localeObj) {
                     msg[i] = msg[i] ? {
@@ -80,9 +79,7 @@ const recursionSetLeaf = (obj:LangObj) =>{
         if(typeof obj[i] === 'string'){
             obj[i] = i;
         }else{
-            for(let j in obj[i]){
-                recursionSetLeaf(obj[i][j]);
-            }
+            recursionSetLeaf(obj[i]);
         }
     }
 }

@@ -24,19 +24,26 @@
       max-height: 25rem;
       overflow-y: auto;
     }
+
     ::-webkit-scrollbar {
       width: .25rem;
     }
+
     /*定义滚动条轨道 内阴影+圆角*/
     ::-webkit-scrollbar-track {
       border-radius: .5rem;
       background-color: rgba(58, 51, 51, 0.075);
     }
+
     /*定义滑块 内阴影+圆角*/
     ::-webkit-scrollbar-thumb {
       border-radius: 10px;
       -webkit-box-shadow: inset 0 0 .3rem rgba(0, 0, 0, .2);
       background-color: rgba(0, 0, 0, 0.2);
+    }
+    /*修改naive ui的form组件中每一项上下的间距*/
+    .n-form-item-feedback-wrapper {
+      min-height: 0.5rem !important;
     }
   </style>
 </head>
@@ -46,15 +53,15 @@
   <script type="module" src="/src/main.ts"></script>
   <script>
     /*添加自执行函数，为rem设置自适应的根DOM字体大小，默认1rem = 20px */
-    (function(){
+    (function () {
       change();
 
-      function change(){
+      function change() {
         document.documentElement.style.fontSize = document.documentElement.clientWidth * 20 / 1920 + "px";
       }
 
       /*监听窗口大小的改变*/
-      window.addEventListener("risize",change,false);
+      window.addEventListener("risize", change, false);
     })()
   </script>
 </body>

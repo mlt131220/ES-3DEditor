@@ -72,7 +72,42 @@ export default {
         sider:{
             "Scene":"场景",
             "Project":"项目",
-            "Sky Box":"天空盒"
+            "Sky Box":"天空盒",
+            scene:{
+                "search":"搜索",
+                "Background":"背景",
+                "Environment":"环境",
+                "Fog":"雾",
+                "Click Upload":"点击上传",
+                /* tabs组件头 */
+                "Object":"属性",
+                "Geometry":"几何组件",
+                "Material":"材质组件",
+            }
+        },
+        footer:{
+            "Basic Setting":"基础设置",
+            "Theme":"主题",
+            "Light":"浅色",
+            "Dark":"深色",
+            "Language":"语言",
+            "Changing the language will refresh the page":"更改语言将会刷新页面",
+            "Server Address":"服务器地址",
+            "Please enter the server address":"请输入服务器地址",
+            "Export Pricision":"输出精度",
+            "Other Setting":"其他设置",
+            "Viewport":"视窗",
+            "Grid":"网格",
+            "Helpers":"辅助",
+            "Please press a key":"请按下一个键位",
+            "Shortcuts":"快捷键",
+            "Translate":"移动",
+            "Rotate":"旋转",
+            "Scale":"缩放",
+            "Undo":"撤销",
+            "Focus":"聚焦",
+            "History":"历史记录",
+            "persistent":"本地存储",
         }
     }
 
