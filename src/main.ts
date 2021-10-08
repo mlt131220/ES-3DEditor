@@ -12,12 +12,17 @@ import 'vfonts/Lato.css'
 // 等宽字体
 import 'vfonts/FiraCode.css'
 
+import Bus from './utils/Bus'
+
 const app = createApp(App);
 const t = (s:string) => {
     const { t } = useI18n();
     return t(s);
 };
 app.provide("t", t);
+
+const $bus = new Bus();
+app.provide("$bus",$bus);
 
 app.use(router).use(I18n);
 // 传入 injection key
