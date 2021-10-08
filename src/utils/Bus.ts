@@ -39,7 +39,7 @@ export default class Bus {
      * @returns {Bus}
      * @memberof Bus
      */
-    static getInstance(): Bus {
+    static getInstance():Bus {
         this.instance = this.instance || new Bus();
         return this.instance;
     }

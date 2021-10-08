@@ -21,7 +21,7 @@ const t = (s:string) => {
 };
 app.provide("t", t);
 
-const $bus = new Bus();
+const $bus = Bus.getInstance();
 app.provide("$bus",$bus);
 
 app.use(router).use(I18n);
