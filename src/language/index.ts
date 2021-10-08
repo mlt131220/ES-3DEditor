@@ -1,4 +1,3 @@
-import { AnyNaptrRecord } from 'dns';
 import { createI18n } from 'vue-i18n';
 import GlobalConfig from '../config/global';
 
@@ -82,15 +81,6 @@ const recursionSetLeaf = (obj:LangObj) =>{
             recursionSetLeaf(obj[i]);
         }
     }
-}
-
-/**
- * 修改语言
- * @param lang
- */
-export function SET_LOCALE(lang: string) {
-    window.localStorage.setItem('locale', lang);
-    window.location.reload();
 }
 
 //注册i8n实例并引入语言文件

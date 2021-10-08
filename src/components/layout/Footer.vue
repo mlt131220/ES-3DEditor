@@ -1,12 +1,22 @@
 <script lang="ts" setup>
 import { ref, inject } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { NPopover, NButton, NIcon, NH3, NDivider, NSelect, NForm, NFormItem, NInput, NSlider, NTooltip, NSwitch } from 'naive-ui';
 import { Cogs } from '@vicons/fa';
-import { SET_LOCALE } from '../../language';
 import GlobalConfig from '../../config/global';
 
 const theme: string | undefined = inject("theme");
 const SET_THEME: any = inject("set_theme");
+
+/**
+ * 修改语言
+ * @param lang
+ */
+const { locale } = useI18n();
+const SET_LOCALE = (lang: string):void => {
+    window.localStorage.setItem('locale', lang);
+    locale.value = lang;
+}
 
 const basicForm = ref({
     server: null,
