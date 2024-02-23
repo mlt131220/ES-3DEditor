@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }}</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/svg+xml" href="/ng.ico"/>
+    <meta name="generator" content="ES 3DEditor">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,body,canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: sans-serif;
+            font-size: 11px;
+            background-color: #000;
+            margin: 0px;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body ontouchstart="">
+<script type="module">
+    import * as THREE from './js/three.module.js';
+    import { APP } from './js/app.js';
+    import { VRButton } from './js/VRButton.js';
+
+    window.THREE = THREE;
+    window.VRButton = VRButton;
+
+    const loader = new THREE.FileLoader();
+    loader.load( 'app.json', (text)=>{
+        const player = new APP.Player();
+        player.load(JSON.parse(text));
+        player.setSize(window.innerWidth, window.innerHeight);
+        player.play();
+
+        document.body.appendChild( player.dom );
+
+        window.addEventListener( 'resize', function () {
+            player.setSize( window.innerWidth, window.innerHeight );
+        });
+    } );
+
+
+</script>
+<edit_button />
+</body>
+</html>

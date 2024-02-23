@@ -1,0 +1,46 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body,
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+/*去除a标签所有默认样式*/
+a,a:link,a:visited,a:hover,a:active{
+    text-decoration: none;
+    color:inherit;
+}
+
+/*顶部菜单弹出框样式*/
+.n-dropdown-menu {
+    /* max-height: 25rem;
+    overflow-y: auto; */
+}
+
+/* 减小form表单item上下间距 */
+.n-form-item-feedback-wrapper {
+    min-height: 0.25rem !important;
+}
+
+::-webkit-scrollbar {
+    width: .25rem;
+    height: .25rem;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+    border-radius: .5rem;
+    background-color: rgba(58, 51, 51, 0.075);
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 .3rem rgba(0, 0, 0, .2);
+    background-color: rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="https://upyun.mhbdng.cn/assets/logo/ng.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ES 3D Editor</title>
+    <link rel="stylesheet" href="/static/css/reset.css">
+</head>
+
+<body>
+<div id="app"></div>
+
+<script type="module" src="/src/main.ts"></script>
+<script>
+    window.URL = window.URL || window.webkitURL;
+    window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+    Number.prototype.format = function () {
+        return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    };
+
+    /*添加自执行函数，为rem设置自适应的根DOM字体大小，1920px下默认1rem = 20px */
+    (function () {
+        change();
+
+        function change() {
+            document.documentElement.style.fontSize = document.documentElement.clientWidth * 20 / 1920 + "px";
+        }
+
+        /*监听窗口大小的改变*/
+        window.addEventListener("resize", change, false);
+    })()
+
+    //屏蔽选中
+    document.onselectstart = function (event) {
+        if (window.event) {
+            event = window.event;
+        }
+        try {
+            const the = event.srcElement;
+            return (the.tagName === "INPUT" && the.type.toLowerCase() === "text") || the.tagName === "TEXTAREA";
+        } catch (e) {
+            return false;
+        }
+    }
+</script>
+</body>
+</html>
