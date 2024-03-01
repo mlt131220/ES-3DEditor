@@ -6,8 +6,8 @@ import * as THREE from 'three';
 import {t} from "@/language";
 import {useAddSignal, useDispatchSignal,useRemoveSignal} from "@/hooks/useSignal";
 import {SetGeometryValueCommand} from '@/core/commands/SetGeometryValueCommand';
-import SidebarSceneGeometryBufferGeometry from "./siderSceneGeometry/SidebarSceneGeometryBufferGeometry.vue";
-import SidebarSceneGeometryModifiers from "./siderSceneGeometry/SidebarSceneGeometryModifiers.vue";
+import SidebarGeometryBufferGeometry from "./siderSceneGeometry/Sidebar.Geometry.BufferGeometry.vue";
+import SidebarGeometryModifiers from "./siderSceneGeometry/Sidebar.Geometry.Modifiers.vue";
 import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 
 const hasGeometry = ref(false);
@@ -39,7 +39,7 @@ async function build(object) {
     geometryData.name = geometry.name;
 
     if (geometry.type !== "BufferGeometry" && currentGeometryType !== geometry.type) {
-      currentParametersComponent = defineAsyncComponent(() => import(`@/components/sider/siderScene/siderSceneGeometry/SidebarSceneGeometry${geometry.type}.vue`));
+      currentParametersComponent = defineAsyncComponent(() => import(`@/components/sider/siderScene/siderSceneGeometry/Sidebar.Geometry.${geometry.type}.vue`));
       currentGeometryType = geometry.type;
     }
 
@@ -132,7 +132,7 @@ const update = (method: string) => {
 
     <!-- parameters -->
     <div>
-      <SidebarSceneGeometryModifiers v-if="geometryData.type === 'BufferGeometry'"/>
+      <SidebarGeometryModifiers v-if="geometryData.type === 'BufferGeometry'"/>
       <Suspense v-else>
         <template #default>
           <currentParametersComponent></currentParametersComponent>
@@ -144,7 +144,7 @@ const update = (method: string) => {
     </div>
 
     <!-- buffer geometry -->
-    <SidebarSceneGeometryBufferGeometry />
+    <SidebarGeometryBufferGeometry />
 
     <n-divider/>
 

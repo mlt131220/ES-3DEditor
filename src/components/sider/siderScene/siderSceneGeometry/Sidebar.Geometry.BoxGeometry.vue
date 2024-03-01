@@ -25,6 +25,11 @@ onMounted(() => {
 function update() {
   window.editor.execute(new SetGeometryCommand(window.editor.selected, new BoxGeometry(
       objectData.width,
+      objectData.height,
+      objectData.depth,
+      objectData.widthSegments,
+      objectData.heightSegments,
+      objectData.depthSegments
   )))
 }
 </script>
