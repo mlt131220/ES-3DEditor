@@ -181,6 +181,11 @@ export default {
 				'Phi start':"经度起点",
 				'Phi length':"经度长度",
 				Points:"点",
+				'Inner radius':"内半径",
+				'Outer radius':'外半径',
+				'Theta segments': '弧度分段',
+				'Phi segments':'经度分段',
+				Extrude:"拉伸",
 				//材质组件tab
 				slot: '插槽',
 				Programme: '程序',
