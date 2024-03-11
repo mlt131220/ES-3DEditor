@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js';
+import { TeapotGeometry } from '@/core/geometries/TeapotGeometry.js';
 import { AddObjectCommand } from '@/core/commands/AddObjectCommand';
 
 export class MenubarAdd {
@@ -151,7 +151,7 @@ export class MenubarAdd {
 
 	//圆环体
 	torus() {
-		const geometry = new THREE.TorusGeometry(1, 0.4, 8, 6, Math.PI * 2);
+		const geometry = new THREE.TorusGeometry(1, 0.4, 12, 48, Math.PI * 2);
 		const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial());
 		mesh.name = 'Torus';
 
@@ -191,7 +191,7 @@ export class MenubarAdd {
 		let lid = true;
 		let body = true;
 		let fitLid = false;
-		let blinn = 1;
+		let blinn = true;
 
 		let material = new THREE.MeshStandardMaterial();
 

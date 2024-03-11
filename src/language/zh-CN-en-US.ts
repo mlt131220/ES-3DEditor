@@ -186,6 +186,10 @@ export default {
 				'Theta segments': '弧度分段',
 				'Phi segments':'经度分段',
 				Extrude:"拉伸",
+				Tube:'管厚',
+				Arc:"弧度",
+				P:"管长弧度",
+				Q:"扭曲弧度",
 				//材质组件tab
 				slot: '插槽',
 				Programme: '程序',

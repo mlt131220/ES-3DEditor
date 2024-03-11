@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import {reactive, onMounted} from "vue";
-import {CapsuleGeometry} from "three";
+import {TorusGeometry,MathUtils} from "three";
 import {t} from "@/language";
 import {SetGeometryCommand} from '@/core/commands/Commands';
 import EsInputNumber from "@/components/es/EsInputNumber.vue";
 
 let objectData = reactive({
   radius: 1.00,
-  length: 1.00,
-  capSegments:4.00,
-  radialSegments:8,
+  tube: 0.40,
+  radialSegments:12,
+  tubularSegments:48,
+  arc:Math.PI * 2
 })
 
 onMounted(() => {
@@ -18,14 +19,16 @@ onMounted(() => {
   Object.keys(parameters).forEach(key => {
     objectData[key] = parameters[key]
   })
+  objectData.arc *= MathUtils.RAD2DEG;
 })
 
 function update() {
-  window.editor.execute(new SetGeometryCommand(window.editor.selected, new CapsuleGeometry(
+  window.editor.execute(new SetGeometryCommand(window.editor.selected, new TorusGeometry(
       objectData.radius,
-      objectData.length,
-      objectData.capSegments,
-      objectData.radialSegments
+      objectData.tube,
+      objectData.radialSegments,
+      objectData.tubularSegments,
+      objectData.arc * MathUtils.DEG2RAD,
   )))
 }
 </script>
@@ -42,27 +45,35 @@ function update() {
                      :show-button="false" :bordered="false" @change="update()"/>
     </div>
 
-    <!--  length  -->
+    <!--  tube  -->
     <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene.Length") }}</span>
+      <span>{{ t("layout.sider.scene.Tube") }}</span>
 
-      <EsInputNumber v-model:value="objectData.length" class="!w-90px" size="small" :decimal="2"
+      <EsInputNumber v-model:value="objectData.tube" class="!w-90px" size="small" :decimal="2"
                      :show-button="false" :bordered="false" @change="update()"/>
     </div>
 
-    <!--  Cap Seg  -->
-    <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene['Cap segments']") }}</span>
-
-      <EsInputNumber v-model:value="objectData.capSegments" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
-    </div>
-
-    <!--  Radial Seg  -->
+    <!--  radialSegments  -->
     <div class="sider-scene-geometry-item">
       <span>{{ t("layout.sider.scene['Radial segments']") }}</span>
 
-      <EsInputNumber v-model:value="objectData.radialSegments" class="!w-90px" size="small" :decimal="0"
+      <EsInputNumber v-model:value="objectData.radialSegments" class="!w-90px" size="small" :decimal="0" :min="1"
+                     :show-button="false" :bordered="false" @change="update()"/>
+    </div>
+
+    <!-- tubularSegments  -->
+    <div class="sider-scene-geometry-item">
+      <span>{{ t("layout.sider.scene['Tubular segments']") }}</span>
+
+      <EsInputNumber v-model:value="objectData.tubularSegments" class="!w-90px" size="small" :decimal="0" :min="1"
+                     :show-button="false" :bordered="false" @change="update()"/>
+    </div>
+
+    <!-- arc  -->
+    <div class="sider-scene-geometry-item">
+      <span>{{ t("layout.sider.scene.Arc") }}</span>
+
+      <EsInputNumber v-model:value="objectData.arc" class="!w-90px" size="small" :decimal="1"
                      :show-button="false" :bordered="false" @change="update()"/>
     </div>
   </div>
