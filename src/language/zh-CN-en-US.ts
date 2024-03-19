@@ -345,6 +345,7 @@ export default {
 		'Are you sure to update the scene?':"确定更新该场景吗？",
 		'Uploading':"正在上传中",
 		'Please try again later!':"请稍后重试！",
+		'There are grammatical errors!':"存在语法错误！",
 	},
     /* 三维场景相关 */
     scene:{

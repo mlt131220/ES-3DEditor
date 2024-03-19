@@ -11,6 +11,7 @@ import {SetRotationCommand} from '@/core/commands/SetRotationCommand';
 import {SetScaleCommand} from '@/core/commands/SetScaleCommand';
 import {SetColorCommand} from '@/core/commands/SetColorCommand';
 import {t} from "@/language";
+import UserData from "@/components/code/UserData.vue";
 
 const isSelectObject3D = ref(false);
 const objectData = reactive({
@@ -381,14 +382,16 @@ const update = (method: string) => {
   call[method]();
 }
 
-const userDataStatus = ref<any>(undefined)
-const userDataInput = () => {
-  try {
-    JSON.parse(objectData.userData);
-    userDataStatus.value = 'success';
-  } catch (error) {
-    userDataStatus.value = 'error';
-  }
+const userDataStatus = ref<any>(undefined);
+const userDataEditorShow = ref(false);
+const handleUserDataClick = () => {
+  // try {
+  //   JSON.parse(objectData.userData);
+  //   userDataStatus.value = 'success';
+  // } catch (error) {
+  //   userDataStatus.value = 'error';
+  // }
+  userDataEditorShow.value = true;
 }
 </script>
 
@@ -636,10 +639,13 @@ const userDataInput = () => {
     <div class="sider-scene-attr-item">
       <span>{{ t("layout.sider.scene.userdata") }}</span>
       <div>
-        <n-input type="textarea" v-model:value="objectData.userData" round :rows="5" :status="userDataStatus"
-                 @update:value="update('userData')" @input="userDataInput"/>
+        <n-input type="textarea" :value="objectData.userData" round :rows="5" readonly :status="userDataStatus"
+                 @click.stop="handleUserDataClick" />
       </div>
     </div>
+
+    <UserData v-model:show="userDataEditorShow" @update:show="(s) => userDataEditorShow = s"
+              v-model:value="objectData.userData" @update:value="update('userData')" />
   </div>
 </template>
 
