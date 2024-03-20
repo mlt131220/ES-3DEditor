@@ -125,7 +125,7 @@ onMounted(async () => {
   }
 
   // 启动websocket连接
-  connectWebSocket(`${import.meta.env.VITE_PROXY_URL.replace("http","ws")}/api/sys/ws`);
+  connectWebSocket(import.meta.env.VITE_SOCKET_URL);
 })
 
 /* 主题相关 */
