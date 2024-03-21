@@ -21,29 +21,21 @@ window.$notification = useNotification();
 const siderWidth = ref(300);
 //当前场景类型 enum:three | cesium
 const currentSceneType = ref(window.editor.config.getKey('project/currentSceneType') || "three");
+const isPlaying = ref(false);
 
-function handleSignals(isAdd: boolean) {
-  function changCurrentSceneType(type: string) {
-    window.editor.config.setKey('project/currentSceneType', type)
-    currentSceneType.value = type;
-  }
-
-  const signals = {
-    "changCurrentSceneType": changCurrentSceneType,
-  }
-  Object.keys(signals).forEach(name => {
-    isAdd ? useAddSignal(name, signals[name]) : useRemoveSignal(name, signals[name]);
-  })
+function changCurrentSceneType(type: string) {
+  window.editor.config.setKey('project/currentSceneType', type)
+  currentSceneType.value = type;
 }
 
 onMounted(() => {
-  handleSignals(true);
-
-
-})
-
-onBeforeMount(() => {
-  handleSignals(false);
+  useAddSignal("changCurrentSceneType", changCurrentSceneType);
+  useAddSignal("startPlayer", () => {
+    isPlaying.value = true;
+  });
+  useAddSignal("stopPlayer", () => {
+    isPlaying.value = false;
+  });
 })
 </script>
 
@@ -55,6 +47,7 @@ onBeforeMount(() => {
       </n-layout-header>
 
       <n-layout
+          v-show="!isPlaying"
           class="n-layout-center-layout"
           has-sider
           sider-placement="right"
@@ -91,6 +84,11 @@ onBeforeMount(() => {
           <Layout.Sider/>
         </n-layout-sider>
       </n-layout>
+
+      <n-layout-content v-show="isPlaying" class="n-layout-center-layout" position="absolute">
+        <div id="player" class="w-full h-full"></div>
+      </n-layout-content>
+
       <n-layout-footer bordered position="absolute">
         <Layout.Footer/>
       </n-layout-footer>
