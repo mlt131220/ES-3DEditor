@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import * as THREE from 'three';
-import {Editor} from '@/core/Editor';
-import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
-
 import {ref, provide, onMounted} from 'vue';
+import * as THREE from 'three';
+import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
 import {
   NConfigProvider,
   darkTheme,
@@ -13,11 +11,11 @@ import {
   NDialogProvider,
   NNotificationProvider
 } from "naive-ui";
+import {Editor} from '@/core/Editor';
 import Layout from "@/views/layout.vue";
 import {theme as GlobalConfigTheme} from "@/config/global";
-import {useAddSignal, useDispatchSignal} from "@/hooks/useSignal";
 import {useDrawingStore} from "@/store/modules/drawing";
-import {zip, unzip} from "@/utils/common/pako";
+import {unzip} from "@/utils/common/pako";
 import {connectWebSocket} from "@/hooks/useWebSocket";
 
 //实例化编辑器
@@ -53,53 +51,6 @@ onMounted(async () => {
         drawingStore.setImgInfo(JSON.parse(state.imgInfo));
       }
     });
-
-    //是否自动保存（防抖）
-    let timeout: NodeJS.Timeout;
-
-    function saveState() {
-      if (!editor.config.getKey('autosave')) {
-        return;
-      }
-
-      clearTimeout(timeout);
-      timeout = setTimeout(function () {
-        useDispatchSignal("savingStarted");
-        timeout = setTimeout(function () {
-          editor.storage.set(editor.toJSON());
-
-          // 判断是否有图纸
-          if (drawingStore.getIsUploaded) {
-            // 存储图纸相关信息至indexDB
-            editor.storage.setDrawing({
-              imgSrc: drawingStore.getImgSrc,
-              markList: zip(drawingStore.getMarkList),
-              selectedRectIndex: drawingStore.getSelectedRectIndex,
-              imgInfo: JSON.stringify(drawingStore.getImgInfo)
-            });
-          }
-
-          useDispatchSignal("savingFinished");
-        }, 100);
-      }, 1000);
-    }
-
-    useAddSignal("geometryChanged", saveState);
-    useAddSignal("objectAdded", saveState);
-    useAddSignal("objectChanged", saveState);
-    useAddSignal("objectRemoved", saveState);
-    useAddSignal("materialChanged", saveState);
-    useAddSignal("sceneBackgroundChanged", saveState);
-    useAddSignal("sceneEnvironmentChanged", saveState);
-    useAddSignal("sceneFogChanged", saveState);
-    useAddSignal("sceneGraphChanged", saveState);
-    useAddSignal("scriptChanged", saveState);
-    useAddSignal("historyChanged", saveState);
-
-    // 图纸相关变更触发
-    useAddSignal("drawingImgChange", saveState);
-    useAddSignal("drawingMarkListChange", saveState);
-    useAddSignal("drawingMarkSelectChange", saveState);
   });
 
   let isLoadingFromHash = false;

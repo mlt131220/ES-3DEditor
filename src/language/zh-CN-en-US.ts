@@ -55,7 +55,7 @@ export default {
 			Other: '其他',
 			Capsule: '胶囊',
 			Lathe: '酒杯',
-            'Double cone':"双锥",
+			'Double cone':"双锥",
 			TorusKnot: '环面扭结体',
 			Tube: '管',
 			Teapot: '茶壶',
@@ -81,7 +81,7 @@ export default {
 			'Exit fullscreen': '退出全屏',
 			Play: '启动',
 			Stop: '停止',
-			Autosave: '自动保存',
+			'Save locally': '本地保存',
 		},
 		scene: {
 			toolbar: {
@@ -295,9 +295,11 @@ export default {
 			History: '历史记录',
 			persistent: '本地存储',
 		},
-        assets:{
-            'Resource library':"资源库",
-        }
+		assets:{
+			'Resource library':"资源库",
+			'Drawing library':"图纸库",
+			'Scene library':"场景库",
+		}
 	},
 	core: {
 		'Any unsaved data will be lost. Are you sure?': '任何未保存的数据都将丢失。你确定吗?',
@@ -317,18 +319,18 @@ export default {
 		cancel: '取消',
 		undo:"撤销",
 		redo:"重做",
-        delete:"删除",
-        Action:"操作",
-        Version:"版本",
-        Loading:"请稍后",
+		delete:"删除",
+		Action:"操作",
+		Version:"版本",
+		Loading:"请稍后",
 		Load:"加载",
-        'Query failed':"查询失败",
-        "Under development":"开发中"
+		'Query failed':"查询失败",
+		"Under development":"开发中"
 	},
 	/* 提示 */
 	prompt: {
-        'Disable this function in the demonstration environment!':'演示环境下禁用该功能！',
-        'Drag or double click to add to scene':'拖拽或双击添加至场景中',
+		'Disable this function in the demonstration environment!':'演示环境下禁用该功能！',
+		'Drag or double click to add to scene':'拖拽或双击添加至场景中',
 		'No object selected.': '未选择任何对象。',
 		"The selected object doesn't have geometry.": '所选对象没有几何体。',
 		'No mesh selected': '未选择Mesh',
@@ -336,56 +338,56 @@ export default {
 			'撤消/重做 历史记录将被清除。你确定吗?',
 		'The history will be preserved across sessions. This can have an impact on performance when working with textures.':
 			'历史记录将在多个会话之间保留。这可能会影响处理纹理时的性能。',
-		'Effective when global auto save': '全局自动保存时生效',
 		'Import of glTF asset not possible. Only versions >= 2.0 are supported. Please try to upgrade the file to glTF 2.0 using glTF-Pipeline':"无法导入gltf资产。仅支持大于等于2.0的版本。请尝试使用gltf-Pipeline将文件升级到gltf 2.0",
 		"Unsupported file format":"不支持的文件格式",
 		'Loader: "Geometry" is no longer supported.':"Loader:不再支持“几何图形”",
-        'Are you sure to save the scene as a new project?':"确定将该场景保存为新工程吗？",
-        'Are you sure to delete the scene?':"您确定要删除该场景吗？",
+		'Are you sure to save the scene as a new project?':"确定将该场景保存为新工程吗？",
+		'Are you sure to delete the scene?':"您确定要删除该场景吗？",
 		'Are you sure to update the scene?':"确定更新该场景吗？",
 		'Uploading':"正在上传中",
 		'Please try again later!':"请稍后重试！",
 		'There are grammatical errors!':"存在语法错误！",
+		'Saved successfully!':"保存成功！",
 	},
-    /* 三维场景相关 */
-    scene:{
-        'All Projects':"全部工程",
-        'Scene type':"场景类型",
-        'Scene name':"场景名称",
-        'Scene introduction':"场景说明",
+	/* 三维场景相关 */
+	scene:{
+		'All Projects':"全部工程",
+		'Scene type':"场景类型",
+		'Scene name':"场景名称",
+		'Scene introduction':"场景说明",
 		'Scene classification':"场景分类",
 		'Include drawings':"包含图纸",
 		'Scene data volume':"场景数据量",
-        'Get the scene data':"获取场景数据中",
+		'Get the scene data':"获取场景数据中",
 		'Failed to get scene data':"获取场景数据失败",
-        'Generate scene data, please wait':"生成场景数据，请稍后",
+		'Generate scene data, please wait':"生成场景数据，请稍后",
 		'Scene data is being regenerated, please wait':"场景数据正在重新生成，请稍后",
-        'Scene information is being saved':"场景信息保存中",
-        'Getting texture':"正在获取贴图",
-        'Getting geometries':'正在获取几何体数据',
-        'Getting models':'正在获取模型',
-        'Parsing to editor':"正在解析至编辑器中",
-        'In storage':"正在存储",
-        'Loading completed!':"加载完成！",
+		'Scene information is being saved':"场景信息保存中",
+		'Getting texture':"正在获取贴图",
+		'Getting geometries':'正在获取几何体数据',
+		'Getting models':'正在获取模型',
+		'Parsing to editor':"正在解析至编辑器中",
+		'In storage':"正在存储",
+		'Loading completed!':"加载完成！",
 		'Failed to save project!':"保存工程失败！",
 		'Scene is packing...':"场景正在打包...",
 		'Scene is unpacking...':"场景正在解包...",
 		'Scene is being compressed...':"场景正在压缩...",
 		'Please save the project first!':"请先保存该工程！",
-    },
-    /*cesium相关*/
-    cesium:{
-        "Please Enter Cesium Token":"请输入Cesium Token",
-        "Default base map":"默认底图",
-        "Base map type":"底图类型",
-        "Image base map":"影像底图",
-        "Vector base map":"矢量底图",
+	},
+	/*cesium相关*/
+	cesium:{
+		"Please Enter Cesium Token":"请输入Cesium Token",
+		"Default base map":"默认底图",
+		"Base map type":"底图类型",
+		"Image base map":"影像底图",
+		"Vector base map":"矢量底图",
 
-        map:{
-            Amap:"高德",
-            Tianditu:"天地图"
-        }
-    },
+		map:{
+			Amap:"高德",
+			Tianditu:"天地图"
+		}
+	},
 	/* 图纸相关 */
 	drawing: {
 		Drawing:"图纸",

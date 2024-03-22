@@ -7,7 +7,6 @@ class Config {
 
 		this.storage = {
 			language: 'zh',
-			autosave: false,
 			selected:"",//当前选中的对象
 
             // 'project/currentSceneType':"three", //当前场景类型 enum:three | cesium

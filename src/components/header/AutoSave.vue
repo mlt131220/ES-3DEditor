@@ -1,37 +1,36 @@
 <script lang="ts" setup>
-import { ref, inject,onMounted } from 'vue';
-import {  NSwitch, NGradientText } from 'naive-ui';
-import {useAddSignal,useDispatchSignal} from "@/hooks/useSignal";
+import { ref } from 'vue';
 import {t} from "@/language";
-
-const autosave = ref(false);
-const autosaveChange = (value: boolean) => {
-  window.editor.config.setKey('autosave',value);
-
-  if(value){
-    useDispatchSignal("sceneGraphChanged");
-  }
-}
+import {zip} from "@/utils/common/pako";
+import {useDrawingStore} from "@/store/modules/drawing";
 
 const loading = ref(false);
-useAddSignal("savingStarted",()=>{
-    loading.value = true;
-})
-useAddSignal("savingFinished",()=>{
-    loading.value = false;
-})
+function saveState() {
+  loading.value = true;
 
-onMounted(()=>{
-  autosave.value = window.editor.config.getKey('autosave');
-})
+  const editor = window.editor;
+  const drawingStore = useDrawingStore();
+
+  editor.storage.set(editor.toJSON());
+
+  // 判断是否有图纸
+  if (drawingStore.getIsUploaded) {
+    // 存储图纸相关信息至indexDB
+    editor.storage.setDrawing({
+      imgSrc: drawingStore.getImgSrc,
+      markList: zip(drawingStore.getMarkList),
+      selectedRectIndex: drawingStore.getSelectedRectIndex,
+      imgInfo: JSON.stringify(drawingStore.getImgInfo)
+    });
+  }
+
+  window.$message?.success(t("prompt['Saved successfully!']"));
+  loading.value = false;
+}
 </script>
 
 <template>
-    <n-switch :loading="loading" v-model:value="autosave" @update:value="autosaveChange">
-        <template #checked>{{ t("layout.header.Autosave") }}</template>
-        <template #unchecked>{{ t("layout.header.Autosave") }}</template>
-    </n-switch>
-<!--    <n-gradient-text class="gradient-text" type="success">r147</n-gradient-text>-->
+  <n-button :loading="loading" size="small" type="primary" @click="saveState">{{ t("layout.header['Save locally']") }}</n-button>
 </template>
 
 <style lang="less" scoped>

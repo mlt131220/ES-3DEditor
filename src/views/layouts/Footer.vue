@@ -249,7 +249,6 @@ function signalsAdd() {
                     <template #checked>{{ t("layout.footer.persistent") }}</template>
                     <template #unchecked>{{ t("layout.footer.persistent") }}</template>
                 </n-switch>
-                <Tip size="22" placement="top-end" class="ml-1">{{ t("prompt['Effective when global auto save']") }}</Tip>
             </div>
         </div>
         <n-card
