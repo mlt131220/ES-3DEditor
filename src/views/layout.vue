@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref, onMounted, onBeforeMount} from 'vue';
+import {ref, onMounted} from 'vue';
 import {
   NLayout,
   NLayoutHeader,
@@ -9,8 +9,9 @@ import {
 } from "naive-ui";
 import {useMessage, useNotification, useDialog, useLoadingBar} from 'naive-ui';
 import * as Layout from './layouts';
-import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
+import {useAddSignal} from "@/hooks/useSignal";
 import Toolbar from '@/components/viewport/Toolbar.vue';
+import {useSceneInfoStore} from "@/store/modules/sceneInfo";
 
 //反馈组件注册至全局
 window.$message = useMessage();
@@ -18,13 +19,16 @@ window.$dialog = useDialog();
 window.$loadingBar = useLoadingBar();
 window.$notification = useNotification();
 
+const sceneInfoStore = useSceneInfoStore();
+
 const siderWidth = ref(300);
 //当前场景类型 enum:three | cesium
-const currentSceneType = ref(window.editor.config.getKey('project/currentSceneType') || "three");
+const currentSceneType = ref(sceneInfoStore.getIsCesium ? 'cesium' : "three");
 const isPlaying = ref(false);
 
 function changCurrentSceneType(type: string) {
-  window.editor.config.setKey('project/currentSceneType', type)
+  sceneInfoStore.setIsCesium(type === 'cesium');
+
   currentSceneType.value = type;
 }
 

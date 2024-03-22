@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import {onMounted, ref} from 'vue';
-import { useDispatchSignal } from "@/hooks/useSignal";
+import {useDispatchSignal} from "@/hooks/useSignal";
 import AutoSave from '@/components/header/AutoSave.vue';
-import { PlayOutline, PauseOutline, ExpandOutline, ContractOutline } from '@vicons/ionicons5';
-import { NIcon, NTooltip } from "naive-ui";
+import CodeOut from '@/components/header/CodeOut.vue';
+import {PlayOutline, PauseOutline, ExpandOutline, ContractOutline} from '@vicons/ionicons5';
+import {NIcon, NTooltip} from "naive-ui";
 import {t} from "@/language";
 import {Player} from "@/core/Player";
 
@@ -15,6 +16,7 @@ function play() {
   useDispatchSignal("startPlayer");
   isPlaying.value = true;
 }
+
 //停止
 function stop() {
   useDispatchSignal("stopPlayer");
@@ -57,7 +59,7 @@ onMounted(() => {
       <n-tooltip trigger="hover" v-if="!isPlaying">
         <template #trigger>
           <n-icon size="22" class="cursor-pointer" @click="play">
-            <play-outline />
+            <play-outline/>
           </n-icon>
         </template>
         {{ t("layout.header.Play") }}
@@ -66,7 +68,7 @@ onMounted(() => {
       <n-tooltip trigger="hover" v-if="isPlaying">
         <template #trigger>
           <n-icon size="22" class="cursor-pointer" @click="stop">
-            <pause-outline />
+            <pause-outline/>
           </n-icon>
         </template>
         {{ t("layout.header.Stop") }}
@@ -78,7 +80,7 @@ onMounted(() => {
       <n-tooltip trigger="hover" v-if="!isFullscreen">
         <template #trigger>
           <n-icon size="20" class="cursor-pointer" @click="fullscreen">
-            <ExpandOutline />
+            <ExpandOutline/>
           </n-icon>
         </template>
         {{ t("layout.header.Fullscreen") }}
@@ -87,14 +89,18 @@ onMounted(() => {
       <n-tooltip trigger="hover" v-if="isFullscreen">
         <template #trigger>
           <n-icon size="20" class="cursor-pointer" @click="fullscreen">
-            <ContractOutline />
+            <ContractOutline/>
           </n-icon>
         </template>
         {{ t("layout.header['Exit fullscreen']") }}
       </n-tooltip>
     </div>
 
-    <AutoSave />
+    <!--自动保存-->
+    <AutoSave class="mr-2" />
+
+    <!-- 出码 -->
+    <CodeOut />
   </div>
 </template>
 

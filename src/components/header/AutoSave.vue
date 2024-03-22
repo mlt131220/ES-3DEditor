@@ -34,7 +34,4 @@ function saveState() {
 </template>
 
 <style lang="less" scoped>
-.n-switch {
-  margin-right: 0.5rem;
-}
 </style>

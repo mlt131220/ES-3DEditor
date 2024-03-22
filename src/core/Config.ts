@@ -9,12 +9,6 @@ class Config {
 			language: 'zh',
 			selected:"",//当前选中的对象
 
-            // 'project/currentSceneType':"three", //当前场景类型 enum:three | cesium
-			//
-			// 'project/id':'',//场景id
-			// 'project/title': '',//项目标题
-			// 'project/introduction': '',//项目描述
-			// 'project/version': 1,//项目版本
 			'project/editable': false,  // 打包后的项目是否可编辑
 			'project/vr': false,  // 项目运行是否启用vr按钮
 
@@ -34,12 +28,12 @@ class Config {
 			//历史记录
 			'settings/history': false,
 
-            /* Cesium 相关 */
-            "cesium/token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyY2ZkOTRlZC1lZTQyLTQwNzQtODhlNC02MmQxODNiNTFlZWIiLCJpZCI6ODU5OTEsImlhdCI6MTY0NzQyNDc1OH0.P57wIrNyawYT680864HUGQ3XE3BM7XCmAQD-tj-C95U",
-            "cesium/defaultMap":"Amap", //默认底图
-            "cesium/defaultMapType":"satellite", //默认底图类型 satellite：影像图，vector：矢量图
-            "cesium/markMap":true,//是否需要标记图
-            "cesium/tiandituTk":"1f264db8cede7365b0b4c47df89b3b16",//天地图密匙
+			/* Cesium 相关 */
+			"cesium/token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyY2ZkOTRlZC1lZTQyLTQwNzQtODhlNC02MmQxODNiNTFlZWIiLCJpZCI6ODU5OTEsImlhdCI6MTY0NzQyNDc1OH0.P57wIrNyawYT680864HUGQ3XE3BM7XCmAQD-tj-C95U",
+			"cesium/defaultMap":"Amap", //默认底图
+			"cesium/defaultMapType":"satellite", //默认底图类型 satellite：影像图，vector：矢量图
+			"cesium/markMap":true,//是否需要标记图
+			"cesium/tiandituTk":"1f264db8cede7365b0b4c47df89b3b16",//天地图密匙
 		};
 
 		if (window.localStorage[this.name] === undefined) {

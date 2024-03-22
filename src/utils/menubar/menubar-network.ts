@@ -1,3 +1,8 @@
+/**
+ * @author ErSan
+ * @email  mlt131220@163.com
+ * @description 场景存储为zip包
+ */
 import {h, reactive, ref, toRaw, unref} from "vue";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {demoEnv} from "@/config/global";
@@ -48,64 +53,7 @@ export class MenubarNetwork {
                 useDispatchSignal("switchViewportLoading", true);
 
                 setTimeout(() => {
-                    /** glb 方式保存
-                     let sceneJson = {
-                        camera: window.editor.camera.toJSON(),
-                        sceneInfo: {
-                            sceneId: sceneID,
-                            sceneName: window.editor.config.getKey('project/title'),
-                            sceneIntroduction: window.editor.config.getKey('project/introduction'),
-                            sceneVersion: parseFloat(window.editor.config.getKey('project/version')),
-                            isCesium: window.editor.config.getKey('project/currentSceneType') === "cesium" ? 1 : 0,
-                            hasDrawing: drawingStore.getIsUploaded ? 1 : 0,
-                        }
-                    }
-                     // 图纸信息
-                     if (drawingStore.getIsUploaded) {
-                        // @ts-ignore
-                        sceneJson.drawingInfo = {
-                            imgSrc: drawingStore.getImgSrc,
-                            markList: zip(drawingStore.getMarkList)
-                        };
-                    }
-
-                     useDispatchSignal("changeViewportLoadingText", window.$t("scene['Scene is being compressed...']"));
-
-                     const esLoader = new EsLoader();
-
-                     esLoader.packGlb(sceneJson, (zip) => {
-                        //遍历完场景数据则隐藏遮罩，显示等待框
-                        useDispatchSignal("switchViewportLoading", false);
-
-                        notification = window.$notification.info({
-                            title: `${window.$t("scene['In storage']")}...`,
-                            content: `${window.$t("scene['Scene information is being saved']")},${window.$t("other.Loading")}...`,
-                            closable: false,
-                        })
-
-                        // 调用接口上传保存场景
-                        const zipFile = new File([zip], sceneID + ".zip", {type: "application/zip"});
-
-                        fetchUpload({
-                            file: zipFile,
-                            biz: "editor3d/scene",
-                        }).then(r => {
-                            if (r.data !== null) {
-                                const params = Object.assign({zip: r.data,zipSize: filterSize(zipFile.size)}, sceneJson.sceneInfo)
-                                fetchSaveScene(params).then(_ => {
-                                    notification.content = `工程已保存`;
-                                    setTimeout(() => {
-                                        notification.destroy();
-                                    }, 500)
-                                })
-                            } else {
-                                window.$message?.error(window.$t("scene['Failed to save project!']"));
-                            }
-                        })
-                    })
-                     **/
-
-                        // 数据分解保存
+                    // 数据分解保存
                     let editorJson = window.editor.toJSON();
                     // 保存项目信息
                     editorJson.sceneInfo = {
@@ -383,22 +331,5 @@ export class MenubarNetwork {
             window.$message?.error(window.$t("prompt['Please save the project first!']"));
             return;
         }
-
-        // const res = await fetchHasSceneId(window.editor.config.getKey('project/sceneID'));
-        //
-        // window.$dialog.warning({
-        //     title: window.$t('other.warning'),
-        //     content: window.$t("prompt['Are you sure to update the scene?']"),
-        //     positiveText: window.$t('other.ok'),
-        //     negativeText: window.$t('other.cancel'),
-        //     onPositiveClick: () => {
-        //         useDispatchSignal("changeViewportLoadingText", window.$t("scene['Scene data is being regenerated, please wait']"));
-        //         useDispatchSignal("switchViewportLoading", true);
-        //
-        //         setTimeout(() => {
-        //
-        //         }, 16)
-        //     }
-        // })
     }
 }

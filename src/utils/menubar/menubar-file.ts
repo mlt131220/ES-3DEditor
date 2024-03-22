@@ -1,13 +1,13 @@
 import {h, reactive, ref} from "vue";
 import {FormInst, NForm, NFormItem, NInput, NButton, NSelect, NCheckbox} from "naive-ui"
-import {downloadBlob, saveArrayBuffer, saveString} from '@/utils/common/utils';
+import {saveArrayBuffer, saveString} from '@/utils/common/utils';
 import {getAnimations} from '@/utils/common/scenes';
-import {zipSync, strToU8} from 'three/examples/jsm/libs/fflate.module.js';
-import * as THREE from 'three';
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {CESIUM_DEFAULT_MAP, CESIUM_DEFAULT_MAP_TYPE} from "@/config/cesium";
-import {demoEnv} from "@/config/global";
 import {EsLoader} from "@/utils/esloader/EsLoader";
+import {useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
+
+const sceneInfoStore = useSceneInfoStoreWithOut();
 
 export class MenubarFile {
     constructor() {
@@ -27,7 +27,7 @@ export class MenubarFile {
             negativeText: window.$t('other.cancel'),
             onPositiveClick: () => {
                 //从Cesium场景切换为选择Three场景
-                if (window.editor.config.getKey('project/currentSceneType') === 'cesium') {
+                if (sceneInfoStore.getIsCesium) {
                     useDispatchSignal("cesium_destroy");
                 }
 
@@ -133,7 +133,7 @@ export class MenubarFile {
 
                                         window.editor.clear();
                                         //已在Cesium场景下时选择新建Cesium场景
-                                        if (window.editor.config.getKey('project/currentSceneType') === 'cesium') {
+                                        if (sceneInfoStore.getIsCesium) {
                                             window.CesiumApp.reset();
                                         }
                                         //当前场景类型改变为cesium
@@ -383,73 +383,5 @@ export class MenubarFile {
         const exporter = new USDZExporter();
         //@ts-ignore
         saveArrayBuffer(await exporter.parse(window.editor.scene, {binary: true}), 'model.usdz');
-    }
-
-    /*********************************发布*******************************************/
-    //预览
-    preview() {
-    }
-
-    //发布
-    release() {
-        if(demoEnv){
-            window.$message?.error(window.$t("prompt['Disable this function in the demonstration environment!']"));
-            return;
-        }
-
-        const toZip = {};
-
-        let output = window.editor.toJSON();
-        output.metadata.type = 'ES-App';
-        delete output.history;
-
-        try {
-            output = JSON.stringify(output, null, '\t');
-            output = output.replace(/[\n\t]+([\d\.e\-\[\]]+)/g, '$1');
-        } catch (error: any) {
-            window.$message?.error(error.message);
-        }
-
-        toZip['app.json'] = strToU8(output);
-
-        const title = window.editor.config.getKey('project/title');
-        const manager = new THREE.LoadingManager(function () {
-            const zipped = zipSync(toZip, {level: 9});
-
-            const blob = new Blob([zipped.buffer], {type: 'application/zip'});
-
-            downloadBlob(blob, (title !== '' ? title : 'untitled') + '.zip');
-        });
-
-        const loader = new THREE.FileLoader(manager);
-        loader.load('/release/index.html', function (content: any) {
-            content = content.replace('{{ title }}', title);
-            const includes = [];
-            content = content.replace('{{ includes }}', includes.join('\n\t\t'));
-            let editButton = '';
-            if (window.editor.config.getKey('project/editable')) {
-                editButton = [
-                    "<script>",
-                    "			let button = document.createElement( 'a' );",
-                    "			button.href = '//editor.mhbdng.cn/editor/#file=' + location.href.split( '/' ).slice( 0, - 1 ).join( '/' ) + '/app.json';",
-                    "			button.style.cssText = 'position: absolute; bottom: 20px; right: 20px; padding: 10px 16px; color: #fff; border: 1px solid #fff; border-radius: 20px; text-decoration: none;';",
-                    "			button.target = '_blank';",
-                    "			button.textContent = 'EDIT';",
-                    '			document.body.appendChild( button );',
-                    "</script>",
-                ].join('\n');
-            }
-            content = content.replace('<edit_button />', editButton);
-            toZip['index.html'] = strToU8(content);
-        });
-        loader.load('/release/js/app.js', function (content) {
-            toZip['js/app.js'] = strToU8(content);
-        });
-        loader.load('/release/lib/three.module.js', function (content) {
-            toZip['js/three.module.js'] = strToU8(content);
-        });
-        loader.load('/release/js/VRButton.js', function (content) {
-            toZip['js/VRButton.js'] = strToU8(content);
-        });
     }
 }

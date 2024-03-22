@@ -15,8 +15,6 @@ export default {
 			'Export Format': '导出格式',
 			'PLY (Binary)': 'PLY(二进制)',
 			'STL (Binary)': 'STL(二进制)',
-			Preview: '预览',
-			Publish: '发布',
 			/* Network */
 			Network: '网络',
 			'Save As A New Project':"保存为新工程",
@@ -82,6 +80,7 @@ export default {
 			Play: '启动',
 			Stop: '停止',
 			'Save locally': '本地保存',
+			'Code out':"出码",
 		},
 		scene: {
 			toolbar: {
