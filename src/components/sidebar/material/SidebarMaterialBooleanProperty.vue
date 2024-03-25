@@ -7,22 +7,21 @@ import {t} from "@/language";
 
 const props = withDefaults(defineProps<{
   property: string,
-  name: string,
-  options: Array<{ label: string, value: any }>
+  name: string
 }>(), {
   property: "",
-  name: "",
+  name: ""
 })
 
 const show = ref(false);
-const value = ref();
+const value = ref(false);
 let object: { material: Material };
 let material: Material;
 let currentMaterialSlot = 0;
 
 onMounted(() => {
   useAddSignal("objectSelected", handleObjectSelected);
-  useAddSignal("materialChanged", update);
+  useAddSignal("materialChanged", update)
   useAddSignal("materialCurrentSlotChange", currentSlotChange);
 })
 
@@ -64,28 +63,27 @@ function onChange() {
 </script>
 
 <template>
-  <div class="sider-scene-material-constant-property" v-if="show">
-    <span>{{ t(`layout.sider.scene.${name}`) }}</span>
+  <div class="sider-scene-material-boolean-property" v-if="show">
+    <span>{{ t(`layout.sider.material.${name}`) }}</span>
     <div>
-      <n-select size="small" v-model:value="value" :options="options" @update:value="onChange"/>
+      <n-checkbox size="small" v-model:checked="value" @update:checked="onChange"/>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-.sider-scene-material-constant-property {
+.sider-scene-material-boolean-property {
   display: flex;
-  justify-content: space-around;
-  margin: 0.4rem 0;
+  justify-content: space-between;
+  margin: 10px 0;
   align-items: center;
 
   & > span {
-    width: 4rem;
-    padding-left: 0.5rem;
+    min-width: 80px;
   }
 
   & > div {
-    width: 9rem;
+    width: 150px;
     color: rgb(165, 164, 164);
   }
 }

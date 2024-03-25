@@ -1,6 +1,8 @@
 <template>
   <div id="layout-assets">
-    <n-tabs default-value="library" animated type="line" justify-content="space-around">
+    <SceneTree style="height: calc(40% - 25px)"/>
+
+    <n-tabs default-value="library" animated type="line" justify-content="space-around" class="!h-60%" pane-class="layout-assets-tab-pane">
       <n-tab-pane name="library" :tab="t('layout.assets[\'Resource library\']')" display-directive="show">
         <AssetsLibrary></AssetsLibrary>
       </n-tab-pane>
@@ -15,16 +17,19 @@
 import {t} from "@/language";
 import AssetsLibrary from "@/components/assets/AssetsLibrary.vue";
 import BIMLibrary from "@/components/assets/BIMLibrary.vue";
+import SceneTree from "@/components/tree/SceneTree.vue";
 </script>
 
 <style scoped lang="less">
 #layout-assets {
-  .n-tabs:first-child{
-    :deep(.n-tabs-tab-wrapper){
-      padding: 0 0.5rem;
-    }
-    .n-tab-pane:first-child {
-      padding-top: 0;
+  height: calc(100vh - 2.1rem - 2.2rem);
+
+  .layout-assets-tab-pane{
+    height: calc(100% - var(--n-pane-padding-top));
+    overflow-y: auto;
+
+    &:first-child{
+      overflow: unset;
     }
   }
 }

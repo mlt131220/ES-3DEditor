@@ -3,20 +3,24 @@ import {inject, ref, onMounted, onUnmounted} from "vue";
 import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
 import type {Material} from "three";
 import EsInputNumber from '@/components/es/EsInputNumber.vue';
-import {SetMaterialValueCommand} from '@/core/commands/SetMaterialValueCommand';
+import {SetMaterialRangeCommand} from '@/core/commands/SetMaterialRangeCommand';
 import {t} from "@/language";
 
 const props = withDefaults(defineProps<{
   property: string,
   name: string,
+  isMin: boolean,
   range: Array<number>,
-  decimal: number
+  step: number,
+  unit: string
 }>(), {
   property: "",
   name: "",
+  isMin: true,
   //@ts-ignore
   range: [-Infinity, Infinity],
-  decimal: 0
+  step: 1,
+  unit: ''
 })
 
 const show = ref(false);
@@ -53,7 +57,7 @@ function update() {
   material = window.editor.getObjectMaterial(object, currentMaterialSlot);
 
   if (props.property in material) {
-    numberValue.value = material[props.property];
+    numberValue.value = material[props.property][props.isMin ? 0 : 1];
     show.value = true;
   } else {
     show.value = false;
@@ -61,37 +65,40 @@ function update() {
 }
 
 function onChange() {
-  if (material[props.property] !== numberValue.value) {
-    window.editor.execute(new SetMaterialValueCommand(object, props.property, numberValue.value, currentMaterialSlot));
+  if (material[props.property][props.isMin ? 0 : 1] !== numberValue.value) {
+    const minValue = props.isMin ? numberValue.value : material[props.property][0];
+    const maxValue = props.isMin ? material[props.property][1] : numberValue.value;
+
+    window.editor.execute(new SetMaterialRangeCommand(object, props.property, minValue, maxValue, currentMaterialSlot));
   }
 }
 
 </script>
 
 <template>
-  <div id="sider-scene-material-color-property" v-if="show">
-    <span>{{ t(`layout.sider.scene.${name}`) }}</span>
+  <div class="sider-scene-material-range-value-property" v-if="show">
+    <span>{{ t(`layout.sider.material.${name}`) }}</span>
     <div>
       <EsInputNumber v-model:value="numberValue" size="tiny" :show-button="false" :min="range[0]" :max="range[1]"
-                     :decimal="decimal" :bordered="false" @change="onChange"/>
+                     :step="step" :bordered="false" @change="onChange"/>
+      <span>{{ unit }}</span>
     </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-#sider-scene-material-color-property {
+.sider-scene-material-range-value-property {
   display: flex;
-  justify-content: space-around;
-  margin: 0.4rem 0;
+  justify-content: space-between;
+  margin: 10px 0;
   align-items: center;
 
   & > span {
-    width: 4rem;
-    padding-left: 0.5rem;
+    min-width: 80px;
   }
 
   & > div {
-    width: 9rem;
+    width: 150px;
     color: rgb(165, 164, 164);
   }
 }

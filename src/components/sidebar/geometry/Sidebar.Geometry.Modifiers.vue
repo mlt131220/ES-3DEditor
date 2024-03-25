@@ -24,7 +24,7 @@ function centerGeometry() {
   <div class="sider-scene-geometry-item">
     <span></span>
     <div>
-      <n-button size="small" @click="computeVertexNormals">{{ t("layout.sider.scene['Compute Vertex Normals']") }}
+      <n-button size="small" @click="computeVertexNormals">{{ t("layout.sider.geometry['Compute Vertex Normals']") }}
       </n-button>
     </div>
   </div>

@@ -281,8 +281,6 @@ onMounted(() => {
 
 <style scoped lang="less">
 #bim-library {
-  height: calc(100vh - 4.3rem - 90px);
-  overflow-y: auto;
   overflow-x: hidden;
 
   .n-alert {

@@ -77,19 +77,16 @@ function dragEnd(e){
 
 <style scoped lang="less">
 #assets-library-object3d{
-  height: calc(100vh - 4.3rem - 90px);
-  overflow-y: auto;
   overflow-x: hidden;
 
   .cards{
-    padding: 0 5px;
+    padding: 0 10px 10px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 10px 8px;
   }
 
   .n-card{
-    //height:max-content;
     cursor:pointer;
 
     .n-image {
@@ -98,8 +95,7 @@ function dragEnd(e){
 
     :deep(.n-card-cover) {
       img {
-        height: 89px;
-        //object-fit: none;
+        height: 85px;
       }
     }
 

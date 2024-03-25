@@ -1,5 +1,6 @@
 <template>
-  <n-tabs v-model:value="currentNav" type='line' size="small" justify-content="space-around">
+  <n-tabs v-model:value="currentNav" type='line' size="small" justify-content="space-around"
+          class="h-full" pane-class="h-full overflow-y-auto">
     <n-tab-pane
         v-for="panel in nav" :key="panel.key"
         :name="panel.key"

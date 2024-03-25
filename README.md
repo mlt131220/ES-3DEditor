@@ -3,7 +3,9 @@
 🌍
 *[简体中文](README.md)*
 
-### 基于vue3与ThreeJs官方Editor重写，添加自定义功能，具体查看[Doc](http://editor-doc.mhbdng.cn/)
+### 基于vue3与ThreeJs，具体查看[Doc](http://editor-doc.mhbdng.cn/)
+
+<div style="text-align: center">
 
 ![Static Badge](https://img.shields.io/badge/Vue-3.3.4-green)
 ![Static Badge](https://img.shields.io/badge/NaiveUI-2.34.4-green)
@@ -12,6 +14,8 @@
 ![Static Badge](https://img.shields.io/badge/UnoCSS-0.46.5-8732D7)
 <br />
 ![Static Badge](https://img.shields.io/badge/license-MIT-blue)
+
+</div>
 
 ## 主要功能：
 - [x] 模型导入展示，支持OBJ、FBX、GLTF、GLB、RVT、IFC、SEA、3DM、3DS、3MF、AMF、DAE、DRC、PLY、SVG、JSON等30+格式；
@@ -84,11 +88,6 @@ Tips:
 
 ## 感谢🌹🌹🌹
 如果本项目帮助到了你，请在[这里](https://github.com/mlt131220/ES-3DEditor/issues/2)留下你的网址，让更多的人看到。您的回复将会是我继续更新维护下去的动力。
-
-## 捐赠
-如果您觉得本项目对您有所帮助，欢迎您请我喝杯咖啡，您的支持是我最大的动力。
-![支付宝](https://upyun.mhbdng.cn/Pay/微信图片_20240223140323.jpg)
-![微信](https://upyun.mhbdng.cn/Pay/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240223140330.jpg)
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=mlt131220/ES-3DEditor&type=Date)](https://star-history.com/#mlt131220/ES-3DEditor&Date)

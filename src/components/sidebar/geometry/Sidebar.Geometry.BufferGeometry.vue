@@ -53,10 +53,10 @@ async function updateRows(object) {
 
     <!-- attributes -->
     <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene.attributes") }}</span>
+      <span>{{ t("layout.sider.geometry.attributes") }}</span>
       <div>
         <div v-if="objectData.index !== null" class="flex justify-between pr-6">
-          <span>{{ t("layout.sider.scene.index") }}</span>
+          <span>{{ t("layout.sider.geometry.index") }}</span>
           <span>{{ objectData.index }}</span>
         </div>
         <div v-for="name in Object.keys(objectData.attributes)" :key="name" class="flex justify-between pr-6">

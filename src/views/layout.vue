@@ -117,6 +117,7 @@ onMounted(() => {
 
     &-sider {
       z-index: 15;
+      height: 100%;
     }
 
     &-center-layout {

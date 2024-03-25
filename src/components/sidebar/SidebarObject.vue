@@ -399,12 +399,12 @@ const handleUserDataClick = () => {
   <div id="sider-scene-attr" v-if="isSelectObject3D">
     <!-- type -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.type") }}</span>
+      <span>{{ t("layout.sider.object.type") }}</span>
       <div>{{ objectData.type }}</div>
     </div>
     <!-- uuid -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.uuid") }}</span>
+      <span>{{ t("layout.sider.object.uuid") }}</span>
       <div class="flex items-center">
         <n-tooltip trigger="hover">
           <template #trigger>
@@ -412,10 +412,10 @@ const handleUserDataClick = () => {
           </template>
           {{ objectData.uuid }}
         </n-tooltip>
-        <n-button quaternary circle type="warning" v-if="objectData.uuid" @click="update('uuid')">
+        <n-button size="small" quaternary circle type="warning" v-if="objectData.uuid" @click="update('uuid')">
           <template #icon>
-            <n-icon>
-              <ReloadCircleOutline/>
+            <n-icon size="16">
+              <ReloadCircleOutline />
             </n-icon>
           </template>
         </n-button>
@@ -423,14 +423,14 @@ const handleUserDataClick = () => {
     </div>
     <!-- name -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.name") }}</span>
+      <span>{{ t("layout.sider.object.name") }}</span>
       <div>
         <n-input v-model:value="objectData.name" type="text" size="small" @update:value="update('name')"/>
       </div>
     </div>
     <!-- position -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.position") }}</span>
+      <span>{{ t("layout.sider.object.position") }}</span>
       <div class="flex">
         <EsInputNumber v-model:value="objectData.position.x" size="tiny" :show-button="false" :decimal="3"
                        :bordered="false" @change="update('position')"/>
@@ -442,7 +442,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- rotation -->
     <div class="sider-scene-attr-item" v-if="transformRowsVisible.rotation">
-      <span>{{ t("layout.sider.scene.rotation") }}</span>
+      <span>{{ t("layout.sider.object.rotation") }}</span>
       <div class="flex">
         <EsInputNumber v-model:value="objectData.rotation.x" size="tiny" :decimal="2" :show-button="false"
                        :bordered="false" @change="update('rotation')" unit="°"/>
@@ -454,7 +454,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- scale -->
     <div class="sider-scene-attr-item" v-if="transformRowsVisible.scale">
-      <span>{{ t("layout.sider.scene.scale") }}</span>
+      <span>{{ t("layout.sider.object.scale") }}</span>
       <div class="flex">
         <EsInputNumber v-model:value="objectData.scale.x" size="tiny" :decimal="3" :show-button="false"
                        :bordered="false" @change="update('scale')"/>
@@ -466,7 +466,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- fov -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.fov">
-      <span>{{ t("layout.sider.scene.fov") }}</span>
+      <span>{{ t("layout.sider.object.fov") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.fov" size="tiny" :decimal="2" :show-button="false"
                        :bordered="false" @change="update('fov')"/>
@@ -474,7 +474,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- left -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.left">
-      <span>{{ t("layout.sider.scene.left") }}</span>
+      <span>{{ t("layout.sider.object.left") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.left" size="tiny" :show-button="false" :bordered="false"
                        @change="update('left')"/>
@@ -482,7 +482,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- right -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.right">
-      <span>{{ t("layout.sider.scene.right") }}</span>
+      <span>{{ t("layout.sider.object.right") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.right" size="tiny" :show-button="false" :bordered="false"
                        @change="update('right')"/>
@@ -490,7 +490,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- top -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.top">
-      <span>{{ t("layout.sider.scene.top") }}</span>
+      <span>{{ t("layout.sider.object.top") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.top" size="tiny" :show-button="false" :bordered="false"
                        @change="update('top')"/>
@@ -498,7 +498,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- bottom -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.bottom">
-      <span>{{ t("layout.sider.scene.bottom") }}</span>
+      <span>{{ t("layout.sider.object.bottom") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.bottom" size="tiny" :show-button="false" :bordered="false"
                        @change="update('bottom')"/>
@@ -506,7 +506,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- near -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.near">
-      <span>{{ t("layout.sider.scene.near") }}</span>
+      <span>{{ t("layout.sider.object.near") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.near" size="tiny" :decimal="2" :min="0" :show-button="false"
                        :bordered="false" @change="update('near')"/>
@@ -514,7 +514,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- far -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.far">
-      <span>{{ t("layout.sider.scene.far") }}</span>
+      <span>{{ t("layout.sider.object.far") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.far" size="tiny" :decimal="2" :show-button="false"
                        :bordered="false" @change="update('far')"/>
@@ -522,7 +522,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- intensity -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.intensity">
-      <span>{{ t("layout.sider.scene.intensity") }}</span>
+      <span>{{ t("layout.sider.object.intensity") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.intensity" size="tiny" :min="0" :show-button="false" :bordered="false"
                        @change="update('intensity')"/>
@@ -530,7 +530,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- color -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.color">
-      <span>{{ t("layout.sider.scene.color") }}</span>
+      <span>{{ t("layout.sider.object.color") }}</span>
       <div>
         <n-color-picker v-model:value="objectData.color" :show-alpha="false" size="small"
                         @update:value="update('color')"/>
@@ -538,7 +538,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- groundcolor -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.groundColor">
-      <span>{{ t("layout.sider.scene.groundcolor") }}</span>
+      <span>{{ t("layout.sider.object.groundcolor") }}</span>
       <div>
         <n-color-picker v-model:value="objectData.groundColor" :modes="['hex']" :show-alpha="false" size="small"
                         @update:value="update('groundColor')"/>
@@ -546,7 +546,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- distance -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.distance">
-      <span>{{ t("layout.sider.scene.distance") }}</span>
+      <span>{{ t("layout.sider.object.distance") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.distance" size="tiny" :min="0" :show-button="false"
                        :bordered="false" @change="update('distance')"/>
@@ -554,7 +554,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- angle -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.angle">
-      <span>{{ t("layout.sider.scene.angle") }}</span>
+      <span>{{ t("layout.sider.object.angle") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.angle" size="tiny" :min="0" :max="Math.PI / 2"
                        :show-button="false" :bordered="false" :decimal="3" @change="update('angle')"/>
@@ -562,7 +562,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- penumbra -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.penumbra">
-      <span>{{ t("layout.sider.scene.penumbra") }}</span>
+      <span>{{ t("layout.sider.object.penumbra") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.penumbra" size="tiny" :min="0" :max="1" :show-button="false"
                        :bordered="false" :decimal="2" @change="update('penumbra')"/>
@@ -570,7 +570,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- decay -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.decay">
-      <span>{{ t("layout.sider.scene.decay") }}</span>
+      <span>{{ t("layout.sider.object.decay") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.decay" size="tiny" :min="0" :max="Infinity"
                        :show-button="false" :bordered="false" @change="update('decay')"/>
@@ -578,20 +578,20 @@ const handleUserDataClick = () => {
     </div>
     <!-- shadow -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.scene.shadow") }}</span>
+      <span>{{ t("layout.sider.object.shadow") }}</span>
       <div>
         <n-checkbox v-model:checked="objectData.castShadow" @update:checked="update('castShadow')"
-                    v-if="objectDataVisible.castShadow">{{ t("layout.sider.scene.cast") }}
+                    v-if="objectDataVisible.castShadow">{{ t("layout.sider.object.cast") }}
         </n-checkbox>
         <n-checkbox v-model:checked="objectData.receiveShadow" @update:checked="update('receiveShadow')"
                     v-if="objectDataVisible.receiveShadow">
-          {{ t("layout.sider.scene.receive") }}
+          {{ t("layout.sider.object.receive") }}
         </n-checkbox>
       </div>
     </div>
     <!-- shadowBias -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.scene.shadowBias") }}</span>
+      <span>{{ t("layout.sider.object.shadowBias") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.shadow.bias" size="tiny" :show-button="false" :bordered="false"
                        :step="0.0001" @change="update('shadowBias')"/>
@@ -599,7 +599,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- shadowNormalBias -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.scene.shadowNormalBias") }}</span>
+      <span>{{ t("layout.sider.object.shadowNormalBias") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.shadow.normalBias" size="tiny" :show-button="false"
                        :bordered="false" @change="update('shadowNormalBias')"/>
@@ -607,7 +607,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- shadowRadius -->
     <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.scene.shadowRadius") }}</span>
+      <span>{{ t("layout.sider.object.shadowRadius") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.shadow.radius" size="tiny" :show-button="false"
                        :bordered="false" @change="update('shadowRadius')"/>
@@ -615,21 +615,21 @@ const handleUserDataClick = () => {
     </div>
     <!-- visible -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.visible") }}</span>
+      <span>{{ t("layout.sider.object.visible") }}</span>
       <div>
         <n-checkbox v-model:checked="objectData.visible" @update:checked="update('visible')"/>
       </div>
     </div>
     <!-- frustumcull -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.frustumcull") }}</span>
+      <span>{{ t("layout.sider.object.frustumcull") }}</span>
       <div>
         <n-checkbox v-model:checked="objectData.frustumCulled" @update:checked="update('frustumCulled')"/>
       </div>
     </div>
     <!-- renderorder -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.renderorder") }}</span>
+      <span>{{ t("layout.sider.object.renderorder") }}</span>
       <div>
         <EsInputNumber v-model:value="objectData.renderOrder" size="tiny" :show-button="false" :bordered="false"
                        @change="update('renderOrder')"/>
@@ -637,7 +637,7 @@ const handleUserDataClick = () => {
     </div>
     <!-- userdata -->
     <div class="sider-scene-attr-item">
-      <span>{{ t("layout.sider.scene.userdata") }}</span>
+      <span>{{ t("layout.sider.object.userdata") }}</span>
       <div>
         <n-input type="textarea" :value="objectData.userData" round :rows="5" readonly :status="userDataStatus"
                  @click.stop="handleUserDataClick" />
@@ -647,23 +647,23 @@ const handleUserDataClick = () => {
     <UserData v-model:show="userDataEditorShow" @update:show="(s) => userDataEditorShow = s"
               v-model:value="objectData.userData" @update:value="update('userData')" />
   </div>
+  <n-result v-else status="418" title="Empty" :description="t('prompt[\'No object selected.\']')" />
 </template>
 
 <style lang="less" scoped>
 #sider-scene-attr {
   .sider-scene-attr-item {
     display: flex;
-    justify-content: space-around;
-    margin: 0.4rem 0;
+    justify-content: space-between;
+    margin: 10px 0;
     align-items: center;
 
     & > span {
-      width: 4rem;
-      padding-left: 0.5rem;
+      min-width: 80px;
     }
 
     & > div {
-      width: 9rem;
+      width: 150px;
       color: rgb(165, 164, 164);
       overflow: hidden;
 

@@ -28,6 +28,12 @@
         </n-upload>
       </n-form-item>
       <n-collapse>
+        <template #arrow>
+          <n-icon>
+            <CaretForwardOutline />
+          </n-icon>
+        </template>
+
         <n-collapse-item :title="t('bim[\'Conversion configuration\']')">
           <!--  极致轻量化 -->
           <n-form-item :label="t('bim[\'Extreme lightweight\']')">
@@ -78,7 +84,7 @@
 import {reactive, ref} from "vue";
 import {NotificationReactive} from "naive-ui";
 import {t} from "@/language";
-import {ArchiveOutline} from "@vicons/ionicons5";
+import {ArchiveOutline, CaretForwardOutline} from "@vicons/ionicons5";
 import {demoEnv} from "@/config/global";
 import {fetchUpload} from "@/http/api/sys";
 import {fetchAddBim2Gltf, fetchUploadRvt} from "@/http/api/bim";

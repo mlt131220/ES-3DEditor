@@ -6,8 +6,8 @@ import * as THREE from 'three';
 import {t} from "@/language";
 import {useAddSignal, useDispatchSignal,useRemoveSignal} from "@/hooks/useSignal";
 import {SetGeometryValueCommand} from '@/core/commands/SetGeometryValueCommand';
-import SidebarGeometryBufferGeometry from "./siderSceneGeometry/Sidebar.Geometry.BufferGeometry.vue";
-import SidebarGeometryModifiers from "./siderSceneGeometry/Sidebar.Geometry.Modifiers.vue";
+import SidebarGeometryBufferGeometry from "@/components/sidebar/geometry/Sidebar.Geometry.BufferGeometry.vue";
+import SidebarGeometryModifiers from "@/components/sidebar/geometry/Sidebar.Geometry.Modifiers.vue";
 import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 
 const hasGeometry = ref(false);
@@ -39,7 +39,7 @@ async function build(object) {
     geometryData.name = geometry.name;
 
     if (geometry.type !== "BufferGeometry" && currentGeometryType !== geometry.type) {
-      currentParametersComponent = defineAsyncComponent(() => import(`@/components/sider/siderScene/siderSceneGeometry/Sidebar.Geometry.${geometry.type}.vue`));
+      currentParametersComponent = defineAsyncComponent(() => import(`@/components/sidebar/geometry/Sidebar.Geometry.${geometry.type}.vue`));
       currentGeometryType = geometry.type;
     }
 
@@ -86,13 +86,13 @@ const update = (method: string) => {
   <div v-show="hasGeometry">
     <!-- type -->
     <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene.type") }}</span>
+      <span>{{ t("layout.sider.object.type") }}</span>
       <div>{{ geometryData.type }}</div>
     </div>
 
     <!-- uuid -->
     <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene.uuid") }}</span>
+      <span>{{ t("layout.sider.object.uuid") }}</span>
       <div class="flex items-center">
         <n-tooltip trigger="hover">
           <template #trigger>
@@ -100,9 +100,9 @@ const update = (method: string) => {
           </template>
           {{ geometryData.uuid }}
         </n-tooltip>
-        <n-button quaternary circle type="warning" v-if="geometryData.uuid" @click="update('uuid')">
+        <n-button size="small" quaternary circle type="warning" v-if="geometryData.uuid" @click="update('uuid')">
           <template #icon>
-            <n-icon>
+            <n-icon size="16">
               <ReloadCircleOutline/>
             </n-icon>
           </template>
@@ -112,7 +112,7 @@ const update = (method: string) => {
 
     <!-- name -->
     <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene.name") }}</span>
+      <span>{{ t("layout.sider.object.name") }}</span>
       <div>
         <n-input v-model:value="geometryData.name" type="text" size="small" @update:value="update('name')"/>
       </div>
@@ -125,7 +125,7 @@ const update = (method: string) => {
       <span></span>
       <div>
         <n-button size="small" @click="update('vertexNormals')">
-          {{ t("layout.sider.scene['Afficher normales']") }}
+          {{ t("layout.sider.geometry['Afficher normales']") }}
         </n-button>
       </div>
     </div>
@@ -150,7 +150,7 @@ const update = (method: string) => {
 
     <!-- bounds -->
     <div class="sider-scene-geometry-item">
-      <span>{{ t("layout.sider.scene.bounds") }}</span>
+      <span>{{ t("layout.sider.geometry.bounds") }}</span>
       <div class="flex flex-col text-12px">
         <span>{{ geometryData.bounds.x }}</span>
         <span>{{ geometryData.bounds.y }}</span>
@@ -158,22 +158,23 @@ const update = (method: string) => {
       </div>
     </div>
   </div>
+
+  <n-result v-show="!hasGeometry" status="418" title="Empty" :description="t('prompt[\'No geometric data for the time being\']')" />
 </template>
 
 <style lang="less">
 .sider-scene-geometry-item {
   display: flex;
-  justify-content: start;
-  margin: 0.4rem 0;
+  justify-content: space-between;
+  margin: 10px 0;
   align-items: center;
 
   & > span {
-    min-width: 4rem;
-    padding-left: 1rem;
+    min-width: 80px;
   }
 
   & > div {
-    width: 9rem;
+    width: 150px;
     color: rgb(165, 164, 164);
     overflow: hidden;
 

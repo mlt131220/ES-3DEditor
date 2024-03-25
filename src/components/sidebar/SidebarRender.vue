@@ -121,7 +121,7 @@ function updateToneMapping() {
 </script>
 
 <template>
-  <n-form label-placement="left" :label-width="90" label-align="left" size="small" class="px-4">
+  <n-form label-placement="left" :label-width="90" label-align="left" size="small">
     <n-form-item :label="t('layout.sider.project.antialias')">
       <n-checkbox v-model:checked="renderModel.antialias" @update:checked="createRenderer"></n-checkbox>
     </n-form-item>

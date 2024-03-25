@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
 })
 
 const show = ref(false);
-const color = ref<string | number>("");
+const color = ref<string>("");
 const intensity = ref(0);
 let object: { material: Material };
 let material: Material;
@@ -78,7 +78,7 @@ function onChange() {
 
 <template>
   <div id="sider-scene-material-color-property" v-if="show">
-    <span>{{ t(`layout.sider.scene.${name}`) }}</span>
+    <span>{{ t(`layout.sider.material.${name}`) }}</span>
     <div>
       <n-color-picker v-model:value="color" :show-alpha="false" size="small" @update:value="onChange()"/>
       <EsInputNumber v-if="property === 'emissive'" v-model:value="intensity" size="tiny" :show-button="false" :bordered="false" @change="onChange()"/>
@@ -89,17 +89,16 @@ function onChange() {
 <style lang="less" scoped>
 #sider-scene-material-color-property {
   display: flex;
-  justify-content: space-around;
-  margin: 0.4rem 0;
+  justify-content: space-between;
+  margin: 10px 0;
   align-items: center;
 
   & > span {
-    width: 4rem;
-    padding-left: 0.5rem;
+    min-width: 80px;
   }
 
   & > div {
-    width: 9rem;
+    width: 150px;
     color: rgb(165, 164, 164);
   }
 }
