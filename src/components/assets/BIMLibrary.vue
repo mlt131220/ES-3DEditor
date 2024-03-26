@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, onMounted, h} from "vue";
+import {ref, reactive, onMounted, h, onBeforeUnmount} from "vue";
 import type {DataTableColumns} from 'naive-ui';
 import {NButton, NTag, NIcon} from 'naive-ui'
 import {CloudUpload, Reload, CheckmarkCircle, CloseOutline} from '@vicons/ionicons5';
@@ -59,7 +59,7 @@ import {fetchGetBim2GltfList} from "@/http/api/bim";
 import {Bim2GltfWsData, Service, WebSocketMessage} from "../../../types/network";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {filterSize} from "@/utils/common/file";
-import {onWebSocket} from "@/hooks/useWebSocket";
+import {onWebSocket,offWebSocket} from "@/hooks/useWebSocket";
 import {useWebsocketStore} from "@/store/modules/websocket";
 import {dateTimeFormat} from "@/utils/common/dateTime";
 import UploadDialog from "./bimLibrary/UploadDialog.vue";
@@ -150,7 +150,7 @@ async function getBim2GltfList() {
   const res = await fetchGetBim2GltfList({
     offset: (paginationReactive.page - 1) * paginationReactive.pageSize,
     limit: paginationReactive.pageSize
-  }) as Service.SuccessResult<Service.ListPageResult<IBIMData>>;
+  });
 
   objectList.value = res.data?.items || [];
   paginationReactive.pageCount = res.data?.pages || 1;
@@ -276,6 +276,9 @@ onMounted(() => {
 
   // 注册websocket消息监听
   onWebSocket(Bim2GltfWsHandle);
+})
+onBeforeUnmount(() => {
+  offWebSocket(Bim2GltfWsHandle)
 })
 </script>
 

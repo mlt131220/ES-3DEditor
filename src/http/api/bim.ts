@@ -1,5 +1,6 @@
 import {request} from "@/http/request";
 import {useWebsocketStore} from "@/store/modules/websocket";
+import {Service} from "../../../types/network";
 
 const websocketStore = useWebsocketStore();
 
@@ -7,7 +8,7 @@ const websocketStore = useWebsocketStore();
  * 获取bim转换列表
  */
 export function fetchGetBim2GltfList(params) {
-    return request.get('/editor3d/bim2gltf/getAll',{params});
+    return request.get<Service.ListPageResult<IBIMData>>('/editor3d/bim2gltf/getAll',{params});
 }
 
 /**

@@ -1,18 +1,32 @@
+/**
+ * @author MaHaiBing
+ * @email  mlt131220@163.com
+ * @date   2023/11/29 10:10
+ * @description websocket hook;使用store管理websocket保证全局唯一性
+ */
 import {unref} from 'vue';
 import {useWebSocket as $useWebSocket} from 'vue-hooks-plus';
-// import {dateTimeFormat} from "@/utils/common/dateTime";
 import {useWebsocketStoreWithOut} from "@/store/modules/websocket";
 import {generateUUID} from "three/src/math/MathUtils";
 
 const websocketStore = useWebsocketStoreWithOut();
-
 const listeners = new Map();
+const PING = new Uint8Array([0x9]);
+let pingInterval:any = null;
 
 /**
  * 开启 WebSocket 链接，全局只需执行一次
  * @param url
  */
 export function connectWebSocket(url) {
+    if(url.substring(0,3).indexOf('ws') === -1){
+        if(url.indexOf('http') !== -1){
+            url = url.replace("http", "ws")
+        }else{
+            url = location.origin.replace("http", "ws") + url;
+        }
+    }
+
     if (!websocketStore.getIsOpen()) {
         // 设置订阅者标识
         let wsUname;
@@ -24,8 +38,19 @@ export function connectWebSocket(url) {
         }
 
         const ws = $useWebSocket(`${url}?uname=${wsUname}`, {
+            reconnectLimit:3,
+            reconnectInterval:2000,
             onOpen: () => {
                 console.log('WebSocket 连接成功');
+
+                // 定时发送 ping 消息
+                send(PING);
+                if(pingInterval !== null){
+                    clearInterval(pingInterval);
+                }
+                pingInterval = setInterval(() => {
+                    send(PING);
+                }, 5000);
             },
             onClose: () => {
                 console.log('WebSocket 连接关闭');
@@ -41,7 +66,6 @@ export function connectWebSocket(url) {
         websocketStore.setWebsocket(ws);
     }
 }
-
 
 function onMessage(e: any) {
     if (e.data === 'ping' || e.data === 'heartbeat' || e.data === 'pong') {
@@ -90,7 +114,5 @@ export function useWebSocket() {
 }
 
 export function send(message: string | ArrayBufferLike | Blob | ArrayBufferView) {
-    if (websocketStore.getIsOpen()) {
-        websocketStore.ws?.webSocketIns?.send(message);
-    }
+    websocketStore.send(message);
 }

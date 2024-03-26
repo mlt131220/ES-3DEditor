@@ -25,7 +25,8 @@
         change();
 
         function change() {
-            document.documentElement.style.fontSize = document.documentElement.clientWidth * 20 / 1920 + "px";
+            const w = document.documentElement.clientWidth > 1280 ? document.documentElement.clientWidth : 1280;
+            document.documentElement.style.fontSize = w * 20 / 1920 + "px";
         }
 
         /*监听窗口大小的改变*/

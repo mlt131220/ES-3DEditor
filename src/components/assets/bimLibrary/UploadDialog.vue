@@ -3,10 +3,10 @@
     <n-form label-placement="left" :model="BIMModel" :rules="BIMRules"
             label-width="100px" label-align="right" ref="formRef"
             require-mark-placement="right-hanging">
-      <n-form-item :label="t('bim[\'File name\']')" path="fileName">
-        <n-input v-model:value="BIMModel.fileName"
-                 :placeholder="t('bim[\'Please enter the BIM file name\']')"/>
-      </n-form-item>
+      <!--      <n-form-item :label="t('bim[\'File name\']')" path="fileName">-->
+      <!--        <n-input v-model:value="BIMModel.fileName"-->
+      <!--                 :placeholder="t('bim[\'Please enter the BIM file name\']')"/>-->
+      <!--      </n-form-item>-->
       <n-form-item :label="t('bim.Thumbnail')">
         <n-upload :default-upload="false" list-type="image-card" :max="1"
                   @change="thumbnailChange"/>
@@ -20,8 +20,9 @@
                 <ArchiveOutline/>
               </n-icon>
             </div>
-            <n-text style="font-size: 14px">{{
-                t("bim['Click or drag the .rvt file to this area']")
+            <n-text style="font-size: 14px">
+              {{
+                t("bim['Click or drag the file to this area.Supported formats are:']") + ` ${NEED_CONVERT_MODEL.join("、")}`
               }}
             </n-text>
           </n-upload-dragger>
@@ -88,6 +89,7 @@ import {ArchiveOutline, CaretForwardOutline} from "@vicons/ionicons5";
 import {demoEnv} from "@/config/global";
 import {fetchUpload} from "@/http/api/sys";
 import {fetchAddBim2Gltf, fetchUploadRvt} from "@/http/api/bim";
+import {NEED_CONVERT_MODEL} from "@/utils/common/constant";
 
 withDefaults(defineProps<{
   show:boolean
@@ -133,11 +135,6 @@ const BIMModel = reactive<{
   }
 })
 const BIMRules = {
-  fileName: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: t("bim['Please enter the BIM file name']")
-  },
   bimFile: {
     required: true,
     trigger: 'change',
@@ -171,13 +168,14 @@ function bimChange({file}) {
     return;
   }
 
-  if (file.name.split(".").at(-1).toLowerCase() !== 'rvt') {
-    window.$message?.error(t("bim['Only rvt format BIM files can be uploaded, please re-upload']"));
+  if (!NEED_CONVERT_MODEL.includes(file.name.split(".").at(-1).toLowerCase())) {
+    window.$message?.error(t("bim['This format is not supported for lightweight, please upload again! Supported formats are:']") + ` ${NEED_CONVERT_MODEL.join("、")}`);
     uploadBIMRef.value.clear();
     return false
   }
 
   BIMModel.bimFile = file.file as File;
+  BIMModel.fileName = BIMModel.bimFile.name;
   formRef.value?.validate();
 }
 
@@ -220,7 +218,7 @@ function submit(e) {
       // 2. 上传bim文件
       const bimRes = await fetchUploadRvt({
         file: BIMModel.bimFile,
-      })
+      });
       if (bimRes.data === null) {
         window.$message?.error(t("bim['Failed to upload BIM file']"));
         wsNotice.content = `${t("bim['Failed to upload BIM file']")},${t("prompt['Please try again later!']")}`;
@@ -238,13 +236,23 @@ function submit(e) {
         fileName: BIMModel.fileName,
         fileSourceIp: "",
         thumbnail,
-        conversionStatus: 0
+        conversionStatus: 0,
+        // 转换配置
+        options:BIMModel.options
       })
 
       // reset
       BIMModel.fileName = "";
       BIMModel.thumbnail = null;
       BIMModel.bimFile = null;
+      BIMModel.options = {
+        Optimize:false,
+        ExportProperty:true,
+        View:"Default",
+        ViewName:"",
+        DisplayStyle:"Colour",
+        CoordinateReference:"Origin"
+      }
     }
   })
 }
