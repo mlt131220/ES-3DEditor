@@ -6,6 +6,9 @@
       <n-tab-pane name="library" :tab="t('layout.assets[\'Resource library\']')" display-directive="show">
         <AssetsLibrary></AssetsLibrary>
       </n-tab-pane>
+      <n-tab-pane name="cad" tab="CAD" display-directive="show">
+        <CadLibrary />
+      </n-tab-pane>
       <n-tab-pane name="bim" tab="BIM" display-directive="show">
         <BIMLibrary></BIMLibrary>
       </n-tab-pane>
@@ -18,6 +21,7 @@ import {t} from "@/language";
 import AssetsLibrary from "@/components/assets/AssetsLibrary.vue";
 import BIMLibrary from "@/components/assets/BIMLibrary.vue";
 import SceneTree from "@/components/tree/SceneTree.vue";
+import CadLibrary from "@/components/assets/CadLibrary.vue";
 </script>
 
 <style scoped lang="less">

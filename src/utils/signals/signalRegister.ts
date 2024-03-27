@@ -122,9 +122,7 @@ const cesiumSignals:SignalRegister = {
  * 图纸 相关
  */
 const drawingSignals:SignalRegister = {
-	drawingMarkListChange:new Signal(),
-	drawingMarkSelectChange:new Signal(),
-	drawingImgChange:new Signal(),
+	cadViewerResize:new Signal(), // 图纸面板移动
 }
 
 /**

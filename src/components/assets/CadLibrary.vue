@@ -1,11 +1,11 @@
 <template>
-  <div id="bim-library">
+  <div id="cad-library">
     <n-alert type="info" :show-icon="false" :bordered="false" class="mb-2 mx-2">
       <n-button quaternary round type="warning" @click="showHistoryModal = true">
         {{ t("layout.footer.History") }}
       </n-button>
 
-      <n-button quaternary circle type="primary" @click="showBIMUpload = true">
+      <n-button quaternary circle type="primary" @click="showCadUpload = true">
         <template #icon>
           <n-icon>
             <CloudUpload/>
@@ -23,13 +23,13 @@
         <template #cover>
           <n-spin :show="item.conversionStatus === 0">
             <template #description>
-              正在轻量化...
+              正在解析...
             </template>
             <img :src="item.thumbnail ? item.thumbnail : '/static/images/占位图.png'" :alt="item.fileName"
-                 draggable="false">
+               draggable="false">
             <n-tag :color="{ color: '#F1C3CC', textColor: '#D03050' }" :bordered="false"
                    size="small" class="absolute top-33px w-full" v-if="item.conversionStatus === 2">
-              轻量化失败
+              解析失败
               <template #icon>
                 <n-icon>
                   <CloseCircleSharp/>
@@ -49,7 +49,7 @@
     </div>
 
     <n-modal v-model:show="showHistoryModal" class="!w-60vw" preset="dialog" display-directive="show"
-             :title="t('bim[\'BIM lightweight\']')+t('layout.footer.History')">
+             :title="t('cad[\'CAD parse\']')+t('layout.footer.History')">
       <n-data-table class="mt-20px" size="small" :loading="tableLoading"
                     :columns="columns" :data="objectList"></n-data-table>
       <div class="flex justify-end mt-15px">
@@ -57,8 +57,8 @@
       </div>
     </n-modal>
 
-    <!--  BIM文件上传  -->
-    <UploadDialog v-model:show="showBIMUpload" ref="uploadDialogRef"/>
+    <!--  CAD文件上传  -->
+    <UploadDialog v-model:show="showCadUpload" @refreshList="getCadList" ref="uploadDialogRef"/>
   </div>
 </template>
 
@@ -69,45 +69,22 @@ import {NButton, NTag, NIcon} from 'naive-ui'
 import {CloudUpload, Reload, CheckmarkCircle, CloseOutline, CloseCircleSharp} from '@vicons/ionicons5';
 import {t} from "@/language";
 import {useDragStore} from "@/store/modules/drag";
-import {fetchGetBim2GltfList} from "@/http/api/bim";
-import {Bim2GltfWsData, WebSocketMessage} from "../../../types/network";
-import {useDispatchSignal} from "@/hooks/useSignal";
-import {filterSize} from "@/utils/common/file";
+import {useDrawingStore} from "@/store/modules/drawing";
+import {fetchGetCadList} from "@/http/api/cad";
 import {onWebSocket, offWebSocket} from "@/hooks/useWebSocket";
 import {useWebsocketStore} from "@/store/modules/websocket";
-import {dateTimeFormat} from "@/utils/common/dateTime";
-import UploadDialog from "./bimLibrary/UploadDialog.vue";
+import UploadDialog from "./cadLibrary/UploadDialog.vue";
 
 const websocketStore = useWebsocketStore();
+const drawingStore = useDrawingStore();
 
-let objectList = ref<IBIMData[]>([]);
+let objectList = ref<ICadData[]>([]);
 const showHistoryModal = ref(false);
 const tableLoading = ref(false);
-const columns: DataTableColumns<IBIMData> = [
+const columns: DataTableColumns<ICadData> = [
   {
     title: '文件名',
     key: 'fileName'
-  },
-  {
-    title: 'bim文件体积',
-    key: 'bimFileSize',
-    render(row) {
-      return filterSize(row.bimFileSize);
-    }
-  },
-  {
-    title: 'gltf文件体积',
-    key: 'gltfFileSize',
-    render(row) {
-      return filterSize(row.gltfFileSize);
-    }
-  },
-  {
-    title: '转换时长',
-    key: 'conversionDuration',
-    render(row) {
-      return row.conversionDuration.toFixed(2) + "s";
-    }
   },
   {
     title: '状态',
@@ -152,16 +129,16 @@ let paginationReactive = reactive({
   pageCount: 1,
   "on-update:page": (page: number) => {
     paginationReactive.page = page;
-    getBim2GltfList();
+    getCadList();
   }
 })
 
-const showBIMUpload = ref(false);
+const showCadUpload = ref(false);
 const uploadDialogRef = ref();
 
-// 获取BIM转换列表
-async function getBim2GltfList() {
-  const res = await fetchGetBim2GltfList({
+// 获取cad列表
+async function getCadList() {
+  const res = await fetchGetCadList({
     offset: (paginationReactive.page - 1) * paginationReactive.pageSize,
     limit: paginationReactive.pageSize
   });
@@ -170,38 +147,30 @@ async function getBim2GltfList() {
   paginationReactive.pageCount = res.data?.pages || 1;
 }
 
-async function addToScene(item) {
+async function addToScene(item: ICadData) {
   showHistoryModal.value = false;
 
-  let notice = window.$notification.info({
-    title: window.$t("scene['Get the scene data']") + "...",
-    content: window.$t("other.Loading") + "...",
-    closable: false,
-  })
+  if (drawingStore.getIsUploaded) {
+    window.$dialog.warning({
+      title: `${window.$t("other.Load")} "${item.fileName}" ${window.$t("drawing.Drawing")} ?`,
+      content: window.$t("drawing['This operation will overwrite the current drawing, and any unsaved data will be lost. Do you want to continue?']"),
+      positiveText: window.$t('other.ok'),
+      negativeText: window.$t('other.cancel'),
+      onPositiveClick: () => {
+        // 先清空图纸
+        drawingStore.$reset();
 
-  // 从gltfFilePath字段去服务器获取gltf文件
-  fetch(item.gltfFilePath)
-      .then(res => res.blob())
-      .then(data => {
-        const file = new File([data as Blob], `${item.fileName}.glb`, {type: 'model/gltf-binary'});
+        drawingStore.setImgSrc(item.converterFilePath);
+        drawingStore.setIsUploaded(true);
+      },
+    });
+  } else {
+    // 先清空图纸
+    drawingStore.$reset();
 
-        notice.content = window.$t("scene['Parsing to editor']");
-
-        window.editor.loader.loadFiles([file], undefined, () => {
-          setTimeout(() => {
-            notice.destroy();
-            useDispatchSignal("sceneGraphChanged");
-          }, 800)
-          useDispatchSignal("sceneGraphChanged");
-        })
-      })
-      .catch(err => {
-        notice.content = window.$t("scene['Failed to get scene data']");
-        setTimeout(() => {
-          notice.destroy();
-        }, 500)
-        return null;
-      })
+    drawingStore.setImgSrc(item.converterFilePath);
+    drawingStore.setIsUploaded(true);
+  }
 }
 
 // 开始拖拽事件
@@ -223,85 +192,62 @@ function dragEnd() {
   dragStore.setActionTarget("");
 }
 
-// websocket监听 bim2gltf 消息
-function Bim2GltfWsHandle(data: WebSocketMessage<Bim2GltfWsData>) {
-  if (data.type === "bim2gltf") {
-    // 判断订阅者，以确定是自己还是别人轻量化的结果
-    if (data.subscriber === websocketStore.uname) {
-      let wsNotice = uploadDialogRef.value?.getNotice();
-      // 如果是自己的轻量化结果，使用用户登录结果作为uname，则用户可能关闭页面再打开时接收到消息，应继续显示
-      if (!wsNotice) {
-        wsNotice = window.$notification.info({
-          title: t("bim['BIM lightweight']"),
-          content: "",
-          closable: false,
-        })
-      }
+// websocket监听 Cad 消息
+function CadWsHandle(data) {
+  if (data.type !== "cad") return;
 
-      if (data.data.conversionStatus === "progress") {
-        wsNotice.content = t("bim['BIM lightweight is in progress']") + "...";
-      } else if (data.data.conversionStatus === "completed") {
-        wsNotice.content = `${t("bim['BIM lightweight completed']")},${t("bim.In")} ${data.data.item.conversionDuration} ${t("bim.seconds")}`;
-        setTimeout(() => {
-          wsNotice?.destroy();
-          window.$dialog.info({
-            title: t("bim['BIM lightweight completed']"),
-            content: t("bim['Whether to load the BIM model into the scene?']"),
-            positiveText: window.$t('other.Load'),
-            negativeText: window.$t('other.cancel'),
-            onPositiveClick: () => {
-              addToScene(data.data.item);
-            }
-          })
-        }, 800)
-        getBim2GltfList();
-      } else if (data.data.conversionStatus === "failed") {
-        wsNotice.content = t("bim['BIM lightweight failed']");
-        setTimeout(() => {
-          wsNotice?.destroy();
-        }, 1500)
-      }
-    } else {
-      if (data.data.conversionStatus !== "completed") return;
+  // 判断订阅者，以确定是自己还是别人轻量化的结果
+  if (data.subscriber !== websocketStore.uname) return;
 
-      // 别人的轻量化结果
-      const n = window.$notification.info({
-        title: t("bim['BIM lightweight']"),
-        content: t("bim['New lightweight BIM model received, do you want to view it?']"),
-        duration: 5000,
-        closable: true,
-        meta: dateTimeFormat("yyyy-MM-dd HH:mm:ss"),
-        action: () =>
-            h(NButton, {
-                  text: true,
-                  type: 'primary',
-                  onClick: () => {
-                    addToScene(data.data.item);
-                    n.destroy();
-                  }
-                },
-                {
-                  default: () => t("other.Load")
-                }
-            ),
+  let wsNotice = uploadDialogRef.value?.getNotice();
+  // 如果是自己的轻量化结果，使用用户登录结果作为uname，则用户可能关闭页面再打开时接收到消息，应继续显示
+  if (!wsNotice) {
+    wsNotice = window.$notification.info({
+      title: t("cad['CAD parse']"),
+      content: "",
+      closable: false,
+    })
+  }
+
+  if (data.data.conversionStatus === "progress") {
+    wsNotice.content = t("cad['CAD parse is in progress']") + "...";
+  } else if (data.data.conversionStatus === "completed") {
+    wsNotice.content = t("cad['CAD parse completed']");
+    getCadList();
+    setTimeout(() => {
+      wsNotice?.destroy();
+      window.$dialog.info({
+        title: t("cad['CAD parse']"),
+        content: t("cad['Do you want to load the preview?']"),
+        positiveText: window.$t('other.Load'),
+        negativeText: window.$t('other.cancel'),
+        onPositiveClick: () => {
+          addToScene(data.data.item);
+        }
       })
-    }
+    }, 800)
+    getCadList();
+  } else if (data.data.conversionStatus === "failed") {
+    wsNotice.content = t("cad['CAD parse failed']");
+    setTimeout(() => {
+      wsNotice?.destroy();
+    }, 1500)
   }
 }
 
 onMounted(() => {
-  getBim2GltfList();
+  getCadList();
 
   // 注册websocket消息监听
-  onWebSocket(Bim2GltfWsHandle);
+  onWebSocket(CadWsHandle);
 })
 onBeforeUnmount(() => {
-  offWebSocket(Bim2GltfWsHandle)
+  offWebSocket(CadWsHandle)
 })
 </script>
 
 <style scoped lang="less">
-#bim-library {
+#cad-library {
   overflow-x: hidden;
 
   .n-alert {

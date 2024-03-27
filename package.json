@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dxfom/mtext": "0.3.2",
     "@ffmpeg/core": "^0.11.0",
     "@ffmpeg/ffmpeg": "^0.11.5",
     "@monaco-editor/loader": "^1.4.0",
@@ -18,6 +19,7 @@
     "cesium": "1.107.0",
     "js-base64": "^3.7.5",
     "jszip": "3.10.1",
+    "loglevel": "1.7.1",
     "naive-ui": "2.38.1",
     "pako": "2.1.0",
     "pinia": "2.1.4",

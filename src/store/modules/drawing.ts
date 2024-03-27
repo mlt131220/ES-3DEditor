@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
-import {useDispatchSignal} from "@/hooks/useSignal";
 
 /**
  * 图纸相关信息
@@ -12,6 +11,8 @@ export const useDrawingStore = defineStore({
         isUploaded: false,
         // 图片base64
         imgSrc: "",
+        // 是否cad
+        isCad:false,
         // 是否正在绘制矩形标记
         isDrawingRect: false,
         // 选中的矩形索引
@@ -37,19 +38,17 @@ export const useDrawingStore = defineStore({
             this.isUploaded = isUploaded;
         },
         setImgSrc(imgSrc:string){
+            this.isCad = imgSrc.split(".").pop() === "dxf";
             this.imgSrc = imgSrc;
-            useDispatchSignal("drawingImgChange",imgSrc);
         },
         setIsDrawingRect(isDrawingRect:boolean){
             this.isDrawingRect = isDrawingRect;
         },
         setSelectedRectIndex(selectedRectIndex:number){
             this.selectedRectIndex = selectedRectIndex;
-            useDispatchSignal("drawingMarkSelectChange",selectedRectIndex);
         },
         setMarkList(markList:IDrawingMark[]){
             this.markList = markList;
-            useDispatchSignal("drawingMarkListChange",markList);
         },
         setImgInfo(imgInfo:IDrawingImgInfo){
             this.imgInfo = imgInfo;

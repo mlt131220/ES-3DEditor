@@ -50,7 +50,7 @@ export function connectWebSocket(url) {
                 }
                 pingInterval = setInterval(() => {
                     send(PING);
-                }, 5000);
+                }, 30 * 1000);
             },
             onClose: () => {
                 console.log('WebSocket 连接关闭');

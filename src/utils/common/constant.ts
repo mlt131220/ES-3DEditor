@@ -4,10 +4,6 @@
  * @date   2024/3/26 9:57
  * @description 全局常量
  */
-
-// "ping"
-export const PING = new Uint8Array([0x9]);
-
 // 支持的模型格式
 export const MODEL_SUPPORT_TYPE = [
     // 普通模型格式

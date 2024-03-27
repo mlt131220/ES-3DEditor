@@ -407,7 +407,9 @@ export default {
 		"The current model has been tagged":"当前模型已被标记",
 		"drawing reset":"图纸复位",
 		"Are you sure you want to delete the drawing?":"确定要删除图纸吗？",
-		"Select the mark whose color you want to change!":"请选择要修改颜色的标记！"
+		"Select the mark whose color you want to change!":"请选择要修改颜色的标记！",
+		'Please upload the drawing file':"请上传图纸文件",
+		"This format is not supported, please upload again! Supported formats are:":"不支持该格式，请重新上传！支持格式为："
 	},
 	bim:{
 		"BIM lightweight":"BIM轻量化",
@@ -442,5 +444,16 @@ export default {
 		"Origin":"原点",
 		"Project base point":"项目基点",
 		"Measuring point":"测量点"
+	},
+	cad:{
+		"CAD parse":"CAD解析",
+		"CAD upload and parse":"CAD上传解析",
+		"CAD file":"CAD 文件",
+		"Upload and parse":"上传并解析",
+		"CAD parse is in progress":"CAD正在解析中",
+		"Failed to upload CAD file":"上传CAD文件失败",
+		"CAD parse completed":"CAD解析完成",
+		"Do you want to load the preview?":"是否加载预览？",
+		"CAD parse failed":"CAD解析失败",
 	}
 };

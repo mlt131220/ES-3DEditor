@@ -54,7 +54,7 @@ function removeDrawing() {
 }
 
 watch(() => drawingStore.getImgSrc, (newVal) => {
-  if (newVal) {
+  if (newVal && !drawingStore.isCad) {
     const file = base64ToFile(drawingStore.getImgSrc, "drawing");
     fileList.value = [{
       id: "1",

@@ -13,7 +13,7 @@
       </n-form-item>
       <n-form-item :label="t('bim[\'BIM file\']')" path="bimFile">
         <n-upload ref="uploadBIMRef" :default-upload="false" directory-dnd :max="1"
-                  accept=".rvt" @change="bimChange">
+                  :accept="'.' + NEED_CONVERT_MODEL.join(',.')" @change="bimChange">
           <n-upload-dragger>
             <div>
               <n-icon size="48" :depth="3">
