@@ -58,6 +58,7 @@ const editorSignals: SignalRegister = {
 
 	objectSelected: new Signal(),
 	objectFocused: new Signal(),
+	objectFocusByUuid: new Signal(),
 
 	objectAdded: new Signal(),
 	objectChanged: new Signal(),
@@ -122,6 +123,7 @@ const cesiumSignals:SignalRegister = {
  * 图纸 相关
  */
 const drawingSignals:SignalRegister = {
+	drawingMarkDone:new Signal(),  // 新增/编辑 图纸标记完成回调
 	cadViewerResize:new Signal(), // 图纸面板移动
 }
 

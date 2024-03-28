@@ -405,11 +405,20 @@ export default {
 		"adds the current model tag":"新增当前模型标记",
 		'Please select the model you want to tag': '请选择您想要标记的模型',
 		"The current model has been tagged":"当前模型已被标记",
+		"Left-drag to add a mark":"按住左键拖动以添加标记",
 		"drawing reset":"图纸复位",
 		"Are you sure you want to delete the drawing?":"确定要删除图纸吗？",
 		"Select the mark whose color you want to change!":"请选择要修改颜色的标记！",
 		'Please upload the drawing file':"请上传图纸文件",
-		"This format is not supported, please upload again! Supported formats are:":"不支持该格式，请重新上传！支持格式为："
+		"This format is not supported, please upload again! Supported formats are:":"不支持该格式，请重新上传！支持格式为：",
+		toolbar:{
+			"Mark color":"标记颜色",
+			"Reset":"复位",
+			"Layer":"图层",
+			"Add mark":"新增标记",
+			"Delete":"删除",
+			"Setting":"设置"
+		}
 	},
 	bim:{
 		"BIM lightweight":"BIM轻量化",

@@ -9,10 +9,12 @@ export const useDrawingStore = defineStore({
     state: () => ({
         // 是否已上传图纸
         isUploaded: false,
-        // 图片base64
+        // 图片base64 / cad文件路径
         imgSrc: "",
         // 是否cad
         isCad:false,
+        // cad图层信息
+        layers: {},
         // 是否正在绘制矩形标记
         isDrawingRect: false,
         // 选中的矩形索引
@@ -23,7 +25,7 @@ export const useDrawingStore = defineStore({
         imgInfo:<IDrawingImgInfo>{
             width:0,
             height:0
-        },
+        }
     }),
     getters:{
         getIsUploaded:state=> state.isUploaded,
@@ -40,6 +42,17 @@ export const useDrawingStore = defineStore({
         setImgSrc(imgSrc:string){
             this.isCad = imgSrc.split(".").pop() === "dxf";
             this.imgSrc = imgSrc;
+        },
+        setLayers(layers:ICad.IDxfLayers){
+            this.layers = layers;
+        },
+        setLayerVisible(layerName:string, visible:boolean){
+            this.layers[layerName].visible = visible;
+        },
+        setLayerAllVisible(visible:boolean){
+            for(let key in this.layers){
+                this.layers[key].visible = visible;
+            }
         },
         setIsDrawingRect(isDrawingRect:boolean){
             this.isDrawingRect = isDrawingRect;

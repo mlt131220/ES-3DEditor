@@ -1,166 +1,170 @@
 <template>
   <div id="drawing" class="!w-full !h-full" @contextmenu="handleContextMenu">
-    <div class="drawing-container" ref="containerRef">
-      <canvas ref="markCanvasRef"></canvas>
-    </div>
+    <n-spin :show="loading">
+      <template #description>加载中...</template>
+      <div class="drawing-container" ref="containerRef">
+        <canvas ref="canvasRef"></canvas>
+      </div>
+    </n-spin>
 
-    <!-- 绘制矩形时的工具栏 -->
-    <div class="drawing-tool-bar" v-if="drawingStore.getMarkList.length > 0">
-      <n-color-picker placement="top-start" size="small" v-model:show="colorPickerShow" v-model:value="rectColor"
-                      :show-alpha="false" :modes="['hex']"
-                      @update:value="changeRectColor"></n-color-picker>
-      <n-button quaternary size="small" @click="showColorPicker">
-        <template #icon>
-          <n-icon>
-            <ColorPaletteSharp/>
-          </n-icon>
-        </template>
-      </n-button>
-    </div>
-
-    <n-dropdown
-        placement="bottom-start"
-        trigger="manual"
-        :x="xRef"
-        :y="yRef"
-        :options="rightMenuOptions"
-        :show="showRightMenu"
-        :on-clickoutside="onClickOutside"
-        @select="rightMenuSelect"
-    />
+    <ImageToolbar v-if="!drawingStore.isCad" />
+    <CADToolbar v-else />
   </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, nextTick, computed} from "vue";
-import {useDrawingStore} from "@/store/modules/drawing";
-import {DrawRect} from "@/utils/drawing/drawRect";
-import {t} from "@/language";
-import {ColorPaletteSharp} from "@vicons/ionicons5";
+import {onMounted, ref, nextTick, computed, onBeforeUnmount} from "vue";
 import {useThemeVars} from 'naive-ui';
+import {useDrawingStore} from "@/store/modules/drawing";
+import {useAddSignal,useRemoveSignal} from "@/hooks/useSignal";
+import * as Dxf from "@/core/dxf";
+import DxfParser from "@/core/dxf/parser";
+import {DrawRect} from "@/utils/drawing/drawRect";
+import ImageToolbar from "./toolbar/Image.vue";
+import CADToolbar from "./toolbar/CAD.vue";
 
 const themeVars = useThemeVars();
 const baseColor = computed(() => themeVars.value.baseColor);
 const borderColor = computed(() => themeVars.value.borderColor);
 
 const drawingStore = useDrawingStore();
-let drawInstance: DrawRect | undefined = undefined;
 
 const containerRef = ref();
-const markCanvasRef = ref();
-// 右键菜单
-const rightMenuOptions = computed(() => [
-  {label: t("drawing['adds the current model tag']"), key: 'addRect', show: drawingStore.getSelectedRectIndex === -1},
-  {label: t("drawing['drawing reset']"), key: 'canvasReset'},
-  {label: t("other.delete"), key: 'delete', show: drawingStore.getSelectedRectIndex !== -1},
-]);
-const xRef = ref(0);
-const yRef = ref(0);
-const showRightMenu = ref(false);
+const canvasRef = ref();
+const loading = ref(true);
 
 function handleContextMenu(e: MouseEvent) {
   e.preventDefault();
 
-  showRightMenu.value = false;
-  nextTick().then(() => {
-    showRightMenu.value = true;
-    xRef.value = e.clientX
-    yRef.value = e.clientY
+  return false
+}
+
+function loadCadFile(canvas:HTMLCanvasElement,parentElement:HTMLDivElement){
+  let dxf;
+
+  // 实例化Dxf.Viewer
+  function loadDxf() {
+    const DXFViewer = new Dxf.Viewer(dxf, canvas, parentElement.offsetWidth, parentElement.offsetHeight, () => {
+      loading.value = false;
+      window.DrawViewer = DXFViewer;
+    });
+
+    if (dxf.tables?.layer?.layers) {
+      const bgColor = window.editor.config.getKey('cad/options')?.bgColor;
+
+      if (bgColor) {
+        const color = Number(bgColor);
+        const contrastColor = color === 0x000000 ? 0xffffff : 0x000000;
+
+        const l = dxf.tables.layer.layers;
+        Object.keys(l).forEach(k => {
+          if (l[k].color === color) {
+            l[k].color = contrastColor;
+          }
+        })
+      }
+      drawingStore.setLayers(dxf.tables.layer.layers);
+    }
+  }
+
+  let notice = window.$notification.info({
+    title: window.$t("drawing['Get the drawing data']") + "...",
+    content: window.$t("other.Loading") + "...",
+    closable: false,
+  })
+
+  // dxf 加载图纸
+  const parser = new DxfParser();
+  fetch(drawingStore.imgSrc).then(res => res.text()).then(text => {
+    notice.content = window.$t("scene['Parsing to editor']");
+    dxf = parser.parse(text);
+    loadDxf();
+
+    setTimeout(() => {
+      notice.destroy();
+    }, 800)
   })
 }
 
-function onClickOutside() {
-  showRightMenu.value = false
-}
-
-function rightMenuSelect(key: string) {
-  showRightMenu.value = false;
-
-  switch (key) {
-    case 'addRect':
-      // 检查是否有选中模型
-      if (window.editor.selected === null) {
-        window.$message?.error(t("drawing['Please select the model you want to tag']"));
-        return;
-      }
-      // 检查该模型是否已有绑定标记
-      for (const rect of drawingStore.getMarkList) {
-        if (rect.modelUuid === window.editor.selected.uuid) {
-          window.$message?.error(t("drawing['The current model has been tagged']"));
-          drawInstance?.selectRect(window.editor.selected.uuid);
-          return;
-        }
-      }
-
-      // 新增标记
-      drawInstance?.addRect();
-      break;
-    case 'delete':
-      // 删除标记
-      drawInstance?.deleteRect();
-      break;
-    case "canvasReset":
-      drawInstance?.canvasReset();
-      break;
-  }
-}
-
 async function initCanvas() {
-  let cav = markCanvasRef.value as HTMLCanvasElement;
+  if(!drawingStore.imgSrc) return;
 
-  // canvas 加载图片
-  let bigImg = new Image();
-  bigImg.src = drawingStore.getImgSrc;
-  bigImg.onload = () => {
-    const containerHeight = (containerRef.value as HTMLDivElement).offsetHeight;
-    cav.height = containerHeight;
-    cav.width = bigImg.width * (containerHeight / bigImg.height);
+  let canvas = canvasRef.value as HTMLCanvasElement;
+  const parentElement = containerRef.value as HTMLDivElement;
 
-    cav.style.backgroundImage = `url(${drawingStore.getImgSrc})`;
-    cav.style.backgroundRepeat = "no-repeat";
-    cav.style.backgroundPosition = "top left";
-    cav.style.backgroundSize = "100% 100%";
+  if(drawingStore.isCad){
+    // dxf 加载图纸
+    loadCadFile(canvas, parentElement);
+  }else{
+    // canvas 加载图片
+    let bigImg = new Image();
+    bigImg.src = drawingStore.getImgSrc;
+    bigImg.onload = () => {
+      const containerHeight = (containerRef.value as HTMLDivElement).offsetHeight;
+      canvas.height = containerHeight;
+      canvas.width = bigImg.width * (containerHeight / bigImg.height);
 
-    drawingStore.setImgInfo({
-      width: cav.width,
-      height: cav.height
-    })
+      canvas.style.backgroundImage = `url(${drawingStore.getImgSrc})`;
+      canvas.style.backgroundRepeat = "no-repeat";
+      canvas.style.backgroundPosition = "top left";
+      canvas.style.backgroundSize = "100% 100%";
 
-    // 调用封装的绘制方法
-    drawInstance = new DrawRect(cav);
+      drawingStore.setImgInfo({
+        width: canvas.width,
+        height: canvas.height
+      })
+
+      window.DrawViewer = new DrawRect(canvas,parentElement);
+
+      loading.value = false;
+    }
   }
 }
 
-/* 工具栏 */
-const rectColor = ref('#15FF00');
-const colorPickerShow = ref(false);
+// 模型选中时反选图纸上的rect
+function objectSelected(object){
+  if(!object ||!window.DrawViewer) return;
+  // if(!drawingStore.isCad){
+  //   window.DrawViewer?.selectRect(object.uuid);
+  // }else{
+  //   // 检查该模型是否已有绑定标记
+  //   for (const rect of drawingStore.markList) {
+  //     if (rect.modelUuid === object.uuid) {
+  //       window.DrawViewer?.selectRect(object.uuid);
+  //       return;
+  //     }
+  //   }
+  //
+  //   window.DrawViewer?.selectRect(undefined);
+  // }
 
-function changeRectColor(color: string) {
-  drawInstance?.setRectColor(color);
-}
-
-function showColorPicker() {
-  if (colorPickerShow.value) return;
-
-  if (drawInstance?.selectRectIndex === -1) {
-    window.$message?.warning(t("drawing['Select the mark whose color you want to change!']"));
-    throw new Error(t("drawing['Select the mark whose color you want to change!']"));
-  }
-  rectColor.value = drawInstance?.selectRectColor as string;
-  colorPickerShow.value = true;
+  window.DrawViewer?.selectRect(object.uuid);
 }
 
 onMounted(async () => {
   await nextTick();
   await initCanvas();
+
+  useAddSignal("objectSelected", objectSelected);
+})
+onBeforeUnmount(() => {
+  useRemoveSignal("objectSelected", objectSelected);
+
+  window.DrawViewer?.dispose();
+  window.DrawViewer = undefined;
 })
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 #drawing {
   overflow: hidden;
   display: flex;
   justify-content: center;
+
+  :deep(.n-spin-container){
+    width: 100%;
+    height: 100%;
+  }
 
   .drawing-container {
     position: relative;
@@ -190,7 +194,7 @@ onMounted(async () => {
     border-radius: 0.3rem;
     display: flex;
 
-    .n-color-picker {
+    :deep(.n-color-picker) {
       position: absolute;
       width: 0;
       overflow: hidden;

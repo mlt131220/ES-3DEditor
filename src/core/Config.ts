@@ -34,6 +34,8 @@ class Config {
 			"cesium/defaultMapType":"satellite", //默认底图类型 satellite：影像图，vector：矢量图
 			"cesium/markMap":true,//是否需要标记图
 			"cesium/tiandituTk":"1f264db8cede7365b0b4c47df89b3b16",//天地图密匙
+
+			"cad/options":{}
 		};
 
 		if (window.localStorage[this.name] === undefined) {

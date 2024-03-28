@@ -26,7 +26,7 @@
               正在解析...
             </template>
             <img :src="item.thumbnail ? item.thumbnail : '/static/images/占位图.png'" :alt="item.fileName"
-               draggable="false">
+                 draggable="false">
             <n-tag :color="{ color: '#F1C3CC', textColor: '#D03050' }" :bordered="false"
                    size="small" class="absolute top-33px w-full" v-if="item.conversionStatus === 2">
               解析失败
@@ -78,10 +78,10 @@ import UploadDialog from "./cadLibrary/UploadDialog.vue";
 const websocketStore = useWebsocketStore();
 const drawingStore = useDrawingStore();
 
-let objectList = ref<ICadData[]>([]);
+let objectList = ref<ICad.IData[]>([]);
 const showHistoryModal = ref(false);
 const tableLoading = ref(false);
-const columns: DataTableColumns<ICadData> = [
+const columns: DataTableColumns<ICad.IData> = [
   {
     title: '文件名',
     key: 'fileName'
@@ -147,7 +147,7 @@ async function getCadList() {
   paginationReactive.pageCount = res.data?.pages || 1;
 }
 
-async function addToScene(item: ICadData) {
+async function addToScene(item: ICad.IData) {
   showHistoryModal.value = false;
 
   if (drawingStore.getIsUploaded) {

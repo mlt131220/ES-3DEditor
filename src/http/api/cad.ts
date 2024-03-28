@@ -8,7 +8,7 @@ const websocketStore = useWebsocketStore();
  * 获取cad列表
  */
 export function fetchGetCadList(params) {
-    return request.get<Service.ListPageResult<ICadData>>('/editor3d/cad/getAll',{params});
+    return request.get<Service.ListPageResult<ICad.IData>>('/editor3d/cad/getAll',{params});
 }
 
 /**

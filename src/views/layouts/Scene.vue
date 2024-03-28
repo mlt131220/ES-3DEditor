@@ -9,7 +9,6 @@ import {SunnyOutline, PlanetOutline} from '@vicons/ionicons5';
 import {Splitpanes, Pane} from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Drawing from "@/components/drawing/Drawing.vue";
-import DrawingDXF from "@/components/drawing/DrawingDXF.vue";
 import {useDragStore} from "@/store/modules/drag";
 import IFCProperties from "@/components/viewport/IFCProperties.vue";
 
@@ -129,8 +128,7 @@ onBeforeUnmount(() => {
           @dragleave="sceneDragLeave">
     <splitpanes class="h-full" @resize="onViewPortResize" @resized="onViewPortResize">
       <pane min-size="10" v-if="drawingStore.getIsUploaded">
-        <Drawing v-if="!drawingStore.isCad" />
-        <DrawingDXF v-else />
+        <Drawing />
       </pane>
       <pane min-size="10">
         <div id="viewport" ref="viewportRef" class="absolute top-0 left-0 w-full h-full">

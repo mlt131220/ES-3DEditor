@@ -96,6 +96,7 @@ class Editor {
 			_DEFAULT_CAMERA.name = window.$t("core.editor['Default Camera']");
 			this.camera.name = window.$t("core.editor['Default Camera']");
 		})
+		addSignal("objectFocusByUuid",this.focusByUuid.bind(this))
 	}
 
 	setScene(scene) {
@@ -392,14 +393,22 @@ class Editor {
 		this.focus(this.scene.getObjectById(id));
 	}
 
+	focusByUuid(uuid) {
+		if (uuid === undefined) {
+			this.deselect();
+			return;
+		}
+		this.focus(this.objectByUuid(uuid));
+	}
+
 	clear() {
 		this.history.clear();
-        this.storage.clear();
+		this.storage.clear();
 		this.camera.copy(_DEFAULT_CAMERA);
 		dispatch('cameraReseted');
 		this.scene.name = window.$t("core.editor['Default Scene']");
-        this.scene.position.set(0,0,0);
-        this.scene.rotation.set(0,0,0);
+		this.scene.position.set(0,0,0);
+		this.scene.rotation.set(0,0,0);
 		this.scene.userData = {};
 		this.scene.background = null;
 		this.scene.environment = null;
