@@ -717,7 +717,7 @@
   dependencies:
     "@unocss/core" "0.46.5"
 
-"@unocss/preset-uno@0.46.5", "@unocss/preset-uno@^0.46.5":
+"@unocss/preset-uno@0.46.5":
   version "0.46.5"
   resolved "https://registry.npmmirror.com/@unocss/preset-uno/-/preset-uno-0.46.5.tgz#4c772d09b04d2ed6e8c1fb9a5b0cea9d235e67e9"
   integrity sha512-O4f/cSdNAnK3MVXLgzihnOLrp12h3787U9bPZ1WS7Ow52D+kzBfRLVEWy4RWCGDN+ko/0q7Q7nqZOkrtcCELJQ==
@@ -794,6 +794,11 @@
     "@unocss/scope" "0.46.5"
     "@unocss/transformer-directives" "0.46.5"
     magic-string "^0.26.7"
+
+"@vicons/carbon@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.npmmirror.com/@vicons/carbon/-/carbon-0.12.0.tgz#dfcc5d6283662eccee55700b2d5c29e688a70f5a"
+  integrity sha512-kCOgr/ZOhZzoiFLJ8pwxMa2TMxrkCUOA22qExPabus35F4+USqzcsxaPoYtqRd9ROOYiHrSqwapak/ywF0D9bg==
 
 "@vicons/fa@^0.12.0":
   version "0.12.0"

@@ -84,6 +84,13 @@ export default {
 		},
 		scene: {
 			toolbar: {
+				Top:"顶视图",
+				Bottom:"底视图",
+				Left:"左视图",
+				Right:"右视图",
+				Front:"前视图",
+				Back:"后视图",
+				"Scene camera":"场景相机",
 				local: '本地坐标',
 				world: '世界坐标',
 			},

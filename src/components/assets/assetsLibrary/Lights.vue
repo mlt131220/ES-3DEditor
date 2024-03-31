@@ -10,7 +10,9 @@
               @dragstart="dragStart($event,item.key)"
               @dragend="dragEnd">
         <template #cover>
-          <img :src="item.img" :alt="item.name" draggable="false"/>
+          <n-icon size="50" class="ml-10px mr-5px">
+            <component :is="item.icon" />
+          </n-icon>
         </template>
         <n-tooltip placement="bottom" trigger="hover">
           <template #trigger> {{ item.name.value }}</template>
@@ -23,29 +25,32 @@
 
 <script lang="ts" setup>
 import {onMounted} from "vue";
+import {Sunny,Haze,BrightnessContrast} from "@vicons/carbon";
+import {BulbOutline,FlashlightOutline} from "@vicons/ionicons5";
 import {MenubarAdd} from "@/utils/menubar/menubar-add";
 import {t, cpt} from "@/language";
 import {useDragStore} from "@/store/modules/drag";
 import {screenToWorld} from "@/utils/common/scenes";
+import {NIcon} from "naive-ui";
 
 const lights = [//配图使用平行光灯光颜色 rgb(35,49,221)
   {
     key: "ambientLight",
-    img: "/static/images/assetsLibrary/lights/ambientLight.svg",
+    icon: Haze,
     name: cpt("layout.header.AmbientLight")
   },
   {
     key: "directionalLight",
-    img: "/static/images/assetsLibrary/lights/directionalLight.svg",
+    icon: Sunny,
     name: cpt("layout.header.DirectionalLight")
   },
   {
     key: "hemisphereLight",
-    img: "/static/images/assetsLibrary/lights/hemisphereLight.svg",
+    icon: BrightnessContrast,
     name: cpt("layout.header.HemisphereLight")
   },
-  {key: "pointLight", img: "/static/images/assetsLibrary/lights/pointLight.svg", name: cpt("layout.header.PointLight")},
-  {key: "spotlight", img: "/static/images/assetsLibrary/lights/spotlight.svg", name: cpt("layout.header.SpotLight")}
+  {key: "pointLight", icon: BulbOutline, name: cpt("layout.header.PointLight")},
+  {key: "spotlight", icon: FlashlightOutline, name: cpt("layout.header.SpotLight")}
 ]
 
 let menubarAdd;
@@ -93,9 +98,10 @@ function dragEnd(e){
     }
 
     :deep(.n-card-cover) {
-      img {
-        height: 85px;
-      }
+      height: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     :deep(.n-card__content) {

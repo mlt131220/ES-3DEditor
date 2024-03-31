@@ -10,7 +10,6 @@ import {
 import {useMessage, useNotification, useDialog, useLoadingBar} from 'naive-ui';
 import * as Layout from './layouts';
 import {useAddSignal} from "@/hooks/useSignal";
-import Toolbar from '@/components/viewport/Toolbar.vue';
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
 
 //反馈组件注册至全局
@@ -71,8 +70,6 @@ onMounted(() => {
         </n-layout-sider>
 
         <n-layout-content>
-          <Toolbar/>
-
           <Layout.Scene v-show="currentSceneType === 'three'"></Layout.Scene>
           <Layout.Cesium v-if="currentSceneType === 'cesium'"></Layout.Cesium>
         </n-layout-content>

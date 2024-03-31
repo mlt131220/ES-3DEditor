@@ -10,7 +10,9 @@
               @dragstart="dragStart($event,item.key)"
               @dragend="dragEnd">
         <template #cover>
-          <img :src="item.img" :alt="item.name" draggable="false"/>
+          <n-icon size="50" class="ml-10px mr-5px">
+            <component :is="item.icon" />
+          </n-icon>
         </template>
         <n-tooltip placement="bottom" trigger="hover">
           <template #trigger> {{ item.name.value }}</template>
@@ -23,14 +25,16 @@
 
 <script lang="ts" setup>
 import {onMounted} from "vue";
+import { Carbon3DMprToggle,CenterToFit } from '@vicons/carbon';
 import {MenubarAdd} from "@/utils/menubar/menubar-add";
 import {t,cpt} from "@/language";
 import {useDragStore} from "@/store/modules/drag";
 import {screenToWorld} from "@/utils/common/scenes";
+import {NIcon} from "naive-ui";
 
 const cameras = [//配图使用平行光灯光颜色 rgb(35,49,221)
-  {key:"orthographicCamera",img:"/static/images/assetsLibrary/cameras/orthographicCamera.svg",name:cpt("layout.header.OrthographicCamera")},
-  {key:"perspectiveCamera",img:"/static/images/assetsLibrary/cameras/perspectiveCamera.svg",name:cpt("layout.header.PerspectiveCamera")}
+  {key:"orthographicCamera",icon:CenterToFit,name:cpt("layout.header.OrthographicCamera")},
+  {key:"perspectiveCamera",icon:Carbon3DMprToggle,name:cpt("layout.header.PerspectiveCamera")}
 ]
 
 let menubarAdd;
@@ -79,10 +83,10 @@ function dragEnd(e){
     }
 
     :deep(.n-card-cover) {
-      img {
-        height: 85px;
-        //object-fit: none;
-      }
+      height: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     :deep(.n-card__content){

@@ -2,7 +2,7 @@
   <div id="layout-assets">
     <SceneTree style="height: calc(40% - 25px)"/>
 
-    <n-tabs default-value="library" animated type="line" justify-content="space-around" class="!h-60%" pane-class="layout-assets-tab-pane">
+    <n-tabs default-value="bim" animated type="line" justify-content="space-around" class="!h-60%" pane-class="layout-assets-tab-pane">
       <n-tab-pane name="library" :tab="t('layout.assets[\'Resource library\']')" display-directive="show">
         <AssetsLibrary></AssetsLibrary>
       </n-tab-pane>
@@ -10,7 +10,7 @@
         <CadLibrary />
       </n-tab-pane>
       <n-tab-pane name="bim" tab="BIM" display-directive="show">
-        <BIMLibrary></BIMLibrary>
+        <BIMLibrary />
       </n-tab-pane>
     </n-tabs>
   </div>
