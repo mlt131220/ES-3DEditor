@@ -170,7 +170,7 @@ onBeforeUnmount(() => {
 <style lang="less" scoped>
 .n-spin-container {
   width: 100%;
-  height: calc(100% - 1.4rem - 1px);
+  height: 100%;
   overflow: hidden;
 
   :deep(.n-spin-content) {
