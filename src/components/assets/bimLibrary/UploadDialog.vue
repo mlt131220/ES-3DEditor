@@ -86,7 +86,7 @@ import {reactive, ref} from "vue";
 import {NotificationReactive} from "naive-ui";
 import {t} from "@/language";
 import {ArchiveOutline, CaretForwardOutline} from "@vicons/ionicons5";
-import {demoEnv} from "@/config/global";
+import {demoEnv} from "@/utils/common/constant";
 import {fetchUpload} from "@/http/api/sys";
 import {fetchAddBim2Gltf, fetchUploadRvt} from "@/http/api/bim";
 import {NEED_CONVERT_MODEL} from "@/utils/common/constant";

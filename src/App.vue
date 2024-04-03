@@ -1,20 +1,19 @@
 <script lang="ts" setup>
-import {ref, provide, onMounted} from 'vue';
+import {computed, onMounted} from 'vue';
 import * as THREE from 'three';
 import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
 import {
   NConfigProvider,
-  darkTheme,
-  GlobalTheme,
   NMessageProvider,
   NLoadingBarProvider,
   NDialogProvider,
-  NNotificationProvider
+  NNotificationProvider, useOsTheme,darkTheme
 } from "naive-ui";
+import type { GlobalTheme } from 'naive-ui';
 import {Editor} from '@/core/Editor';
 import Layout from "@/views/layout.vue";
-import {theme as GlobalConfigTheme} from "@/config/global";
 import {useDrawingStore} from "@/store/modules/drawing";
+import {useGlobalConfigStore} from "@/store/modules/globalConfig";
 import {unzip} from "@/utils/common/pako";
 import {connectWebSocket} from "@/hooks/useWebSocket";
 
@@ -26,6 +25,13 @@ window.VRButton = VRButton;
 
 // 图纸相关状态存储
 const drawingStore = useDrawingStore();
+
+// 全局配置相关
+const globalConfigStore = useGlobalConfigStore();
+const osThemeRef = useOsTheme()
+const configTheme = computed(() => {
+  return globalConfigStore.theme === 'osTheme' ? (osThemeRef.value === 'dark' ? darkTheme : null) : globalConfigStore.theme === 'lightTheme'? null : darkTheme;
+})
 
 onMounted(async () => {
   //初始化IndexDB
@@ -78,21 +84,11 @@ onMounted(async () => {
   // 启动websocket连接
   connectWebSocket(import.meta.env.VITE_SOCKET_URL);
 })
-
-/* 主题相关 */
-const theme = GlobalConfigTheme === 'default' ? ref<null>(null) : ref<GlobalTheme>(darkTheme);
-const SET_THEME = (data: string) => {
-  theme.value = data === 'darkTheme' ? darkTheme : null;
-  localStorage.setItem("theme", data);
-}
-
-provide("theme", GlobalConfigTheme);
-provide('set_theme', SET_THEME);
 </script>
 
 <template>
   <!-- 调整 naive-ui 的字重配置 -->
-  <n-config-provider :theme="theme" :theme-overrides="{ common: { fontWeightStrong: '600' } }">
+  <n-config-provider :theme="configTheme as GlobalTheme" :theme-overrides="{ common: { fontWeightStrong: '600' } }">
     <n-loading-bar-provider>
       <n-dialog-provider>
         <n-notification-provider placement="bottom">

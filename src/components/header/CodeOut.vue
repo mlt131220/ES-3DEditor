@@ -7,9 +7,9 @@ import {ref} from "vue";
 import {LoadingManager,FileLoader} from "three";
 import {zipSync, strToU8} from 'three/examples/jsm/libs/fflate.module.js';
 import {t} from "@/language";
-import {demoEnv} from "@/config/global";
 import {downloadBlob} from "@/utils/common/utils";
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
+import {demoEnv} from "@/utils/common/constant";
 
 const sceneInfoStore = useSceneInfoStore();
 

@@ -17,8 +17,6 @@ import {onMounted, ref, nextTick, computed, onBeforeUnmount} from "vue";
 import {useThemeVars} from 'naive-ui';
 import {useDrawingStore} from "@/store/modules/drawing";
 import {useAddSignal,useRemoveSignal} from "@/hooks/useSignal";
-import * as Dxf from "@/core/dxf";
-import DxfParser from "@/core/dxf/parser";
 import {DrawRect} from "@/utils/drawing/drawRect";
 import ImageToolbar from "./toolbar/Image.vue";
 import CADToolbar from "./toolbar/CAD.vue";
@@ -39,52 +37,7 @@ function handleContextMenu(e: MouseEvent) {
   return false
 }
 
-function loadCadFile(canvas:HTMLCanvasElement,parentElement:HTMLDivElement){
-  let dxf;
-
-  // 实例化Dxf.Viewer
-  function loadDxf() {
-    const DXFViewer = new Dxf.Viewer(dxf, canvas, parentElement.offsetWidth, parentElement.offsetHeight, () => {
-      loading.value = false;
-      window.DrawViewer = DXFViewer;
-    });
-
-    if (dxf.tables?.layer?.layers) {
-      const bgColor = window.editor.config.getKey('cad/options')?.bgColor;
-
-      if (bgColor) {
-        const color = Number(bgColor);
-        const contrastColor = color === 0x000000 ? 0xffffff : 0x000000;
-
-        const l = dxf.tables.layer.layers;
-        Object.keys(l).forEach(k => {
-          if (l[k].color === color) {
-            l[k].color = contrastColor;
-          }
-        })
-      }
-      drawingStore.setLayers(dxf.tables.layer.layers);
-    }
-  }
-
-  let notice = window.$notification.info({
-    title: window.$t("drawing['Get the drawing data']") + "...",
-    content: window.$t("other.Loading") + "...",
-    closable: false,
-  })
-
-  // dxf 加载图纸
-  const parser = new DxfParser();
-  fetch(drawingStore.imgSrc).then(res => res.text()).then(text => {
-    notice.content = window.$t("scene['Parsing to editor']");
-    dxf = parser.parse(text);
-    loadDxf();
-
-    setTimeout(() => {
-      notice.destroy();
-    }, 800)
-  })
-}
+function loadCadFile(canvas:HTMLCanvasElement,parentElement:HTMLDivElement){}
 
 async function initCanvas() {
   if(!drawingStore.imgSrc) return;

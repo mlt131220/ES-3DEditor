@@ -1,7 +1,6 @@
 import {h, reactive, ref, toRaw, unref} from "vue";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import * as THREE from "three";
-import {demoEnv} from "@/config/global";
 import {SceneJsonGeometry, SceneJsonImage, SceneJsonModel, Service, TraverseWorkerData} from "../../../types/network";
 import TraverseWorker from '../worker/sceneTraverseWorker.js?worker';
 import RequestWorker from '../worker/requestWorker.js?worker';
@@ -9,6 +8,7 @@ import {NotificationReactive, NDataTable, NTag, NButton, NPagination} from 'naiv
 import {fetchDeleteScenes, fetchGetAllScenes, fetchGetGeometry, fetchGetImage, fetchGetModel} from "@/http/api/scenes";
 import {unzip, zip} from "@/utils/common/pako";
 import {_base64ToArrayBuffer} from "@/utils/common/base64";
+import {demoEnv} from "@/utils/common/constant";
 
 const sceneTableLoading = ref(false);
 let notification: NotificationReactive;

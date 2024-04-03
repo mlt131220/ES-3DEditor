@@ -5,7 +5,6 @@
  */
 import {h, reactive, ref, toRaw, unref} from "vue";
 import {useDispatchSignal} from "@/hooks/useSignal";
-import {demoEnv} from "@/config/global";
 import {Service} from "../../../types/network";
 import {NotificationReactive, NDataTable, NTag, NButton, NPagination, NIcon} from 'naive-ui';
 import {CheckmarkCircleSharp,CloseCircleSharp} from "@vicons/ionicons5";
@@ -20,7 +19,7 @@ import {fetchUpload} from "@/http/api/sys";
 import {useDrawingStoreWithOut} from "@/store/modules/drawing";
 import {filterSize} from "@/utils/common/file";
 import {useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
-
+import {demoEnv} from "@/utils/common/constant";
 
 const drawingStore = useDrawingStoreWithOut();
 const sceneInfoStore = useSceneInfoStoreWithOut();

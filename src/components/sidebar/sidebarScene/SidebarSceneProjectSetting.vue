@@ -3,8 +3,8 @@ import {onMounted, onBeforeUnmount} from 'vue';
 import {NForm, NFormItem, NInput} from 'naive-ui';
 import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
 import {t} from "@/language";
-import {SCENE_TYPE} from "@/config/global";
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
+import {SCENE_TYPE} from "@/utils/common/constant";
 
 const sceneInfoStore = useSceneInfoStore();
 

@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import {BASE64_TYPES, TYPED_ARRAYS} from "@/config/global";
+import {BASE64_TYPES, TYPED_ARRAYS} from "@/utils/common/constant";
 import {getAnimations} from "@/utils/common/scenes";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {unzip, zip} from "@/utils/common/pako";

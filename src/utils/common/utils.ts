@@ -1,5 +1,5 @@
 import {TreeOption} from 'naive-ui';
-import {BASE64_TYPES} from "@/config/global";
+import {BASE64_TYPES} from "@/utils/common/constant";
 
 /**
  * 下载blob二进制对象
