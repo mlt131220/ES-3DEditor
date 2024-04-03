@@ -289,7 +289,7 @@ function Viewport(container) {
 
 	// 加载默认的环境和背景
 	useAddSignal("loadDefaultEnvAndBack", (definition = 2) => {
-		window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/alps_field_${definition}k.hdr`, (tex) => {
+		window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (tex) => {
 			tex.mapping = THREE.EquirectangularReflectionMapping;
 			scene.environment = tex;
 			scene.background = tex;

@@ -1,39 +1,61 @@
 <template>
-    <div id="toolbar">
+    <div class="absolute top-0 left-0 w-full h-0 z-10 flex justify-between pt-1">
+      <div class="pl-2">
         <ViewportCamera />
+      </div>
+
+      <div class="pr-2">
         <n-button-group size="small">
-            <n-button ghost :type="transfrom === 'translate' ? 'success' : 'default'" @click="handlerRadioChange('translate')">
-                <template #icon>
-                    <n-icon>
-                        <MoveSharp />
-                    </n-icon>
-                </template>
-            </n-button>
-            <n-button ghost :type="transfrom === 'rotate' ? 'success' : 'default'" @click.stop="handlerRadioChange('rotate')">
-                <template #icon>
-                    <n-icon>
-                        <SyncSharp />
-                    </n-icon>
-                </template>
-            </n-button>
-            <n-button ghost :type="transfrom === 'scale' ? 'success' : 'default'" @click="handlerRadioChange('scale')">
-                <template #icon>
-                    <n-icon>
-                        <ResizeSharp />
-                    </n-icon>
-                </template>
-            </n-button>
+<!--          <n-button :type="transfrom === 'translate' ? 'success' : 'default'" @click.stop="handlerRadioChange('translate')" round>-->
+<!--            <template #icon>-->
+<!--              <n-icon>-->
+<!--                <Cursor1 />-->
+<!--              </n-icon>-->
+<!--            </template>-->
+<!--          </n-button>-->
+          <n-button :type="transfrom === 'translate' ? 'success' : 'default'" @click.stop="handlerRadioChange('translate')" round>
+            <template #icon>
+              <n-icon :size="16">
+                <Move />
+              </n-icon>
+            </template>
+          </n-button>
+          <n-button :type="transfrom === 'rotate' ? 'success' : 'default'" @click.stop="handlerRadioChange('rotate')">
+            <template #icon>
+              <n-icon :size="16">
+                <Renew />
+              </n-icon>
+            </template>
+          </n-button>
+          <n-button :type="transfrom === 'scale' ? 'success' : 'default'" @click.stop="handlerRadioChange('scale')" round>
+            <template #icon>
+              <n-icon :size="16">
+                <Minimize />
+              </n-icon>
+            </template>
+          </n-button>
         </n-button-group>
-        <n-checkbox v-model:checked="localValue" @update:checked="handlerCheckChange" size="small" class="ml-10px">
-            {{ localValue ? t("layout.scene.toolbar.local") : t("layout.scene.toolbar.world") }}
-        </n-checkbox>
+
+        <n-tooltip placement="bottom" trigger="hover">
+          <template #trigger>
+            <n-button circle size="small" class="ml-10px" @click.stop="handlerLocalChange">
+              <template #icon>
+                <n-icon >
+                  <Chart3D v-if="localValue" />
+                  <Wikis v-else />
+                </n-icon>
+              </template>
+            </n-button>
+          </template>
+          <span> {{ localValue ? t("layout.scene.toolbar.local") : t("layout.scene.toolbar.world") }} </span>
+        </n-tooltip>
+      </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, inject } from "vue";
-import { NCheckbox, NButtonGroup, NButton,NIcon } from "naive-ui";
-import { MoveSharp,SyncSharp,ResizeSharp } from '@vicons/ionicons5';
+import {ref} from "vue";
+import { Cursor1,Move,Renew,Minimize,Wikis,Chart3D } from '@vicons/carbon';
 import { useDispatchSignal } from '@/hooks/useSignal';
 import ViewportCamera from '@/components/viewport/ViewportCamera.vue';
 import {t} from "@/language";
@@ -45,19 +67,16 @@ function handlerRadioChange(value: string) {
 }
 
 const localValue = ref(false);
-function handlerCheckChange(checked: boolean) {
-    useDispatchSignal("spaceChanged", checked ? 'local' : 'world');
+function handlerLocalChange() {
+    localValue.value = !localValue.value;
+    useDispatchSignal("spaceChanged", localValue.value ? 'local' : 'world');
 }
-
 </script>
 
-<style lang="less" scope>
-#toolbar {
-    height: 1.4rem;
-    display: flex;
-    width: 100%;
-    border-bottom: 1px solid #dbdbdb;
-    overflow-y: hidden;
-    align-items: center;
+<style lang="less" scoped>
+.n-button-group{
+  .n-button{
+    width: 32px;
+  }
 }
 </style>

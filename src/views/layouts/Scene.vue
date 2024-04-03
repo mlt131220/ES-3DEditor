@@ -1,14 +1,15 @@
 <script lang="ts" setup>
-import {Viewport} from '@/core/Viewport';
 import {onMounted, onBeforeUnmount, ref, nextTick} from 'vue';
+import {SunnyOutline, PlanetOutline} from '@vicons/ionicons5';
+import {Viewport} from '@/core/Viewport';
 import ViewportInfo from '@/components/viewport/ViewportInfo.vue';
 import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
 import {useDrawingStore} from "@/store/modules/drawing";
-import {SunnyOutline, PlanetOutline} from '@vicons/ionicons5';
 // 窗口分割（为图纸组件）
 import {Splitpanes, Pane} from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import Drawing from "@/components/drawing/Drawing.vue";
+import Toolbar from "@/components/viewport/Toolbar.vue";
 import {useDragStore} from "@/store/modules/drag";
 import IFCProperties from "@/components/viewport/IFCProperties.vue";
 
@@ -28,43 +29,6 @@ function onViewPortResize() {
     useDispatchSignal("sceneResize");
     timer = null;
   }, 10)
-}
-
-function handleSignals(isAdd: boolean) {
-  function changeLoading(bool: boolean) {
-    loading.value = bool;
-  }
-
-  function changeLoadingText(str: string) {
-    loadingText.value = str;
-  }
-
-  function objectSelected(object) {
-    if (!object) {
-      showBimInfo.value = false;
-      return;
-    }
-    if (!object.userData.BIM) {
-      if(!object.parent || !object.parent.userData.BIM) {
-        showBimInfo.value = false;
-      }else{
-        showBimInfo.value = true;
-        bimInfo.value = object.parent.userData.BIM;
-      }
-    } else {
-      showBimInfo.value = true;
-      bimInfo.value = object.userData.BIM;
-    }
-  }
-
-  const signals = {
-    "switchViewportLoading": changeLoading,
-    "changeViewportLoadingText": changeLoadingText,
-    "objectSelected": objectSelected
-  }
-  Object.keys(signals).forEach(name => {
-    isAdd ? useAddSignal(name, signals[name]) : useRemoveSignal(name, signals[name]);
-  })
 }
 
 // 图纸组件相关
@@ -104,6 +68,31 @@ function sceneDragLeave() {
 }
 
 /** 鼠标拖拽事件相关 End **/
+function changeLoading(bool: boolean) {
+  loading.value = bool;
+}
+
+function changeLoadingText(str: string) {
+  loadingText.value = str;
+}
+
+function objectSelected(object) {
+  if (!object) {
+    showBimInfo.value = false;
+    return;
+  }
+  if (!object.userData.BIM) {
+    if(!object.parent || !object.parent.userData.BIM) {
+      showBimInfo.value = false;
+    }else{
+      showBimInfo.value = true;
+      bimInfo.value = object.parent.userData.BIM;
+    }
+  } else {
+    showBimInfo.value = true;
+    bimInfo.value = object.userData.BIM;
+  }
+}
 
 onMounted(async () => {
   Viewport(viewportRef.value);
@@ -115,11 +104,15 @@ onMounted(async () => {
   });
   resizeObserver.observe(viewportRef.value);
 
-  handleSignals(true);
+  useAddSignal("switchViewportLoading",changeLoading);
+  useAddSignal("changeViewportLoadingText",changeLoadingText);
+  useAddSignal("objectSelected",objectSelected);
 })
 
 onBeforeUnmount(() => {
-  handleSignals(false);
+  useRemoveSignal("switchViewportLoading",changeLoading);
+  useRemoveSignal("changeViewportLoadingText",changeLoadingText);
+  useRemoveSignal("objectSelected",objectSelected);
 })
 </script>
 
@@ -131,14 +124,16 @@ onBeforeUnmount(() => {
         <Drawing />
       </pane>
       <pane min-size="10">
+        <Toolbar />
+
         <div id="viewport" ref="viewportRef" class="absolute top-0 left-0 w-full h-full">
-          <ViewportInfo/>
+          <ViewportInfo />
         </div>
       </pane>
     </splitpanes>
 
     <!--  RVT BIM 构件信息悬浮框  -->
-    <n-card v-if="showBimInfo" class="absolute top-1 right-1 max-w-300px" content-style="padding: 5px 10px;">
+    <n-card v-if="showBimInfo" class="absolute top-40px right-1 max-w-300px" content-style="padding: 5px 10px;">
       <n-collapse accordion default-expanded-names="bim">
         <template #arrow="{collapsed}">
           <n-icon v-if="collapsed">
@@ -175,7 +170,7 @@ onBeforeUnmount(() => {
 <style lang="less" scoped>
 .n-spin-container {
   width: 100%;
-  height: calc(100% - 1.4rem - 1px);
+  height: 100%;
   overflow: hidden;
 
   :deep(.n-spin-content) {

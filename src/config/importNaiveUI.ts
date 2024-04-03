@@ -2,6 +2,7 @@ import {
     // create naive ui
     create,
     // component
+    NButtonGroup,
     NButton,
     NCollapse,
     NCollapseItem,
@@ -41,6 +42,7 @@ import {
 
 export const naive = create({
     components: [
+        NButtonGroup,
         NButton,
         NCollapse,
         NCollapseItem,
