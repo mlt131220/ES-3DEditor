@@ -443,7 +443,7 @@ class Editor {
 		drawingStore.$reset();
 
 		// 加载默认的环境和背景
-		dispatch('loadDefaultEnvAndBack');
+		dispatch('loadDefaultEnvAndBackground');
 	}
 
 	async fromJSON(json) {

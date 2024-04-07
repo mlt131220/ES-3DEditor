@@ -93,7 +93,7 @@ const editorSignals: SignalRegister = {
  * @path src/core/Viewport.js
  */
 const viewportSignals:SignalRegister = {
-	loadDefaultEnvAndBack:new Signal(),
+	loadDefaultEnvAndBackground:new Signal(),
 	IFCPropertiesVisible:new Signal(),
 }
 

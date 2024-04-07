@@ -95,7 +95,7 @@ function objectSelected(object) {
 }
 
 onMounted(async () => {
-  Viewport(viewportRef.value);
+  new Viewport(viewportRef.value);
 
   await nextTick();
 
@@ -218,9 +218,5 @@ onBeforeUnmount(() => {
       }
     }
   }
-}
-
-#viewport {
-
 }
 </style>
