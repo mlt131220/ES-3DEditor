@@ -139,22 +139,18 @@ function save(blob, filename) {
   <div>
     <n-form label-placement="left" :label-width="90" label-align="left" size="small">
       <n-form-item :label="t('layout.sider.sceneConfig.resolution')">
-        <EsInputNumber v-model:value="videoWidth" :min="500" size="tiny" :step="1" :show-button="false"
-                       :bordered="false" class="w-8"/>
+        <EsInputNumber v-model:value="videoWidth" :min="500" size="tiny" :step="1" :show-button="false"  class="w-8"/>
         <span>×</span>
-        <EsInputNumber v-model:value="videoHeight" :min="500" size="tiny" :step="1" :show-button="false"
-                       :bordered="false" class="w-8"/>
+        <EsInputNumber v-model:value="videoHeight" :min="500" size="tiny" :step="1" :show-button="false" class="w-8"/>
       </n-form-item>
 
       <n-form-item :label="t('layout.sider.sceneConfig[\'frame rate\']')">
-        <EsInputNumber v-model:value="videoFPS" :min="15" :max="240" size="tiny" :step="1" :show-button="false"
-                       :bordered="false" class="w-16"/>
+        <EsInputNumber v-model:value="videoFPS" :min="15" :max="240" size="tiny" :step="1" :show-button="false" class="w-16"/>
         <span>&nbsp;fps</span>
       </n-form-item>
 
       <n-form-item :label="t('layout.sider.sceneConfig.duration')">
-        <EsInputNumber v-model:value="videoDuration" :min="1" size="tiny" :step="1" :show-button="false"
-                       :bordered="false" class="w-16"/>
+        <EsInputNumber v-model:value="videoDuration" :min="1" size="tiny" :step="1" :show-button="false" class="w-16"/>
         <span>&nbsp;{{ t('layout.sider.sceneConfig.seconds') }}</span>
       </n-form-item>
     </n-form>
@@ -178,7 +174,7 @@ function save(blob, filename) {
     text-align: center;
 
     .n-input__input-el {
-      color: #3b82f6 !important;
+     // color: #3b82f6 !important;
     }
   }
 }

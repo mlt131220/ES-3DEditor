@@ -41,7 +41,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Segments") }}</span>
 
       <EsInputNumber v-model:value="objectData.segments" class="!w-90px" size="small" :decimal="0"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  phiStart  -->
@@ -49,7 +49,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Phi start']") }}</span>
 
       <EsInputNumber v-model:value="objectData.phiStart" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  phiLength  -->
@@ -57,7 +57,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Phi length']") }}</span>
 
       <EsInputNumber v-model:value="objectData.phiLength" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  points  -->

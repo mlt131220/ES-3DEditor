@@ -12,7 +12,15 @@ const props = defineProps({
     type: Object,
     default: {}
   },
-  mapping: {}
+  mapping: {},
+  width: {
+    type: String,
+    default: "2rem"
+  },
+  height: {
+    type: String,
+    default: "2rem"
+  }
 })
 const emits = defineEmits(["update:texture", "change"]);
 
@@ -212,18 +220,18 @@ defineExpose({
 :deep(.n-upload) {
   .n-upload-trigger.n-upload-trigger--image-card,
   .n-upload-file--image-card-type {
-    width: 2rem;
-    height: 2rem;
+    width: v-bind(width);
+    height: v-bind(height);
   }
 }
 
 .es-texture {
-  width: 2rem;
-  height: 2rem;
+  width: v-bind(width);
+  height: v-bind(height);
 
   &-canvas {
-    width: 100%;
-    height: 100%;
+    width: v-bind(width);
+    height: v-bind(height);
     cursor: pointer;
   }
 }

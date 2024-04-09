@@ -59,7 +59,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Radius") }}</span>
 
       <EsInputNumber v-model:value="objectData.radius" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  tubularSegments  -->
@@ -67,7 +67,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Tubular segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.tubularSegments" class="!w-90px" size="small" :decimal="0"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  radialSegments  -->
@@ -75,7 +75,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Radial segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.radialSegments" class="!w-90px" size="small" :decimal="0"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  closed  -->
@@ -97,7 +97,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Tension") }}</span>
 
       <EsInputNumber v-model:value="objectData.path.tension" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update"/>
+                     :show-button="false" @change="update"/>
     </div>
   </div>
 </template>

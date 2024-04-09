@@ -53,7 +53,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Size") }}</span>
 
       <EsInputNumber v-model:value="objectData.size" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  segments  -->
@@ -61,7 +61,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Segments") }}</span>
 
       <EsInputNumber v-model:value="objectData.segments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  bottom  -->

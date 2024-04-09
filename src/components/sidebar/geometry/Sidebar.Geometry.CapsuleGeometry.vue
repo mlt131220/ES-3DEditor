@@ -39,7 +39,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Radius") }}</span>
 
       <EsInputNumber v-model:value="objectData.radius" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  length  -->
@@ -47,7 +47,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Length") }}</span>
 
       <EsInputNumber v-model:value="objectData.length" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  Cap Seg  -->
@@ -55,7 +55,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Cap segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.capSegments" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  Radial Seg  -->
@@ -63,7 +63,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Radial segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.radialSegments" class="!w-90px" size="small" :decimal="0"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
   </div>
 </template>

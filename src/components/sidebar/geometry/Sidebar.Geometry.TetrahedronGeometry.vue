@@ -38,7 +38,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Radius") }}</span>
 
       <EsInputNumber v-model:value="objectData.radius" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  detail  -->
@@ -46,7 +46,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Facet segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.detail" class="!w-90px" size="small" :decimal="0" :min="0"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
   </div>
 </template>

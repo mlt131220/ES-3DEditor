@@ -80,7 +80,7 @@ function onChange() {
     <span>{{ t(`layout.sider.material.${name}`) }}</span>
     <div>
       <EsInputNumber v-model:value="numberValue" size="tiny" :show-button="false" :min="range[0]" :max="range[1]"
-                     :step="step" :bordered="false" @change="onChange"/>
+                     :step="step" @change="onChange"/>
       <span>{{ unit }}</span>
     </div>
   </div>

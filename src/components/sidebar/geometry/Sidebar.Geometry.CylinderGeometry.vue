@@ -43,7 +43,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Radius top']") }}</span>
 
       <EsInputNumber v-model:value="objectData.radiusTop" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  radiusBottom  -->
@@ -51,7 +51,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Radius bottom']") }}</span>
 
       <EsInputNumber v-model:value="objectData.radiusBottom" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  height  -->
@@ -59,7 +59,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Height") }}</span>
 
       <EsInputNumber v-model:value="objectData.height" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  radialSegments  -->
@@ -67,7 +67,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Radial segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.radialSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  heightSegments  -->
@@ -75,7 +75,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Height segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.heightSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  openEnded  -->

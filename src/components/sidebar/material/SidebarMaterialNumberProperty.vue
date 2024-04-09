@@ -72,7 +72,7 @@ function onChange() {
     <span>{{ t(`layout.sider.material.${name}`) }}</span>
     <div>
       <EsInputNumber v-model:value="numberValue" size="tiny" :show-button="false" :min="range[0]" :max="range[1]"
-                     :decimal="decimal" :bordered="false" @change="onChange"/>
+                     :decimal="decimal" @change="onChange"/>
     </div>
   </div>
 </template>

@@ -39,7 +39,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Width") }}</span>
 
       <EsInputNumber v-model:value="objectData.width" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  height  -->
@@ -47,7 +47,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Height") }}</span>
 
       <EsInputNumber v-model:value="objectData.height" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  widthSegments  -->
@@ -55,7 +55,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Width segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.widthSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  heightSegments  -->
@@ -63,7 +63,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Height segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.heightSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
   </div>
 </template>

@@ -45,7 +45,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Inner radius']") }}</span>
 
       <EsInputNumber v-model:value="objectData.innerRadius" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  outerRadius  -->
@@ -53,7 +53,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Outer radius']") }}</span>
 
       <EsInputNumber v-model:value="objectData.outerRadius" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  thetaSegments  -->
@@ -61,7 +61,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Theta segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.thetaSegments" class="!w-90px" size="small" :decimal="0" :min="3"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  phiSegments  -->
@@ -69,7 +69,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Phi segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.phiSegments" class="!w-90px" size="small" :decimal="0" :min="3"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  thetaStart  -->
@@ -77,7 +77,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Theta start']") }}</span>
 
       <EsInputNumber v-model:value="objectData.thetaStart" class="!w-90px" size="small" :decimal="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  thetaLength  -->
@@ -85,7 +85,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Theta length']") }}</span>
 
       <EsInputNumber v-model:value="objectData.thetaLength" class="!w-90px" size="small" :decimal="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
   </div>
 </template>

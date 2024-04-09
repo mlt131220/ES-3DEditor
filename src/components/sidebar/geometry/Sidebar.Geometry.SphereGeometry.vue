@@ -49,7 +49,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Radius") }}</span>
 
       <EsInputNumber v-model:value="objectData.radius" class="!w-90px" size="small" :decimal="2"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  widthSegments  -->
@@ -57,7 +57,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Width segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.widthSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  heightSegments  -->
@@ -65,7 +65,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Height segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.heightSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  phiStart  -->
@@ -73,7 +73,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Phi start']") }}</span>
 
       <EsInputNumber v-model:value="objectData.phiStart" class="!w-90px" size="small" :decimal="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false"  @change="update()"/>
     </div>
 
     <!--  phiLength  -->
@@ -81,7 +81,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Phi length']") }}</span>
 
       <EsInputNumber v-model:value="objectData.phiLength" class="!w-90px" size="small" :decimal="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  thetaStart  -->
@@ -89,7 +89,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Theta start']") }}</span>
 
       <EsInputNumber v-model:value="objectData.thetaStart" class="!w-90px" size="small" :decimal="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  thetaLength  -->
@@ -97,7 +97,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Theta length']") }}</span>
 
       <EsInputNumber v-model:value="objectData.thetaLength" class="!w-90px" size="small" :decimal="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
   </div>
 </template>

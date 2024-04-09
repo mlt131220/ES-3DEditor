@@ -81,7 +81,7 @@ function onChange() {
     <span>{{ t(`layout.sider.material.${name}`) }}</span>
     <div>
       <n-color-picker v-model:value="color" :show-alpha="false" size="small" @update:value="onChange()"/>
-      <EsInputNumber v-if="property === 'emissive'" v-model:value="intensity" size="tiny" :show-button="false" :bordered="false" @change="onChange()"/>
+      <EsInputNumber v-if="property === 'emissive'" v-model:value="intensity" size="tiny" :show-button="false" @change="onChange()"/>
     </div>
   </div>
 </template>

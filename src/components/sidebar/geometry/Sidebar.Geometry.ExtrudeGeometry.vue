@@ -63,7 +63,7 @@ function update() {
       <span>{{ t("layout.sider.scene['Curve Segments']") }}</span>
 
       <EsInputNumber v-model:value="options.curveSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  steps  -->
@@ -71,7 +71,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Steps") }}</span>
 
       <EsInputNumber v-model:value="options.steps" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  depth  -->
@@ -79,7 +79,7 @@ function update() {
       <span>{{ t("layout.sider.scene.Depth") }}</span>
 
       <EsInputNumber v-model:value="options.depth" class="!w-90px" size="small" :decimal="2" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  enabled  -->
@@ -95,7 +95,7 @@ function update() {
         <span>{{ t("layout.sider.scene['Bevel thickness']") }}</span>
 
         <EsInputNumber v-model:value="options.bevelThickness" class="!w-90px" size="small" :decimal="2"
-                       :show-button="false" :bordered="false" @change="update"/>
+                       :show-button="false" @change="update"/>
       </div>
 
       <!--  size  -->
@@ -103,7 +103,7 @@ function update() {
         <span>{{ t("layout.sider.scene['Bevel size']") }}</span>
 
         <EsInputNumber v-model:value="options.bevelSize" class="!w-90px" size="small" :decimal="2"
-                       :show-button="false" :bordered="false" @change="update"/>
+                       :show-button="false" @change="update"/>
       </div>
 
       <!--  offset  -->
@@ -111,7 +111,7 @@ function update() {
         <span>{{ t("layout.sider.scene['Bevel offset']") }}</span>
 
         <EsInputNumber v-model:value="options.bevelOffset" class="!w-90px" size="small" :decimal="2"
-                       :show-button="false" :bordered="false" @change="update"/>
+                       :show-button="false" @change="update"/>
       </div>
 
       <!--  segments  -->
@@ -119,7 +119,7 @@ function update() {
         <span>{{ t("layout.sider.scene['Bevel segments']") }}</span>
 
         <EsInputNumber v-model:value="options.bevelSegments" class="!w-90px" size="small" :decimal="2" :min="0"
-                       :show-button="false" :bordered="false" @change="update"/>
+                       :show-button="false" @change="update"/>
       </div>
 
       <!--  Convert to Shape  -->

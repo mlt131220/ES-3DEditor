@@ -41,7 +41,7 @@ function toExtrude() {
       <span>{{ t("layout.sider.scene['Curve Segments']") }}</span>
 
       <EsInputNumber v-model:value="objectData.curveSegments" class="!w-90px" size="small" :decimal="0" :min="1"
-                     :show-button="false" :bordered="false" @change="update()"/>
+                     :show-button="false" @change="update()"/>
     </div>
 
     <!--  to extrude  -->

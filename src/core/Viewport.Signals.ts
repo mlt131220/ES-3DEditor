@@ -117,7 +117,7 @@ export class ViewportSignals {
      * @param backgroundIntensity
      * @param backgroundRotation
      */
-    sceneBackgroundChanged(backgroundType:string, backgroundColor, backgroundTexture, backgroundEquirectangularTexture, backgroundBlurriness,backgroundIntensity:number, backgroundRotation:number){
+    sceneBackgroundChanged(backgroundType:string, backgroundColor:string, backgroundTexture, backgroundEquirectangularTexture, backgroundBlurriness:number,backgroundIntensity:number, backgroundRotation:number){
         this.viewport.scene.background = null;
 
         switch (backgroundType) {

@@ -80,7 +80,7 @@ function onMouseMove(event) {
   pointer.x = event.clientX;
   pointer.y = event.clientY;
 
-  distance += ( pointer.x - prevPointer.x ) - ( pointer.y - prevPointer.y );
+  distance += (pointer.x - prevPointer.x) - (pointer.y - prevPointer.y);
 
   let value = onMouseDownValue + (distance / (event.shiftKey ? 5 : 23)) * step.value;
   value = Math.min(props.max, Math.max(props.min, value));
@@ -106,8 +106,29 @@ function onMouseUp(event) {
 
 <style lang="less" scoped>
 .n-input-number {
-  :deep(.n-input){
+  :deep(.n-input) {
     cursor: ns-resize;
+    background-color: transparent;
+    border-radius: 0;
+
+    .n-input-wrapper {
+      padding: 0;
+      text-align: center;
+    }
+
+    .n-input__suffix{
+      margin-left: 1px;
+    }
+
+    .n-input__border{
+      display: none;
+    }
+    .n-input__state-border{
+      border-top: none;
+      border-right: none;
+      border-left: none;
+      border-bottom-style: dashed;
+    }
   }
 
   :deep(.n-input__input-el), :deep(.n-input__suffix) {

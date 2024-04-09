@@ -174,7 +174,7 @@ function onRangeChange() {
     <div class="sider-scene-material-map-property-item" v-if="property === 'aoMap'">
       <span></span>
       <div>
-        <EsInputNumber v-model:value="intensity" size="tiny" :show-button="false" :bordered="false"
+        <EsInputNumber v-model:value="intensity" size="tiny" :show-button="false"
                        @change="onIntensityChange"/>
       </div>
     </div>
@@ -184,7 +184,7 @@ function onRangeChange() {
          v-if="property === 'bumpMap' || property === 'displacementMap'">
       <span></span>
       <div>
-        <EsInputNumber v-model:value="scale" size="tiny" :show-button="false" :bordered="false"
+        <EsInputNumber v-model:value="scale" size="tiny" :show-button="false"
                        @change="onScaleChange"/>
       </div>
     </div>
@@ -194,9 +194,9 @@ function onRangeChange() {
          v-if="property === 'normalMap' || property === 'clearcoatNormalMap'">
       <span></span>
       <div>
-        <EsInputNumber v-model:value="scaleX" size="tiny" :show-button="false" :bordered="false"
+        <EsInputNumber v-model:value="scaleX" size="tiny" :show-button="false"
                        @change="onScaleXYChange"/>
-        <EsInputNumber v-model:value="scaleY" size="tiny" :show-button="false" :bordered="false"
+        <EsInputNumber v-model:value="scaleY" size="tiny" :show-button="false"
                        @change="onScaleXYChange"/>
       </div>
     </div>
@@ -205,7 +205,7 @@ function onRangeChange() {
     <div class="sider-scene-material-map-property-item" v-if="property === 'iridescenceThicknessMap'">
       <span>min:</span>
       <div>
-        <EsInputNumber v-model:value="rangeMin" size="tiny" :show-button="false" :bordered="false" :min="0"
+        <EsInputNumber v-model:value="rangeMin" size="tiny" :show-button="false" :min="0"
                        :max="Infinity" :step="10" @change="onRangeChange"/>
         <span>nm</span>
       </div>
@@ -213,7 +213,7 @@ function onRangeChange() {
     <div class="sider-scene-material-map-property-item" v-if="property === 'iridescenceThicknessMap'">
       <span>max:</span>
       <div>
-        <EsInputNumber v-model:value="rangeMax" size="tiny" :show-button="false" :bordered="false" :min="0"
+        <EsInputNumber v-model:value="rangeMax" size="tiny" :show-button="false" :min="0"
                        :max="Infinity" :step="10" @change="onRangeChange"/>
         <span>nm</span>
       </div>
