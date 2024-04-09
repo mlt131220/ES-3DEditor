@@ -1,14 +1,17 @@
 import * as THREE from 'three';
-import WebGPURenderer from "three/examples/jsm/renderers/webgpu/WebGPURenderer.js";
 import {ViewHelper as ViewHelperBase} from 'three/examples/jsm/helpers/ViewHelper.js';
 import {EditorControls} from "@/core/EditorControls";
-import {VR} from "@/core/Viewport.VR";
-import {ViewportSignals} from "@/core/Viewport.Signals";
+
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {SetPositionCommand} from "@/core/commands/SetPositionCommand";
 import {SetRotationCommand} from "@/core/commands/SetRotationCommand";
 import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
 import {useDispatchSignal} from "@/hooks/useSignal";
+import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
+
+import {VR} from "@/core/Viewport.VR";
+import {ViewportSignals} from "@/core/Viewport.Signals";
+import { ViewportPathtracer } from './Viewport.Pathtracer';
 
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
@@ -29,8 +32,9 @@ export class Viewport {
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
     private sceneHelpers: THREE.Scene;
-    private renderer: THREE.WebGLRenderer | typeof WebGPURenderer | undefined;
+    private renderer: THREE.WebGLRenderer | undefined;
     private pmremGenerator: THREE.PMREMGenerator | undefined;
+    private pathtracer:ViewportPathtracer | undefined;
     private modules: any;
     private showSceneHelpers: boolean = true;
 
@@ -62,7 +66,7 @@ export class Viewport {
         // 拾取对象
         this.raycaster = new THREE.Raycaster();
         //Raycaster 将只从它遇到的第一个对象中获取信息
-        this.raycaster.firstHitOnly = true;
+        //this.raycaster.firstHitOnly = true;
 
         this.initModules();
 
@@ -71,18 +75,19 @@ export class Viewport {
         this.container.addEventListener('dblclick', this.onDoubleClick.bind(this));
     }
 
-    protected initRenderer(newRenderer: THREE.WebGLRenderer | typeof WebGPURenderer) {
+    protected initRenderer(newRenderer: THREE.WebGLRenderer) {
         if (this.renderer) {
             this.renderer.setAnimationLoop(null);
             this.renderer.dispose();
             this.pmremGenerator?.dispose();
+
             this.container.removeChild(this.renderer.domElement);
         }
 
         this.renderer = newRenderer;
 
         this.renderer.setAnimationLoop(this.animate.bind(this));
-        this.renderer.setClearColor(0x272727, 1);
+        this.renderer.setClearColor(0xaaaaaa, 1);
 
         if (window.matchMedia) {
             const grid1 = this.grid.children[0];
@@ -90,12 +95,13 @@ export class Viewport {
 
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
             mediaQuery.addEventListener('change', (event) => {
-                this.renderer.setClearColor(event.matches ? 0x333333 : 0xaaaaaa);
-                updateGridColors(grid1, grid2, event.matches ? [0x222222, 0x888888] : [0x888888, 0x282828]);
+                this.renderer?.setClearColor(event.matches ? 0x333333 : 0xaaaaaa);
+                updateGridColors(grid1, grid2, event.matches ? GRID_COLORS_DARK : GRID_COLORS_LIGHT);
                 this.render();
             });
+
             this.renderer.setClearColor(mediaQuery.matches ? 0x333333 : 0xaaaaaa);
-            updateGridColors(grid1, grid2, mediaQuery.matches ? [0x222222, 0x888888] : [0x888888, 0x282828]);
+            updateGridColors(grid1, grid2, mediaQuery.matches ? GRID_COLORS_DARK : GRID_COLORS_LIGHT);
         }
 
         this.renderer.setPixelRatio(Math.max(Math.ceil(window.devicePixelRatio), 1));
@@ -104,6 +110,8 @@ export class Viewport {
         // 创建一个PMREMGenerator，从立方体映射环境纹理生成预过滤的 Mipmap 辐射环境贴图
         this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
         this.pmremGenerator.compileEquirectangularShader();
+
+        this.pathtracer = new ViewportPathtracer(this.renderer);
 
         this.container.appendChild(this.renderer.domElement);
 
@@ -299,8 +307,16 @@ export class Viewport {
         const actions = mixer.stats.actions;
         if (actions.inUse > 0 || prevActionsInUse > 0) {
             prevActionsInUse = actions.inUse;
+
             mixer.update(delta);
             needsUpdate = true;
+
+            if (window.editor.selected !== null) {
+                // 避免某些蒙皮网格的帧延迟效应(e.g. Michelle.glb)
+                window.editor.selected.updateWorldMatrix( false, true );
+                //  选择框应反映当前动画状态
+                this.selectionBox.box.setFromObject(window.editor.selected, true );
+            }
         }
 
         // View Helper
@@ -314,6 +330,32 @@ export class Viewport {
         }
 
         if (needsUpdate) this.render();
+
+        this.updatePT();
+    }
+
+    initPT() {
+        if (window.editor.viewportShading === 'realistic') {
+            this.pathtracer?.init(this.scene, this.camera);
+        }
+    }
+
+    updatePTBackground() {
+        if (window.editor.viewportShading === 'realistic') {
+            this.pathtracer?.setBackground(this.scene.background,this.scene.backgroundBlurriness);
+        }
+    }
+
+    updatePTEnvironment() {
+        if (window.editor.viewportShading === 'realistic') {
+            this.pathtracer?.setEnvironment(this.scene.environment);
+        }
+    }
+
+    updatePT() {
+        if (window.editor.viewportShading === 'realistic') {
+            this.pathtracer?.update();
+        }
     }
 
     render() {
@@ -321,13 +363,14 @@ export class Viewport {
 
         startTime = performance.now();
 
-        this.scene.add(this.grid);
+        // this.scene.add(this.grid);
         this.renderer.setViewport(0, 0, this.container.offsetWidth, this.container.offsetHeight);
         this.renderer.render(this.scene, window.editor.viewportCamera);
-        this.scene.remove(this.grid);
+        // this.scene.remove(this.grid);
 
         if (this.camera === window.editor.viewportCamera) {
             this.renderer.autoClear = false;
+            if (this.grid.visible) this.renderer.render(this.grid, this.camera);
             if (this.showSceneHelpers) this.renderer.render(this.sceneHelpers, this.camera);
             if (this.modules["vr"].currentSession === null) this.modules["viewHelper"].render(this.renderer);
             this.renderer.autoClear = true;

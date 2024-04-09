@@ -83,3 +83,6 @@ export const SCENE_TYPE = [
     {label:"设备",value:"设备"},
     {label:"其他",value:"其他"},
 ]
+
+export const GRID_COLORS_LIGHT = [ 0x999999, 0x777777 ]
+export const GRID_COLORS_DARK =  [ 0x555555, 0x888888 ];

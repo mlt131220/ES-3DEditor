@@ -10,11 +10,6 @@ import { Selector } from './Viewport.Selector';
 import {useDrawingStoreWithOut} from "@/store/modules/drawing";
 import {useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
 
-import {acceleratedRaycast, computeBoundsTree, disposeBoundsTree,} from "three-mesh-bvh";
-THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
-THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
-THREE.Mesh.prototype.raycast = acceleratedRaycast;
-
 const { add:addSignal,dispatch, setActive } = useSignal();
 
 const drawingStore = useDrawingStoreWithOut();
@@ -46,6 +41,7 @@ class Editor {
 	public helpers;
 	public cameras: { [uuid: string]: THREE.Camera };
 	protected viewportCamera: THREE.Camera;
+	protected viewportShading: string;
 
 	constructor() {
 		_DEFAULT_CAMERA.name = window.$t("core.editor['Default Camera']");
@@ -88,6 +84,7 @@ class Editor {
 
 		this.cameras = {};
 		this.viewportCamera = this.camera;
+		this.viewportShading = 'default';
 
 		this.addCamera(this.camera);
 
@@ -353,9 +350,14 @@ class Editor {
 		}
 	}
 
-	setViewportCamera(uuid) {
+	setViewportCamera(uuid:string) {
 		this.viewportCamera = this.cameras[uuid];
 		dispatch('viewportCameraChanged');
+	}
+
+	setViewportShading(value:string) {
+		this.viewportShading = value;
+		dispatch("viewportShadingChanged");
 	}
 
 	select(object) {

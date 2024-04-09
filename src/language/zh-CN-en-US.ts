@@ -30,7 +30,6 @@ export default {
 			Center: '居中',
 			Clone: '拷贝',
 			'Delete(Del)': '删除(Del)',
-			'Fix Color Maps': '修复颜色贴图',
 			/* Edit 下的选项 End */
 			Add: '添加',
 			/* Add 下的选项 */
@@ -91,6 +90,10 @@ export default {
 				Front:"前视图",
 				Back:"后视图",
 				"Scene camera":"场景相机",
+				Realistic: "真实",
+				Solid: '原色',
+				Normals: '法向',
+				Wireframe: '线框',
 				local: '本地坐标',
 				world: '世界坐标',
 			},
@@ -158,7 +161,6 @@ export default {
 				editable: '编辑性',
 				VR: '虚拟现实',
 				antialias: '抗锯齿',
-				'physical lights': '物理灯',
 				shadows: '阴影',
 				'tone mapping': '色调映射',
 				materials: '材质',

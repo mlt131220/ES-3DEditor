@@ -4,7 +4,6 @@ const APP = {
 
 		var renderer = new THREE.WebGLRenderer( { antialias: true } );
 		renderer.setPixelRatio( window.devicePixelRatio ); // TODO: Use player.setPixelRatio()
-		renderer.outputEncoding = THREE.sRGBEncoding;
 
 		var loader = new THREE.ObjectLoader();
 		var camera, scene;

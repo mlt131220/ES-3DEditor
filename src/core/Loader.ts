@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { IFCLoader } from 'web-ifc-three/IFCLoader';
-import {acceleratedRaycast, computeBoundsTree, disposeBoundsTree,} from "three-mesh-bvh";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
@@ -9,6 +8,7 @@ import { AddObjectCommand } from './commands/AddObjectCommand';
 import { SetSceneCommand } from './commands/SetSceneCommand.js';
 import { unzipSync, strFromU8 } from 'three/examples/jsm/libs/fflate.module.js';
 import MaterialCreator = MTLLoader.MaterialCreator;
+import {useDispatchSignal} from "@/hooks/useSignal";
 
 class Loader {
 	protected texturePath:string;
@@ -41,30 +41,30 @@ class Loader {
 			manager.addHandler( /\.tga$/i, new TGALoader() );
 			manager.addHandler( /\.mtl$/i, new MTLLoader() );
 
-            /** 2023/02/03 二三：判断是否存在mtl文件，存在则提前解析 **/
-            // @ts-ignore
-            const mtlIndex = Object.values(files).findIndex((item:File) => item.name?.split( '.' ).pop().toLowerCase() === "mtl");
-            let mtlMaterials:MaterialCreator | null = null;
-            if(mtlIndex !== -1){
-                const mtlLoader = new MTLLoader();
-                const reader = new FileReader();
-                reader.addEventListener( 'load',  ( event ) => {
-                    const contents = event.target?.result as string;
-                    const materials = mtlLoader.parse( contents,"" );
-                    materials.preload();
-                    mtlMaterials = materials;
-                    for ( let i = 0; i < files.length; i ++ ) {
-                        this.loadFile( files[ i ], manager,mtlMaterials );
-                    }
-                    complete();
-                }, false );
-                reader.readAsText( files[ mtlIndex ] );
-            }else{
-                for ( let i = 0; i < files.length; i ++ ) {
-                    this.loadFile( files[ i ], manager,null );
-                }
-                complete();
-            }
+			/** 2023/02/03 二三：判断是否存在mtl文件，存在则提前解析 **/
+				// @ts-ignore
+			const mtlIndex = Object.values(files).findIndex((item:File) => item.name?.split( '.' ).pop().toLowerCase() === "mtl");
+			let mtlMaterials:MaterialCreator | null = null;
+			if(mtlIndex !== -1){
+				const mtlLoader = new MTLLoader();
+				const reader = new FileReader();
+				reader.addEventListener( 'load',  ( event ) => {
+					const contents = event.target?.result as string;
+					const materials = mtlLoader.parse( contents,"" );
+					materials.preload();
+					mtlMaterials = materials;
+					for ( let i = 0; i < files.length; i ++ ) {
+						this.loadFile( files[ i ], manager,mtlMaterials );
+					}
+					complete();
+				}, false );
+				reader.readAsText( files[ mtlIndex ] );
+			}else{
+				for ( let i = 0; i < files.length; i ++ ) {
+					this.loadFile( files[ i ], manager,null );
+				}
+				complete();
+			}
 		}
 	}
 
@@ -193,24 +193,23 @@ class Loader {
 
 				break;
 			case 'glb':
-				reader.addEventListener( 'load', async function ( event ) {
-					const contents = event.target?.result;
+				reader.addEventListener( 'load', async ( event )=>  {
+					const contents = event.target?.result as ArrayBuffer;
 
-					const { DRACOLoader } = await import( 'three/examples/jsm/loaders/DRACOLoader.js' );
-					const { GLTFLoader } = await import( 'three/examples/jsm/loaders/GLTFLoader.js' );
+					const loader = await this.createGLTFLoader();
 
-					const dracoLoader = new DRACOLoader();
-					dracoLoader.setDecoderPath('/upyun/libs/draco/gltf/');
+					console.log(contents)
 
-					const loader = new GLTFLoader();
-					loader.setDRACOLoader( dracoLoader );
-					loader.parse(contents as ArrayBuffer, '', function ( result ) {
+					loader.parse( contents, '', function (result) {
 						const scene = result.scene;
 						scene.name = filename;
 
-						scene.animations.push( ...result.animations );
+						scene.animations.push(...result.animations);
+						window.editor.execute(new AddObjectCommand(scene));
 
-						window.editor.execute( new AddObjectCommand( scene ) );
+						loader.dracoLoader?.dispose();
+						// @ts-ignore
+						loader.ktx2Loader.dispose();
 					});
 				}, false );
 				reader.readAsArrayBuffer( file );
@@ -218,27 +217,19 @@ class Loader {
 				break;
 			case 'gltf':
 				reader.addEventListener( 'load', async ( event ) => {
-					const contents = event.target?.result;
-					let loader;
+					const contents = event.target?.result as ArrayBuffer;
+					const loader = await this.createGLTFLoader(manager);
 
-					if (this.isGLTF1(contents)) {
-						window.$message?.warning(window.$t("Import of glTF asset not possible. Only versions >= 2.0 are supported. Please try to upgrade the file to glTF 2.0 using glTF-Pipeline"));
-					} else {
-						const { DRACOLoader } = await import( 'three/examples/jsm/loaders/DRACOLoader.js' );
-						const { GLTFLoader } = await import( 'three/examples/jsm/loaders/GLTFLoader.js' );
-
-						const dracoLoader = new DRACOLoader();
-						dracoLoader.setDecoderPath( '/upyun/libs/draco/gltf/' );
-
-						loader = new GLTFLoader( manager );
-						loader.setDRACOLoader( dracoLoader );
-					}
 					loader.parse(contents, '', function ( result ) {
 						const scene = result.scene;
 						scene.name = filename;
 
 						scene.animations.push( ...result.animations );
-						window.editor.execute( new AddObjectCommand( scene ) );
+						window.editor.execute(new AddObjectCommand( scene ));
+
+						loader.dracoLoader?.dispose();
+						// @ts-ignore
+						loader.ktx2Loader.dispose();
 					});
 				}, false );
 				reader.readAsArrayBuffer( file );
@@ -283,12 +274,6 @@ class Loader {
 				reader.addEventListener( 'load', async ( event ) => {
 					if(!this.ifcLoader){
 						this.ifcLoader = new IFCLoader();
-						// Sets up optimized picking
-						this.ifcLoader.ifcManager.setupThreeMeshBVH(
-							computeBoundsTree,
-							disposeBoundsTree,
-							acceleratedRaycast
-						);
 					}
 
 					await this.ifcLoader.ifcManager.useWebWorkers(true, "/upyun/libs/web-ifc/IFCWorker.js");
@@ -312,6 +297,21 @@ class Loader {
 				reader.readAsArrayBuffer( file );
 
 				break;
+			// case 'ifc':
+			// 	reader.addEventListener( 'load', async function ( event ) {
+			// 		const { IFCLoader } = await import( 'three/examples/jsm/loaders/IFCLoader.js' );
+			//
+			// 		const loader = new IFCLoader();
+			// 		loader.ifcManager.setWasmPath( 'three/examples/jsm/loaders/ifc/' );
+			//
+			// 		// @ts-ignore
+			// 		const model = await loader.parse( event.target.result );
+			// 		model.mesh.name = filename;
+			//
+			// 		window.editor.execute( new AddObjectCommand(model.mesh));
+			// 	}, false );
+			// 	reader.readAsArrayBuffer( file );
+			// 	break;
 			case 'kmz':
 				reader.addEventListener( 'load', async function ( event ) {
 					const { KMZLoader } = await import( 'three/examples/jsm/loaders/KMZLoader.js' );
@@ -366,12 +366,12 @@ class Loader {
 					const contents = event.target?.result as string;
 
 					const { OBJLoader } = await import( 'three/examples/jsm/loaders/OBJLoader.js' );
-                    const objLoader = new OBJLoader();
+					const objLoader = new OBJLoader();
 
-                    /** 2023/02/03 二三：判断是否存在已解析的mtl文件 **/
-                    if(mtlMaterials !== null){
-                        objLoader.setMaterials(mtlMaterials);
-                    }
+					/** 2023/02/03 二三：判断是否存在已解析的mtl文件 **/
+					if(mtlMaterials !== null){
+						objLoader.setMaterials(mtlMaterials);
+					}
 
 					const object = objLoader.parse( contents );
 					object.name = filename;
@@ -381,9 +381,9 @@ class Loader {
 				reader.readAsText( file );
 
 				break;
-            case 'mtl':
-                //mtl文件已经提前预加载
-                break;
+			case 'mtl':
+				//mtl文件已经提前预加载
+				break;
 			case 'pcd':
 				reader.addEventListener( 'load', async function ( event ) {
 					const contents = event.target?.result as ArrayBuffer;
@@ -676,105 +676,59 @@ class Loader {
 				}
 				case 'glb':
 				{
-					const { DRACOLoader } = await import( 'three/examples/jsm/loaders/DRACOLoader.js' );
-					const { GLTFLoader } = await import( 'three/examples/jsm/loaders/GLTFLoader.js' );
-					const dracoLoader = new DRACOLoader();
-					dracoLoader.setDecoderPath( 'three/examples/js/libs/draco/gltf/' );
+					const loader = await this.createGLTFLoader();
 
-					const loader = new GLTFLoader();
-					loader.setDRACOLoader( dracoLoader );
-
-					loader.parse( file.buffer, '', function ( result ) {
-
+					loader.parse(file.buffer, '', function ( result ) {
 						const scene = result.scene;
 
 						scene.animations.push( ...result.animations );
 						window.editor.execute( new AddObjectCommand( scene ) );
-					} );
 
+						loader.dracoLoader?.dispose();
+						// @ts-ignore
+						loader.ktx2Loader.dispose();
+					});
 					break;
 				}
 				case 'gltf':
 				{
-					const { DRACOLoader } = await import( 'three/examples/jsm/loaders/DRACOLoader.js' );
-					const { GLTFLoader } = await import( 'three/examples/jsm/loaders/GLTFLoader.js' );
+					const loader = await this.createGLTFLoader( manager );
 
-					const dracoLoader = new DRACOLoader();
-					dracoLoader.setDecoderPath( 'three/examples/js/libs/draco/gltf/' );
-
-					const loader = new GLTFLoader( manager );
-					loader.setDRACOLoader( dracoLoader );
 					loader.parse( strFromU8( file ), '', function ( result ) {
 						const scene = result.scene;
 						scene.animations.push( ...result.animations );
 						window.editor.execute( new AddObjectCommand( scene ) );
 
-					} );
-
+						loader.dracoLoader?.dispose();
+						// @ts-ignore
+						loader.ktx2Loader.dispose();
+					});
 					break;
 				}
 			}
 		}
 	}
 
-	isGLTF1( contents ) {
-		let resultContent;
+	async createGLTFLoader(manager:any = null) {
+		const { GLTFLoader } = await import( 'three/examples/jsm/loaders/GLTFLoader.js' );
+		const { DRACOLoader } = await import( 'three/examples/jsm/loaders/DRACOLoader.js' );
+		const { KTX2Loader } = await import( 'three/examples/jsm/loaders/KTX2Loader.js' );
+		const { MeshoptDecoder } = await import( 'three/examples/jsm/libs/meshopt_decoder.module.js' );
 
-		if ( typeof contents === 'string' ) {
-			// contents 是一个JSON字符串
-			resultContent = contents;
-		} else {
-			const magic = THREE.LoaderUtils.decodeText( new Uint8Array( contents, 0, 4 ) );
+		const dracoLoader = new DRACOLoader();
+		dracoLoader.setDecoderPath( '/upyun/libs/draco/gltf/' );
 
-			if ( magic === 'glTF' ) {
-				// contents 是.glb文件；解压缩版本
-				const version = new DataView( contents ).getUint32( 4, true );
-				return version < 2;
-			} else {
-				// contents 是.gltf 文件
-				resultContent = THREE.LoaderUtils.decodeText( new Uint8Array( contents ) );
-			}
-		}
-		const json = JSON.parse( resultContent );
-		return ( json.asset != undefined && json.asset.version[ 0 ] < 2 );
-	}
+		const ktx2Loader = new KTX2Loader();
+		ktx2Loader.setTranscoderPath( 'three/examples/jsm/libs/basis/' );
 
-	loadTexture(file: File, onload: (tex: THREE.Texture, buffer?: ArrayBuffer) => void) {
-		const extension = file.name.split(".").pop()?.toLowerCase() as string;
-		const reader = new FileReader();
-		reader.addEventListener("load", (event) => {
-				this.parseTexture(extension, event.target?.result as ArrayBuffer, onload, file);
-			},
-			false
-		);
-		reader.readAsDataURL(file);
-	}
+		useDispatchSignal("rendererDetectKTX2Support",ktx2Loader);
 
-	async parseTexture(extension: string, buffer: ArrayBuffer, onload?: (tex: THREE.Texture, buffer?: ArrayBuffer) => void, file?: File ) {
-		if (extension === "hdr" || extension === "pic") {
-			const loader = new RGBELoader();
-			loader.setDataType(THREE.HalfFloatType);
-			loader.load(buffer as any, (hdrTexture) => {
-				(hdrTexture as any).isHDRTexture = true;
-				onload && onload(hdrTexture, buffer);
-			});
-		} else if (extension === "tga") {
-			const canvas = new TGALoader().parse(buffer);
-			onload && onload(canvas);
-		} else if (file && file.type.match("image.*")) {
-			const image = document.createElement("img");
-			image.src = URL.createObjectURL(file);
-			image.addEventListener(
-				"load",
-				function () {
-					const texture = new THREE.Texture(this);
-					texture.name = file.name;
-					texture.needsUpdate = true;
-					onload && onload(texture);
-				},
-				false
-			);
-		}
+		const loader = new GLTFLoader(manager);
+		loader.setDRACOLoader(dracoLoader);
+		loader.setKTX2Loader(ktx2Loader);
+		loader.setMeshoptDecoder(MeshoptDecoder);
+
+		return loader;
 	}
 
 	loadUrlTexture(extension: string, url: string, onload: (tex: THREE.Texture) => void) {

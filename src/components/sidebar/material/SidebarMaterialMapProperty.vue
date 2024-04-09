@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import {inject, ref, onMounted, onUnmounted, nextTick, toRaw} from "vue";
+import {ref, onMounted, onUnmounted, nextTick, toRaw} from "vue";
 import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
+import {EquirectangularReflectionMapping, SRGBColorSpace} from "three";
 import type {Material, BufferGeometry} from "three";
-import {EquirectangularReflectionMapping, sRGBEncoding} from "three";
 import {SetMaterialMapCommand} from '@/core/commands/SetMaterialMapCommand';
 import {SetMaterialValueCommand} from '@/core/commands/SetMaterialValueCommand';
 import {SetMaterialVectorCommand} from '@/core/commands/SetMaterialVectorCommand';
@@ -27,6 +27,7 @@ const esTextureRef = ref();
 let object: { material: Material, geometry: BufferGeometry };
 let material: Material;
 let mapType;
+const colorMaps = [ 'map', 'emissiveMap', 'sheenColorMap', 'specularColorMap', 'envMap' ];
 let currentMaterialSlot = 0;
 const intensity = ref();
 const scale = ref();
@@ -119,8 +120,8 @@ function onChange() {
 // 贴图change
 function onMapChange(texture) {
   if (texture !== null) {
-    if (texture.isDataTexture !== true && texture.encoding !== sRGBEncoding) {
-      texture.encoding = sRGBEncoding;
+    if (colorMaps.includes(props.property) && !texture.isDataTexture && texture.colorSpace !== SRGBColorSpace) {
+      texture.encoding = SRGBColorSpace;
       material.needsUpdate = true;
     }
   }

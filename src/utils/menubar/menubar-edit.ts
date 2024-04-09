@@ -1,15 +1,10 @@
 import { AddObjectCommand } from '@/core/commands/AddObjectCommand';
 import { SetPositionCommand } from '@/core/commands/SetPositionCommand';
 import { RemoveObjectCommand } from '@/core/commands/RemoveObjectCommand';
-import { Box3, Vector3, sRGBEncoding } from 'three';
-import { useDispatchSignal } from '@/hooks/useSignal';
+import { Box3, Vector3 } from 'three';
 
 export class MenubarEdit {
-	private colorMaps;
-
-	constructor() {
-		this.colorMaps = ['map', 'envMap', 'emissiveMap'];
-	}
+	constructor() {}
 
 	// 调用对应方法
 	init(key: string) {
@@ -76,36 +71,5 @@ export class MenubarEdit {
 		if (object !== null && object.parent !== null) {
 			window.editor.execute(new RemoveObjectCommand(object));
 		}
-	}
-
-	//修复颜色贴图 Set textures to sRGB.
-	fixColorMaps() {
-		window.editor.scene.traverse(obj => {
-			const material = obj.material;
-
-			if (material !== undefined) {
-				if (Array.isArray(material) === true) {
-					for (let i = 0; i < material.length; i++) {
-						this.fixMaterial(material[i]);
-					}
-				} else {
-					this.fixMaterial(material);
-				}
-
-				useDispatchSignal('sceneGraphChanged');
-			}
-		});
-	}
-
-	fixMaterial(material) {
-		let needsUpdate = material.needsUpdate;
-		for (let i = 0; i < this.colorMaps.length; i++) {
-			const map = material[this.colorMaps[i]];
-			if (map) {
-				map.encoding = sRGBEncoding;
-				needsUpdate = true;
-			}
-		}
-		material.needsUpdate = needsUpdate;
 	}
 }

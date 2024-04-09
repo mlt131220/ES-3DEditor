@@ -926,7 +926,6 @@ function renderToCanvas( texture ) {
 	if ( renderer === undefined ) {
 
 		renderer = new THREE.WebGLRenderer();
-		renderer.outputEncoding = THREE.sRGBEncoding;
 
 	}
 
