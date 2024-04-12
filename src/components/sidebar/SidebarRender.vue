@@ -9,7 +9,7 @@ import EsInputNumber from '@/components/es/EsInputNumber.vue';
 import {t} from "@/language";
 
 //编辑器渲染器在此创建
-let currentRenderer: THREE.WebGLRenderer /** | WebGPURenderer**/;
+let currentRenderer: THREE.WebGLRenderer | WebGPURenderer;
 
 /* 渲染器设置项 */
 //阴影选项
@@ -73,11 +73,21 @@ onMounted(() => {
 })
 
 function createRenderer() {
+  // 判断是否支持WebGPU
+  // if (WebGPU.isAvailable()) {
+  //   console.log("使用WebGPU渲染器");
+  //   currentRenderer = new WebGPURenderer({antialias: renderModel.antialias});
+  //   currentRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  //   currentRenderer.toneMappingExposure = 1;
+  //   // @ts-ignore
+  //   currentRenderer.useLegacyLights = false;
+  // } else {
   currentRenderer = new THREE.WebGLRenderer({
     antialias: renderModel.antialias,
     //想把canvas画布上内容下载到本地，需要设置为true
     preserveDrawingBuffer: true
   });
+  // }
   // @ts-ignore
   currentRenderer.toneMapping = renderModel.toneMapping;
   currentRenderer.toneMappingExposure = renderModel.toneMappingExposure;

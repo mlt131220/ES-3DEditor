@@ -198,8 +198,6 @@ class Loader {
 
 					const loader = await this.createGLTFLoader();
 
-					console.log(contents)
-
 					loader.parse( contents, '', function (result) {
 						const scene = result.scene;
 						scene.name = filename;
@@ -719,7 +717,7 @@ class Loader {
 		dracoLoader.setDecoderPath( '/upyun/libs/draco/gltf/' );
 
 		const ktx2Loader = new KTX2Loader();
-		ktx2Loader.setTranscoderPath( 'three/examples/jsm/libs/basis/' );
+		ktx2Loader.setTranscoderPath( '/upyun/libs/basis/' );
 
 		useDispatchSignal("rendererDetectKTX2Support",ktx2Loader);
 
