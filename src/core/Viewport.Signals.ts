@@ -30,7 +30,7 @@ export class ViewportSignals {
         useAddSignal("sceneFogSettingsChanged", this.sceneFogSettingsChanged.bind(this));
         useAddSignal("sceneGraphChanged", this.sceneGraphChanged.bind(this));
         useAddSignal("cameraChanged", this.cameraChanged.bind(this));
-        useAddSignal("cameraReseted", this.viewport.updateAspectRatio.bind(this));
+        useAddSignal("cameraReseted", this.viewport.updateAspectRatio.bind(this.viewport));
         useAddSignal("viewportCameraChanged", this.viewportCameraChanged.bind(this));
         useAddSignal("viewportShadingChanged", this.viewportShadingChanged.bind(this));
 
