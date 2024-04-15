@@ -1,7 +1,8 @@
+import { Object3D } from 'three';
 import { Command } from '../Command';
+import { useDispatchSignal } from "@/hooks/useSignal";
 
 /**
- * @param editor Editor
  * @param object THREE.Object3D
  * @param script javascript object
  * @param attributeName string
@@ -9,10 +10,14 @@ import { Command } from '../Command';
  * @constructor
  */
 class SetScriptValueCommand extends Command {
+	private object: Object3D;
+	private script: IScript.IStruct;
+	private attributeName: string;
+	private oldValue: any;
+	private newValue: string;
 
-	constructor( editor, object, script, attributeName, newValue ) {
-
-		super( editor );
+	constructor(object:Object3D, script:IScript.IStruct, attributeName:string, newValue:string) {
+		super();
 
 		this.type = 'SetScriptValueCommand';
 		this.name = `Set Script.${attributeName}`;
@@ -24,57 +29,45 @@ class SetScriptValueCommand extends Command {
 		this.attributeName = attributeName;
 		this.oldValue = ( script !== undefined ) ? script[ this.attributeName ] : undefined;
 		this.newValue = newValue;
-
 	}
 
 	execute() {
+		this.script[this.attributeName] = this.newValue;
 
-		this.script[ this.attributeName ] = this.newValue;
-
-		this.editor.signals.scriptChanged.dispatch();
-
+		useDispatchSignal("scriptChanged");
 	}
 
 	undo() {
-
 		this.script[ this.attributeName ] = this.oldValue;
 
-		this.editor.signals.scriptChanged.dispatch();
-
+		useDispatchSignal("scriptChanged");
 	}
 
-	update( cmd ) {
-
+	update(cmd) {
 		this.newValue = cmd.newValue;
-
 	}
 
 	toJSON() {
-
-		const output = super.toJSON( this );
+		const output = super.toJSON();
 
 		output.objectUuid = this.object.uuid;
-		output.index = this.editor.scripts[ this.object.uuid ].indexOf( this.script );
+		output.index = window.editor.scripts[this.object.uuid].indexOf(this.script);
 		output.attributeName = this.attributeName;
 		output.oldValue = this.oldValue;
 		output.newValue = this.newValue;
 
 		return output;
-
 	}
 
-	fromJSON( json ) {
-
-		super.fromJSON( json );
+	fromJSON(json) {
+		super.fromJSON(json);
 
 		this.oldValue = json.oldValue;
 		this.newValue = json.newValue;
 		this.attributeName = json.attributeName;
-		this.object = this.editor.objectByUuid( json.objectUuid );
-		this.script = this.editor.scripts[ json.objectUuid ][ json.index ];
-
+		this.object = window.editor.objectByUuid(json.objectUuid);
+		this.script = window.editor.scripts[json.objectUuid][json.index];
 	}
-
 }
 
 export { SetScriptValueCommand };

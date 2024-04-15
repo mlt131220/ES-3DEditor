@@ -5,7 +5,7 @@ import { TGALoader } from 'three/examples/jsm/loaders/TGALoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
 import { AddObjectCommand } from './commands/AddObjectCommand';
-import { SetSceneCommand } from './commands/SetSceneCommand.js';
+import { SetSceneCommand } from './commands/Commands';
 import { unzipSync, strFromU8 } from 'three/examples/jsm/libs/fflate.module.js';
 import MaterialCreator = MTLLoader.MaterialCreator;
 import {useDispatchSignal} from "@/hooks/useSignal";
@@ -541,7 +541,7 @@ class Loader {
 					const { VRMLLoader } = await import( 'three/examples/jsm/loaders/VRMLLoader.js' );
 					//@ts-ignore
 					const result = new VRMLLoader().parse( contents );
-					window.editor.execute( new SetSceneCommand( window.editor, result ) );
+					window.editor.execute(new SetSceneCommand(result));
 				}, false );
 				reader.readAsText( file );
 
@@ -614,9 +614,9 @@ class Loader {
 
 				loader.parse( data, function ( result:any ) {
 					if ( result.isScene ) {
-						window.editor.execute( new SetSceneCommand( window.editor, result ) );
+						window.editor.execute(new SetSceneCommand(result));
 					} else {
-						window.editor.execute( new AddObjectCommand( result ) );
+						window.editor.execute(new AddObjectCommand(result));
 					}
 				});
 				break;

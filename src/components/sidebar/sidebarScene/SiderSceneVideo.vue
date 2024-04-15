@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import {onMounted, ref} from 'vue';
-import EsInputNumber from '@/components/es/EsInputNumber.vue';
 import {NForm, NFormItem, NButton, NProgress} from 'naive-ui';
-import {APP} from '@/core/libs/app.js';
 import {createFFmpeg, fetchFile} from '@ffmpeg/ffmpeg';
+
 import {t} from "@/language";
+import EsInputNumber from '@/components/es/EsInputNumber.vue';
+import {usePlayerStore} from "@/store/modules/player";
+
+const playerState = usePlayerStore();
 
 const videoWidth = ref(1024);
 const videoHeight = ref(1024);
@@ -23,7 +26,7 @@ async function renderVideoCopy() {
   rendering.value = true;
   percentage.value = 0;
 
-  const player = new APP.Player();
+  const player = playerState.player();
   player.load(window.editor.toJSON());
   player.setPixelRatio(1);
   player.setSize(videoWidth.value, videoHeight.value);
@@ -174,7 +177,7 @@ function save(blob, filename) {
     text-align: center;
 
     .n-input__input-el {
-     // color: #3b82f6 !important;
+      // color: #3b82f6 !important;
     }
   }
 }

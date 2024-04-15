@@ -14,7 +14,7 @@ class SetMaterialValueCommand extends Command {
 	public newValue;
 	public attributeName;
 
-	constructor(object, attributeName, newValue, materialSlot ) {
+	constructor(object, attributeName, newValue, materialSlot = 0 ) {
 		super();
 
 		this.type = 'SetMaterialValueCommand';

@@ -4,7 +4,7 @@
 class Command {
 	protected id:number;
 	protected inMemory:boolean;
-	protected updatable:boolean;
+	public updatable:boolean;
 	protected type:string;
 	protected name:string;
 

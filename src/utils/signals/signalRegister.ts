@@ -25,10 +25,6 @@ const editorSignals: SignalRegister = {
 	// 脚本
 	editScript: new Signal(),
 
-	// player
-	startPlayer: new Signal(),
-	stopPlayer: new Signal(),
-
 	// vr
 	toggleVR: new Signal(),
 	exitedVR: new Signal(),

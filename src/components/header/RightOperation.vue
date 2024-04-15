@@ -1,27 +1,14 @@
 <script lang="ts" setup>
-import {onMounted, ref} from 'vue';
-import {useDispatchSignal} from "@/hooks/useSignal";
+import {ref} from 'vue';
 import AutoSave from '@/components/header/AutoSave.vue';
 import CodeOut from '@/components/header/CodeOut.vue';
 import {PlayOutline, PauseOutline, ExpandOutline, ContractOutline} from '@vicons/ionicons5';
 import {NIcon, NTooltip} from "naive-ui";
 import {t} from "@/language";
-import {Player} from "@/core/Player";
+import {usePlayerStore} from "@/store/modules/player";
 
-const isPlaying = ref(false);
+const playerState = usePlayerStore();
 const isFullscreen = ref(false);
-
-//启动
-function play() {
-  useDispatchSignal("startPlayer");
-  isPlaying.value = true;
-}
-
-//停止
-function stop() {
-  useDispatchSignal("stopPlayer");
-  isPlaying.value = false;
-}
 
 //全屏 / 退出全屏
 function fullscreen() {
@@ -46,28 +33,24 @@ function fullscreen() {
     isFullscreen.value = false;
   }
 }
-
-onMounted(() => {
-  new Player();
-})
 </script>
 
 <template>
   <div id="rightOperation">
     <!-- 启动 -->
     <div class="flex items-center mr-2">
-      <n-tooltip trigger="hover" v-if="!isPlaying">
+      <n-tooltip trigger="hover" v-if="!playerState.isPlaying">
         <template #trigger>
-          <n-icon size="22" class="cursor-pointer" @click="play">
+          <n-icon size="22" class="cursor-pointer" @click="playerState.start()">
             <play-outline/>
           </n-icon>
         </template>
         {{ t("layout.header.Play") }}
       </n-tooltip>
 
-      <n-tooltip trigger="hover" v-if="isPlaying">
+      <n-tooltip trigger="hover" v-else>
         <template #trigger>
-          <n-icon size="22" class="cursor-pointer" @click="stop">
+          <n-icon size="22" class="cursor-pointer" @click="playerState.stop()">
             <pause-outline/>
           </n-icon>
         </template>

@@ -284,6 +284,20 @@ export default {
 				'Depth Write': '深度缓冲',
 				Wireframe: '线框',
 			},
+			Animations: '动画',
+			animation:{
+				Play: '播放',
+				Pause: '暂停',
+				'Time scale':"时间缩放"
+			},
+			Script: '脚本',
+			script:{
+				Edit: '编辑',
+				Remove: '移除',
+				New: '新建',
+				'Please enter the script name': '请输入脚本名称',
+				'The script name already exists': '脚本名称已存在',
+			},
 			Drawing:"图纸",
 			drawing:{
 				'Click to select or drag the drawing to this area': '点击选择或拖拽图纸到此区域',

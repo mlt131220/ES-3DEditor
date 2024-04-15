@@ -11,6 +11,7 @@ import {useMessage, useNotification, useDialog, useLoadingBar} from 'naive-ui';
 import * as Layout from './layouts';
 import {useAddSignal} from "@/hooks/useSignal";
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
+import {usePlayerStore} from "@/store/modules/player";
 
 //反馈组件注册至全局
 window.$message = useMessage();
@@ -19,11 +20,11 @@ window.$loadingBar = useLoadingBar();
 window.$notification = useNotification();
 
 const sceneInfoStore = useSceneInfoStore();
+const playerState = usePlayerStore();
 
 const siderWidth = ref(300);
 //当前场景类型 enum:three | cesium
 const currentSceneType = ref(sceneInfoStore.getIsCesium ? 'cesium' : "three");
-const isPlaying = ref(false);
 
 function changCurrentSceneType(type: string) {
   sceneInfoStore.setIsCesium(type === 'cesium');
@@ -33,12 +34,6 @@ function changCurrentSceneType(type: string) {
 
 onMounted(() => {
   useAddSignal("changCurrentSceneType", changCurrentSceneType);
-  useAddSignal("startPlayer", () => {
-    isPlaying.value = true;
-  });
-  useAddSignal("stopPlayer", () => {
-    isPlaying.value = false;
-  });
 })
 </script>
 
@@ -50,7 +45,7 @@ onMounted(() => {
       </n-layout-header>
 
       <n-layout
-          v-show="!isPlaying"
+          v-show="!playerState.isPlaying"
           class="n-layout-center-layout"
           has-sider
           sider-placement="right"
@@ -86,7 +81,7 @@ onMounted(() => {
         </n-layout-sider>
       </n-layout>
 
-      <n-layout-content v-show="isPlaying" class="n-layout-center-layout" position="absolute">
+      <n-layout-content v-show="playerState.isPlaying" class="n-layout-center-layout" position="absolute">
         <div id="player" class="w-full h-full"></div>
       </n-layout-content>
 

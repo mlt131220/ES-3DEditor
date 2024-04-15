@@ -2,7 +2,7 @@ import * as Commands from './commands/Commands';
 import {useSignal} from "@/hooks/useSignal";
 import type { Object3D } from 'three';
 
-const {add:useAddSignal,dispatch:useDispathSignal,setActive} = useSignal();
+const {dispatch:useDispathSignal,setActive} = useSignal();
 
 interface Undos{
 	id:number,
@@ -25,7 +25,7 @@ class History {
 	public redos:Array<Undos>;
 	protected lastCmdTime:number;
 	protected idCounter:number;
-	protected historyDisabled:boolean;
+	public historyDisabled:boolean;
 
 	constructor() {
 		this.undos = [];
@@ -34,15 +34,6 @@ class History {
 		this.idCounter = 0;
 
 		this.historyDisabled = false;
-
-		// signals
-		useAddSignal("startPlayer",()=>{
-			this.historyDisabled = true;
-		})
-
-		useAddSignal("stopPlayer",()=>{
-			this.historyDisabled = false;
-		})
 	}
 
 	execute( cmd, optionalName ) {
@@ -165,7 +156,7 @@ class History {
 			cmd.name = cmdJSON.name;
 			this.undos.push( cmd );
 			//设置最后使用的idCounter
-			this.idCounter = ( cmdJSON.id > this.idCounter ) ? cmdJSON.id : this.idCounter; 
+			this.idCounter = ( cmdJSON.id > this.idCounter ) ? cmdJSON.id : this.idCounter;
 		}
 
 		for ( let i = 0; i < json.redos.length; i ++ ) {

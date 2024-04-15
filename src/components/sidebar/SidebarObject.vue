@@ -84,10 +84,6 @@ const objectDataVisible = reactive({
 })
 
 onMounted(() => {
-  signalsAdd()
-})
-
-function signalsAdd() {
   useAddSignal("objectSelected", (object) => {
     if (object !== null) {
       isSelectObject3D.value = true;
@@ -107,7 +103,7 @@ function signalsAdd() {
     if (object !== window.editor.selected) return;
     updateUI(object);
   })
-}
+})
 
 function updateRows(object) {
   for (const property in objectDataVisible) {

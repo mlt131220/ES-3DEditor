@@ -33,9 +33,22 @@ const initMonaco = () => {
     })
 }
 
+const getModel = (index: number = 0) => {
+    return monacoRef.value.editor?.getModels()[index];
+}
+
+const setLanguage = (language: string) => {
+    const model = getModel();
+    if (model) {
+        monacoRef.value.editor?.setModelLanguage(model,language);
+    }
+}
+
 export function useMonacoEditor() {
     return {
         initMonaco,
+        getModel,
+        setLanguage,
         monacoRef
     }
 }
