@@ -9,7 +9,7 @@ import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
 
-import {VR} from "@/core/Viewport.VR";
+import { XR } from './Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
 import { ViewportPathtracer } from './Viewport.Pathtracer';
 
@@ -137,7 +137,6 @@ export class Viewport {
 
     protected initModules() {
         this.modules["viewHelper"] = new ViewHelperBase(this.camera, this.container);
-        this.modules["vr"] = new VR();
 
         let objectPositionOnDown = new THREE.Vector3();
         let objectRotationOnDown = new THREE.Euler();
@@ -194,6 +193,8 @@ export class Viewport {
         })
         this.modules["transformControls"] = transformControls;
         this.sceneHelpers.add(transformControls);
+
+        this.modules["xr"] = new XR(this.modules["transformControls"]);
 
         this.modules["controls"] = new EditorControls(this.camera, this.container);
         this.modules["controls"].addEventListener("change", () => {
@@ -325,7 +326,7 @@ export class Viewport {
             needsUpdate = true;
         }
 
-        if (this.modules["vr"].currentSession !== null) {
+        if (this.renderer?.xr.isPresenting) {
             needsUpdate = true;
         }
 
@@ -363,16 +364,14 @@ export class Viewport {
 
         startTime = performance.now();
 
-        // this.scene.add(this.grid);
         this.renderer.setViewport(0, 0, this.container.offsetWidth, this.container.offsetHeight);
         this.renderer.render(this.scene, window.editor.viewportCamera);
-        // this.scene.remove(this.grid);
 
         if (this.camera === window.editor.viewportCamera) {
             this.renderer.autoClear = false;
             if (this.grid.visible) this.renderer.render(this.grid, this.camera);
             if (this.showSceneHelpers) this.renderer.render(this.sceneHelpers, this.camera);
-            if (this.modules["vr"].currentSession === null) this.modules["viewHelper"].render(this.renderer);
+            if (!this.renderer.xr.isPresenting) this.modules["viewHelper"].render(this.renderer);
             this.renderer.autoClear = true;
         }
 

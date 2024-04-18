@@ -42,7 +42,6 @@ export class ViewportSignals {
         useAddSignal("geometryChanged", this.geometryChanged.bind(this));
         useAddSignal("materialChanged", this.materialChanged.bind(this));
 
-        useAddSignal("exitedVR", this.render.bind(this));
         useAddSignal("sceneResize", this.sceneResize.bind(this));
         useAddSignal("showGridChanged", this.showGridChanged.bind(this));
         useAddSignal("showHelpersChanged", this.showHelpersChanged.bind(this));

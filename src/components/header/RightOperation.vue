@@ -1,14 +1,30 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
+import {ref,onMounted} from 'vue';
 import AutoSave from '@/components/header/AutoSave.vue';
 import CodeOut from '@/components/header/CodeOut.vue';
+import XR from '@/components/header/XR.vue';
 import {PlayOutline, PauseOutline, ExpandOutline, ContractOutline} from '@vicons/ionicons5';
 import {NIcon, NTooltip} from "naive-ui";
 import {t} from "@/language";
 import {usePlayerStore} from "@/store/modules/player";
+import {useDispatchSignal} from "@/hooks/useSignal";
 
 const playerState = usePlayerStore();
 const isFullscreen = ref(false);
+const supportXr = ref(false);
+
+onMounted(() => {
+  // 判断是否支持XR
+  if (navigator.xr) {
+    if ('offerSession' in navigator.xr) {
+      useDispatchSignal("offerXR",'immersive-ar');
+    }else{
+      supportXr.value = true;
+    }
+  }else{
+    supportXr.value = false;
+  }
+});
 
 //全屏 / 退出全屏
 function fullscreen() {
@@ -78,6 +94,8 @@ function fullscreen() {
         {{ t("layout.header['Exit fullscreen']") }}
       </n-tooltip>
     </div>
+
+    <XR v-if="supportXr" />
 
     <!--自动保存-->
     <AutoSave class="mr-2" />

@@ -36,7 +36,7 @@ function iconTabName(text:string,icon:any){
 </script>
 
 <template>
-  <n-tabs default-value="scene" type="line" size="small" pane-class="!p-10px overflow-y-auto"
+  <n-tabs default-value="scene" type="line" size="small" pane-class="!p-10px overflow-y-auto" id="sidebar-attributes"
           placement="left">
     <n-tab-pane v-for="t in data" :key="t.name" :name="t.name" :tab="iconTabName(t.icon.text,t.icon.component)" display-directive="show">
       <component :is="t.component" />

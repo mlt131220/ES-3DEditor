@@ -1,5 +1,6 @@
 {
-  "name": "fmation3deditor",
+  "name": "es-3d-editor",
+  "author": "ErSan",
   "private": true,
   "version": "0.0.0",
   "type": "module",

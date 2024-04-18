@@ -10,6 +10,87 @@ import { unzipSync, strFromU8 } from 'three/examples/jsm/libs/fflate.module.js';
 import MaterialCreator = MTLLoader.MaterialCreator;
 import {useDispatchSignal} from "@/hooks/useSignal";
 
+const LoaderUtils = {
+	createFilesMap: function (files: FileList | File[]) {
+		const map = {};
+
+		for ( let i = 0; i < files.length; i ++ ) {
+			const file = files[ i ];
+			map[ file.name ] = file;
+		}
+
+		return map;
+	},
+	getFilesFromItemList: function ( items: DataTransferItem[], onDone: (files: File[], filesMap) => void ) {
+		// TOFIX: setURLModifier() breaks when the file being loaded is not in root
+		let itemsCount = 0;
+		let itemsTotal = 0;
+
+		const files: File[] = [];
+		const filesMap = {};
+
+		function onEntryHandled() {
+
+			itemsCount ++;
+
+			if ( itemsCount === itemsTotal ) {
+
+				onDone( files, filesMap );
+
+			}
+
+		}
+
+		function handleEntry( entry ) {
+
+			if ( entry.isDirectory ) {
+
+				const reader = entry.createReader();
+				reader.readEntries( function ( entries ) {
+
+					for ( let i = 0; i < entries.length; i ++ ) {
+
+						handleEntry( entries[ i ] );
+
+					}
+
+					onEntryHandled();
+
+				} );
+
+			} else if ( entry.isFile ) {
+
+				entry.file( function ( file ) {
+
+					files.push( file );
+
+					filesMap[ entry.fullPath.slice( 1 ) ] = file;
+					onEntryHandled();
+
+				} );
+
+			}
+
+			itemsTotal ++;
+
+		}
+
+		for ( let i = 0; i < items.length; i ++ ) {
+
+			const item = items[ i ];
+
+			if ( item.kind === 'file' ) {
+
+				handleEntry( item.webkitGetAsEntry() );
+
+			}
+
+		}
+
+	}
+
+};
+
 class Loader {
 	protected texturePath:string;
 	protected ifcLoader:IFCLoader | null;
@@ -25,7 +106,7 @@ class Loader {
 		} );
 	}
 
-	loadFiles( files, filesMap,complete ) {
+	loadFiles(files, filesMap,complete) {
 		if ( files.length > 0 ) {
 			filesMap = filesMap || LoaderUtils.createFilesMap( files );
 			const manager = new THREE.LoadingManager();
@@ -33,7 +114,6 @@ class Loader {
 				url = url.replace( /^(\.?\/)/, '' ); // remove './'
 				const file = filesMap[ url ];
 				if ( file ) {
-					console.log( 'Loading', url );
 					return URL.createObjectURL( file );
 				}
 				return url;
@@ -68,18 +148,16 @@ class Loader {
 		}
 	}
 
-	loadFile( file, manager,mtlMaterials ) {
+	loadFile(file, manager:THREE.LoadingManager,mtlMaterials) {
 		const filename = file.name;
 		const extension = filename.split( '.' ).pop().toLowerCase();
 
-		console.log("loadFile",extension)
-
 		const reader = new FileReader();
-		reader.addEventListener( 'progress', function ( event ) {
-			const size = '(' + Math.floor( event.total / 1000 ).format() + ' KB)';
-			const progress = Math.floor( ( event.loaded / event.total ) * 100 ) + '%';
-			console.log( 'Loading', filename, size, progress );
-		} );
+		// reader.addEventListener( 'progress', function ( event ) {
+		// 	const size = '(' + Math.floor( event.total / 1000 ).format() + ' KB)';
+		// 	const progress = Math.floor( ( event.loaded / event.total ) * 100 ) + '%';
+		// 	console.log( 'Loading', filename, size, progress );
+		// } );
 
 		switch (extension) {
 			case '3dm':
@@ -196,9 +274,8 @@ class Loader {
 				reader.addEventListener( 'load', async ( event )=>  {
 					const contents = event.target?.result as ArrayBuffer;
 
-					const loader = await this.createGLTFLoader();
-
-					loader.parse( contents, '', function (result) {
+					const loader = await this.createGLTFLoader(manager);
+					loader.parse(contents, '', (result) => {
 						const scene = result.scene;
 						scene.name = filename;
 
@@ -650,8 +727,6 @@ class Loader {
 				const file = zip[ url ];
 
 				if ( file ) {
-					console.log( 'Loading', url );
-
 					const blob = new Blob( [ file.buffer ], { type: 'application/octet-stream' } );
 					return URL.createObjectURL( blob );
 				}
@@ -707,18 +782,17 @@ class Loader {
 		}
 	}
 
-	async createGLTFLoader(manager:any = null) {
+	async createGLTFLoader(manager?:THREE.LoadingManager) {
 		const { GLTFLoader } = await import( 'three/examples/jsm/loaders/GLTFLoader.js' );
 		const { DRACOLoader } = await import( 'three/examples/jsm/loaders/DRACOLoader.js' );
 		const { KTX2Loader } = await import( 'three/examples/jsm/loaders/KTX2Loader.js' );
 		const { MeshoptDecoder } = await import( 'three/examples/jsm/libs/meshopt_decoder.module.js' );
 
 		const dracoLoader = new DRACOLoader();
-		dracoLoader.setDecoderPath( '/upyun/libs/draco/gltf/' );
+		dracoLoader.setDecoderPath('/upyun/libs/draco/gltf/');
 
 		const ktx2Loader = new KTX2Loader();
-		ktx2Loader.setTranscoderPath( '/upyun/libs/basis/' );
-
+		ktx2Loader.setTranscoderPath('/upyun/libs/basis/');
 		useDispatchSignal("rendererDetectKTX2Support",ktx2Loader);
 
 		const loader = new GLTFLoader(manager);
@@ -758,86 +832,5 @@ class Loader {
 		}
 	}
 }
-
-const LoaderUtils = {
-	createFilesMap: function (files: FileList | File[]) {
-		const map = {};
-
-		for ( let i = 0; i < files.length; i ++ ) {
-			const file = files[ i ];
-			map[ file.name ] = file;
-		}
-
-		return map;
-	},
-	getFilesFromItemList: function ( items: DataTransferItem[], onDone: (files: File[], filesMap) => void ) {
-		// TOFIX: setURLModifier() breaks when the file being loaded is not in root
-		let itemsCount = 0;
-		let itemsTotal = 0;
-
-		const files: File[] = [];
-		const filesMap = {};
-
-		function onEntryHandled() {
-
-			itemsCount ++;
-
-			if ( itemsCount === itemsTotal ) {
-
-				onDone( files, filesMap );
-
-			}
-
-		}
-
-		function handleEntry( entry ) {
-
-			if ( entry.isDirectory ) {
-
-				const reader = entry.createReader();
-				reader.readEntries( function ( entries ) {
-
-					for ( let i = 0; i < entries.length; i ++ ) {
-
-						handleEntry( entries[ i ] );
-
-					}
-
-					onEntryHandled();
-
-				} );
-
-			} else if ( entry.isFile ) {
-
-				entry.file( function ( file ) {
-
-					files.push( file );
-
-					filesMap[ entry.fullPath.slice( 1 ) ] = file;
-					onEntryHandled();
-
-				} );
-
-			}
-
-			itemsTotal ++;
-
-		}
-
-		for ( let i = 0; i < items.length; i ++ ) {
-
-			const item = items[ i ];
-
-			if ( item.kind === 'file' ) {
-
-				handleEntry( item.webkitGetAsEntry() );
-
-			}
-
-		}
-
-	}
-
-};
 
 export { Loader };
