@@ -15,8 +15,8 @@
     <div class="w-full text-center mt-2">
       <n-button size="small" type="primary" @click="handleNew">{{ t('layout.sider.script.New') }}</n-button>
     </div>
-
   </div>
+
   <n-result v-else status="418" title="Empty" :description="t('prompt[\'No object selected.\']')"/>
 
   <Script />
@@ -30,6 +30,7 @@ import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSigna
 import {SetScriptValueCommand, RemoveScriptCommand, AddScriptCommand} from "@/core/commands/Commands";
 import EsInput from "@/components/es/EsInput.vue";
 import Script from "@/components/code/Script.vue";
+import {Source} from "@/core/script/source.js";
 
 const isSelectObject3D = ref(false);
 const scripts = ref<IScript.IStruct[]>([]);
@@ -102,7 +103,7 @@ function handleNew() {
         return false;
       }
 
-      const script = {name: v.value, source: 'function update( event ) {}'};
+      const script = {name: v.value, source: Source};
       window.editor.execute(new AddScriptCommand(window.editor.selected, script));
     },
   })

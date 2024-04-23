@@ -9,12 +9,16 @@ let events = {
 	init: [],
 	start: [],
 	stop: [],
-	keydown: [],
-	keyup: [],
-	pointerdown: [],
-	pointerup: [],
-	pointermove: [],
-	update: []
+	beforeUpdate: [],
+	update: [],
+	afterUpdate: [],
+	beforeDestroy:[],
+	destroy: [],
+	onKeydown: [],
+	onKeyup: [],
+	onPointerdown: [],
+	onPointerup: [],
+	onPointermove: [],
 };
 let time:number, startTime:number, prevTime: number;
 
@@ -100,7 +104,7 @@ export class Player{
 		this.dom.removeEventListener( 'pointerup', onPointerUpFn );
 		this.dom.removeEventListener( 'pointermove', onPointerMoveFn );
 
-		this.dispatch( events.stop, arguments );
+		this.dispatch(events.stop, arguments);
 
 		this.renderer.setAnimationLoop(null);
 
@@ -133,15 +137,19 @@ export class Player{
 			init: [],
 			start: [],
 			stop: [],
-			keydown: [],
-			keyup: [],
-			pointerdown: [],
-			pointerup: [],
-			pointermove: [],
-			update: []
+			beforeUpdate: [],
+			update: [],
+			afterUpdate: [],
+			beforeDestroy:[],
+			destroy: [],
+			onKeydown: [],
+			onKeyup: [],
+			onPointerdown: [],
+			onPointerup: [],
+			onPointermove: [],
 		};
 
-		let scriptWrapParams = 'player,renderer,scene,camera';
+		let scriptWrapParams = 'renderer,scene,camera,controls';
 		const scriptWrapResultObj = {};
 
 		for (const eventKey in events) {
@@ -163,7 +171,7 @@ export class Player{
 
 			for (let i = 0; i < scripts.length; i++) {
 				const script = scripts[i];
-				const functions = (new Function(scriptWrapParams, script.source + '\nreturn ' + scriptWrapResult + ';').bind(object))(this, this.renderer, this.scene, this.camera);
+				const functions = (new Function(scriptWrapParams, script.source + '\nreturn ' + scriptWrapResult + ';').bind(object))(this.renderer, this.scene, this.camera,this.controls);
 
 				for (const name in functions) {
 					if (functions[name] === undefined) continue;
@@ -213,22 +221,24 @@ export class Player{
 
 	// 事件
 	onKeyDown(event:Event){
-		this.dispatch(events.keydown, event);
+		this.dispatch(events.onKeydown, event);
 	}
 	onKeyUp(event:Event) {
-		this.dispatch(events.keyup, event);
+		this.dispatch(events.onKeyup, event);
 	}
-	onPointerDown(event:Event) {
-		this.dispatch(events.pointerdown, event);
+	onPointerDown(event:MouseEvent) {
+		this.dispatch(events.onPointerdown, event);
 	}
-	onPointerUp(event:Event) {
-		this.dispatch( events.pointerup, event );
+	onPointerUp(event:MouseEvent) {
+		this.dispatch( events.onPointerup, event );
 	}
-	onPointerMove(event:Event) {
-		this.dispatch( events.pointermove, event );
+	onPointerMove(event:MouseEvent) {
+		this.dispatch( events.onPointermove, event );
 	}
 
 	animate() {
+		this.dispatch( events.beforeUpdate,arguments );
+
 		time = performance.now();
 
 		try {
@@ -242,6 +252,8 @@ export class Player{
 		this.renderer.render(this.scene as THREE.Scene, this.camera as THREE.Camera);
 
 		prevTime = time;
+
+		this.dispatch( events.afterUpdate,arguments );
 	}
 
 	render(time:number) {
@@ -250,6 +262,8 @@ export class Player{
 	}
 
 	dispose(){
+		this.dispatch(events.beforeDestroy,arguments);
+
 		this.renderer.dispose();
 
 		this.camera = undefined;
@@ -258,7 +272,6 @@ export class Player{
 
 		sceneResizeFn = undefined;
 
-
 		onKeyDownFn = undefined;
 		onKeyUpFn = undefined;
 		onPointerDownFn = undefined;
@@ -266,5 +279,7 @@ export class Player{
 		onPointerMoveFn = undefined;
 
 		animateFn = undefined;
+
+		this.dispatch(events.destroy,arguments);
 	}
 }
