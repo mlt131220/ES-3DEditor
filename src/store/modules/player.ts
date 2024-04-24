@@ -30,11 +30,11 @@ export const usePlayerStore = defineStore('player',()=>{
     /**
      * actions
      **/
-    const start = () => {
+    const start = (json = undefined) => {
         state.isPlaying = true;
         window.editor.history.historyDisabled = true;
 
-        player().start();
+        player().start(json || window.editor.toJSON());
     }
     const stop = () => {
         state.isPlaying = false;

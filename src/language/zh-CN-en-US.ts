@@ -381,6 +381,8 @@ export default {
 		'Please try again later!':"请稍后重试！",
 		'There are grammatical errors!':"存在语法错误！",
 		'Saved successfully!':"保存成功！",
+		'Parameter error!':"参数错误！",
+		"Parse failed":"解析失败",
 	},
 	/* 三维场景相关 */
 	scene:{

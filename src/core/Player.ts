@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
 import {VRButton} from "three/examples/jsm/webxr/VRButton.js";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import Helper from "@/core/script/Helper";
 
 let sceneResizeFn,onKeyDownFn,onKeyUpFn,onPointerDownFn,onPointerUpFn,onPointerMoveFn,animateFn;
 const loader = new THREE.ObjectLoader();
@@ -20,22 +21,27 @@ let events = {
 	onPointerup: [],
 	onPointermove: [],
 };
-let time:number, startTime:number, prevTime: number;
 
 export class Player{
 	private readonly renderer: THREE.WebGLRenderer;
-	private camera: THREE.PerspectiveCamera | undefined = undefined;
-	private scene: THREE.Scene | undefined = undefined;
-	controls:OrbitControls | undefined = undefined;
+	private camera: THREE.PerspectiveCamera | undefined;
+	private scene: THREE.Scene | undefined;
+	controls:OrbitControls | undefined;
+	clock:THREE.Clock = new THREE.Clock();
 	dom:HTMLDivElement;
 	private width: number;
 	private height: number;
 	private readonly vrButton: HTMLElement;
 
+	// animations
+	prevActionsInUse = 0;
+
 	constructor() {
 		this.renderer = this.initRender();
 
 		this.dom = document.getElementById("player") as HTMLDivElement;
+		// 设置 tabindex 使得 div 可以被 focus 到，才能响应键盘事件
+		//this.dom.tabIndex = -1;
 		this.dom.appendChild(this.renderer.domElement);
 
 		this.vrButton = VRButton.createButton(this.renderer);
@@ -87,8 +93,43 @@ export class Player{
 		this.renderer.setSize( width, height );
 	};
 
-	start(){
-		this.load(window.editor.toJSON());
+	setupPreview(){
+		this.setSize(this.dom.clientWidth, this.dom.clientHeight);
+
+		this.camera = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
+		this.camera.position.set(4.6, 0, 10);
+		this.camera.lookAt(new THREE.Vector3());
+		this.scene = new THREE.Scene();
+
+		this.loadDefaultEnvAndBackground();
+
+		this.controls = new OrbitControls(this.camera as THREE.PerspectiveCamera, this.renderer.domElement);
+		this.controls.enableDamping = true;
+		this.controls.dampingFactor = 0.03;
+
+		this.renderer.setAnimationLoop(animateFn);
+	}
+
+	/**
+	 * 加载环境和背景
+	 * @param definition 分辨率
+	 */
+	loadDefaultEnvAndBackground(definition = 1) {
+		window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (texture) => {
+			texture.mapping = THREE.EquirectangularReflectionMapping;
+			if(this.scene){
+				this.scene.environment = texture;
+				this.scene.background = texture;
+			}
+		})
+	}
+
+	start(json){
+		if(json === undefined) {
+			window.$message?.error(window.$t("prompt['Parse failed']"));
+			return;
+		}
+		this.load(json);
 		this.setSize(this.dom.clientWidth, this.dom.clientHeight);
 		this.play();
 
@@ -98,8 +139,8 @@ export class Player{
 	stop(){
 		if (this.renderer.xr.enabled) this.vrButton.remove();
 
-		this.dom.removeEventListener( 'keydown', onKeyDownFn );
-		this.dom.removeEventListener( 'keyup', onKeyUpFn );
+		window.removeEventListener( 'keydown', onKeyDownFn );
+		window.removeEventListener( 'keyup', onKeyUpFn );
 		this.dom.removeEventListener( 'pointerdown', onPointerDownFn );
 		this.dom.removeEventListener( 'pointerup', onPointerUpFn );
 		this.dom.removeEventListener( 'pointermove', onPointerMoveFn );
@@ -129,9 +170,11 @@ export class Player{
 
 		// 加入控制器
 		this.controls = new OrbitControls(this.camera as THREE.PerspectiveCamera, this.renderer.domElement);
-		// this.controls.target.set(0, 0, 0);
 		this.controls.enableDamping = true;
 		this.controls.dampingFactor = 0.03;
+
+		// 注册 Helper
+		const helper = new Helper(this.scene as THREE.Scene);
 
 		events = {
 			init: [],
@@ -149,7 +192,7 @@ export class Player{
 			onPointermove: [],
 		};
 
-		let scriptWrapParams = 'renderer,scene,camera,controls';
+		let scriptWrapParams = 'helper,renderer,scene,camera,controls,clock';
 		const scriptWrapResultObj = {};
 
 		for (const eventKey in events) {
@@ -171,7 +214,7 @@ export class Player{
 
 			for (let i = 0; i < scripts.length; i++) {
 				const script = scripts[i];
-				const functions = (new Function(scriptWrapParams, script.source + '\nreturn ' + scriptWrapResult + ';').bind(object))(this.renderer, this.scene, this.camera,this.controls);
+				const functions = (new Function(scriptWrapParams, script.source + '\nreturn ' + scriptWrapResult + ';').bind(object))(helper,this.renderer, this.scene, this.camera,this.controls,this.clock);
 
 				for (const name in functions) {
 					if (functions[name] === undefined) continue;
@@ -198,10 +241,8 @@ export class Player{
 	play() {
 		if (this.renderer.xr.enabled) this.dom.append(this.vrButton);
 
-		startTime = prevTime = performance.now();
-
-		this.dom.addEventListener('keydown', onKeyDownFn);
-		this.dom.addEventListener('keyup', onKeyUpFn);
+		window.addEventListener('keydown', onKeyDownFn);
+		window.addEventListener('keyup', onKeyUpFn);
 		this.dom.addEventListener('pointerdown', onPointerDownFn);
 		this.dom.addEventListener('pointerup', onPointerUpFn);
 		this.dom.addEventListener('pointermove', onPointerMoveFn);
@@ -239,10 +280,21 @@ export class Player{
 	animate() {
 		this.dispatch( events.beforeUpdate,arguments );
 
-		time = performance.now();
+		const delta = this.clock.getDelta();
+
+		const mixer = Helper.mixer;
+		if(mixer){
+			// @ts-ignore Animations
+			const actions = mixer.stats.actions;
+			if (actions.inUse > 0 || this.prevActionsInUse > 0) {
+				this.prevActionsInUse = actions.inUse;
+
+				mixer.update(delta);
+			}
+		}
 
 		try {
-			this.dispatch( events.update, { time: time - startTime, delta: time - prevTime } );
+			this.dispatch( events.update, { time: this.clock.elapsedTime, delta: delta } );
 		} catch (e: any) {
 			console.error((e.message || e), (e.stack || ''));
 		}
@@ -250,8 +302,6 @@ export class Player{
 		this.controls?.update();
 
 		this.renderer.render(this.scene as THREE.Scene, this.camera as THREE.Camera);
-
-		prevTime = time;
 
 		this.dispatch( events.afterUpdate,arguments );
 	}

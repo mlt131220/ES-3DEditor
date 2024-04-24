@@ -182,7 +182,7 @@ function editScript(object:Object3D, sc:IScript.IStruct | string) {
 function submit(e: Event) {
   e.stopPropagation();
 
-  console.log(monacoRef.value.editor.getModelMarkers())
+  // console.log(monacoRef.value.editor.getModelMarkers())
 
   if(monacoRef.value.editor.getModelMarkers().length > 0){
     window.$message?.error(t("prompt['There are grammatical errors!']"));

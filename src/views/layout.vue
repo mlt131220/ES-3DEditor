@@ -7,17 +7,10 @@ import {
   NLayoutContent,
   NLayoutFooter
 } from "naive-ui";
-import {useMessage, useNotification, useDialog, useLoadingBar} from 'naive-ui';
 import * as Layout from './layouts';
 import {useAddSignal} from "@/hooks/useSignal";
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
 import {usePlayerStore} from "@/store/modules/player";
-
-//反馈组件注册至全局
-window.$message = useMessage();
-window.$dialog = useDialog();
-window.$loadingBar = useLoadingBar();
-window.$notification = useNotification();
 
 const sceneInfoStore = useSceneInfoStore();
 const playerState = usePlayerStore();

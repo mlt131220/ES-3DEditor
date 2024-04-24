@@ -281,7 +281,6 @@ export class MenubarNetwork {
             })
 
             fetch(sceneInfo.zip).then(r => r.blob()).then(r => {
-                console.log(r.size)
                 if(r.size !== 0){
                     // 解压zip包
                     const esLoader = new EsLoader();

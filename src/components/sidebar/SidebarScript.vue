@@ -30,7 +30,7 @@ import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSigna
 import {SetScriptValueCommand, RemoveScriptCommand, AddScriptCommand} from "@/core/commands/Commands";
 import EsInput from "@/components/es/EsInput.vue";
 import Script from "@/components/code/Script.vue";
-import {Source} from "@/core/script/source.js";
+import {Source} from "@/core/script/Source.js";
 
 const isSelectObject3D = ref(false);
 const scripts = ref<IScript.IStruct[]>([]);

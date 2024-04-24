@@ -11,16 +11,15 @@ import {
 } from "naive-ui";
 import type { GlobalTheme } from 'naive-ui';
 import {Editor} from '@/core/Editor';
-import Layout from "@/views/layout.vue";
 import {useDrawingStore} from "@/store/modules/drawing";
 import {useGlobalConfigStore} from "@/store/modules/globalConfig";
 import {unzip} from "@/utils/common/pako";
 import {connectWebSocket} from "@/hooks/useWebSocket";
+import Index from "@/views/index.vue";
 
 //实例化编辑器
 const editor = new Editor();
 window.editor = editor; // 将编辑器暴露到控制台
-window.THREE = THREE;
 window.VRButton = VRButton;
 
 // 图纸相关状态存储
@@ -93,7 +92,7 @@ onMounted(async () => {
       <n-dialog-provider>
         <n-notification-provider placement="bottom">
           <n-message-provider>
-            <Layout></Layout>
+            <Index />
           </n-message-provider>
         </n-notification-provider>
       </n-dialog-provider>

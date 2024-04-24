@@ -5,11 +5,14 @@ import 'uno.css';
 
 import {setupI18n} from '@/language';
 import { naive } from './config/importNaiveUI';
+import {setupRouter} from "@/router";
 
 async function main() {
     const app = createApp(App);
 
     app.use(naive)
+
+    setupRouter(app);
 
     // 配置存储
     setupStore(app);
@@ -21,3 +24,7 @@ async function main() {
 }
 
 main();
+
+
+
+
