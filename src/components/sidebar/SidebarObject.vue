@@ -559,11 +559,10 @@ const handleUserDataClick = () => {
       </div>
     </div>
     <!-- shadow -->
-    <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
+    <div class="sider-scene-attr-item" v-if="objectDataVisible.castShadow">
       <span>{{ t("layout.sider.object.shadow") }}</span>
       <div>
-        <n-checkbox v-model:checked="objectData.castShadow" @update:checked="update('castShadow')"
-                    v-if="objectDataVisible.castShadow">{{ t("layout.sider.object.cast") }}
+        <n-checkbox v-model:checked="objectData.castShadow" @update:checked="update('castShadow')" >{{ t("layout.sider.object.cast") }}
         </n-checkbox>
         <n-checkbox v-model:checked="objectData.receiveShadow" @update:checked="update('receiveShadow')"
                     v-if="objectDataVisible.receiveShadow">
@@ -571,30 +570,34 @@ const handleUserDataClick = () => {
         </n-checkbox>
       </div>
     </div>
-    <!-- shadowBias -->
-    <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.object.shadowBias") }}</span>
-      <div>
-        <EsInputNumber v-model:value="objectData.shadow.bias" size="tiny" :show-button="false"
-                       :step="0.0001" @change="update('shadowBias')"/>
+
+    <template v-if="objectDataVisible.shadow">
+      <!-- shadowBias -->
+      <div class="sider-scene-attr-item">
+        <span>{{ t("layout.sider.object.shadowBias") }}</span>
+        <div>
+          <EsInputNumber v-model:value="objectData.shadow.bias" size="tiny" :show-button="false"
+                         :step="0.0001" @change="update('shadowBias')"/>
+        </div>
       </div>
-    </div>
-    <!-- shadowNormalBias -->
-    <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.object.shadowNormalBias") }}</span>
-      <div>
-        <EsInputNumber v-model:value="objectData.shadow.normalBias" size="tiny" :show-button="false"
-                       @change="update('shadowNormalBias')"/>
+      <!-- shadowNormalBias -->
+      <div class="sider-scene-attr-item">
+        <span>{{ t("layout.sider.object.shadowNormalBias") }}</span>
+        <div>
+          <EsInputNumber v-model:value="objectData.shadow.normalBias" size="tiny" :show-button="false"
+                         @change="update('shadowNormalBias')"/>
+        </div>
       </div>
-    </div>
-    <!-- shadowRadius -->
-    <div class="sider-scene-attr-item" v-if="objectDataVisible.shadow">
-      <span>{{ t("layout.sider.object.shadowRadius") }}</span>
-      <div>
-        <EsInputNumber v-model:value="objectData.shadow.radius" size="tiny" :show-button="false"
-                       @change="update('shadowRadius')"/>
+      <!-- shadowRadius -->
+      <div class="sider-scene-attr-item">
+        <span>{{ t("layout.sider.object.shadowRadius") }}</span>
+        <div>
+          <EsInputNumber v-model:value="objectData.shadow.radius" size="tiny" :show-button="false"
+                         @change="update('shadowRadius')"/>
+        </div>
       </div>
-    </div>
+    </template>
+
     <!-- visible -->
     <div class="sider-scene-attr-item">
       <span>{{ t("layout.sider.object.visible") }}</span>

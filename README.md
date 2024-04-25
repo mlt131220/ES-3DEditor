@@ -9,7 +9,7 @@
 
 ![Static Badge](https://img.shields.io/badge/Vue-3.3.4-green)
 ![Static Badge](https://img.shields.io/badge/NaiveUI-2.34.4-green)
-![Static Badge](https://img.shields.io/badge/ThreeJS-r154-8732D7)
+![Static Badge](https://img.shields.io/badge/ThreeJS-r163-8732D7)
 ![Static Badge](https://img.shields.io/badge/Cesium-1.107.0-8732D7)
 ![Static Badge](https://img.shields.io/badge/UnoCSS-0.46.5-8732D7)
 <br />
@@ -25,6 +25,7 @@
 - [x] WebSocket 协作；
 - [x] 又拍云 USS 存储；
 - [x] Golang + MySQL 后端支持;
+- [x] 运行脚本;
 - [ ] WebGPU 支持 (:tada:开发阶段)；
 - [ ] 数据组件 (暂定支持：API接口、WebSocket，不支持：前端SQL、GraphQL)；
 - [ ] VUE / React 组件动态导入为面板UI；
@@ -49,6 +50,7 @@
 |   |-- hooks                        // 钩子函数
 |   |-- http                         // 封装请求
 |   |-- language                     // i18n 国际化配置文件夹
+|   |-- router                       // 路由配置
 |   |-- store                        // Pinia 状态管理
 |   |-- utils                        // 全局公用函数目录    
 |   |-- views                        // vue页面            

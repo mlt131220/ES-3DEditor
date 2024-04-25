@@ -8,6 +8,16 @@ interface IPlayerState {
     isPlaying: boolean;
 }
 
+/* ------------20240425: 在store外定义并实例化，避免Player成员被Proxy污染---------- */
+let _player: Player;
+function initPlayer() {
+    if (!_player) {
+        _player = new Player();
+    }
+
+    return _player;
+}
+
 /**
  * websocket相关
  */
@@ -21,10 +31,7 @@ export const usePlayerStore = defineStore('player',()=>{
      * getter
      **/
     const player = (): Player => {
-        if (!state.playerInstance) {
-            state.playerInstance = new Player();
-        }
-        return state.playerInstance as Player;
+        return initPlayer();
     };
 
     /**

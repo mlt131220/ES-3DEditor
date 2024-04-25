@@ -1,10 +1,12 @@
 import * as THREE from 'three';
-import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
-import {VRButton} from "three/examples/jsm/webxr/VRButton.js";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
+import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
+import {XRButton} from "three/examples/jsm/webxr/XRButton.js";
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import Helper from "@/core/script/Helper";
+import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
 
-let sceneResizeFn,onKeyDownFn,onKeyUpFn,onPointerDownFn,onPointerUpFn,onPointerMoveFn,animateFn;
+let sceneResizeFn, onKeyDownFn, onKeyUpFn, onPointerDownFn, onPointerUpFn, onPointerMoveFn, animateFn;
 const loader = new THREE.ObjectLoader();
 let events = {
 	init: [],
@@ -13,7 +15,7 @@ let events = {
 	beforeUpdate: [],
 	update: [],
 	afterUpdate: [],
-	beforeDestroy:[],
+	beforeDestroy: [],
 	destroy: [],
 	onKeydown: [],
 	onKeyup: [],
@@ -22,13 +24,13 @@ let events = {
 	onPointermove: [],
 };
 
-export class Player{
-	private readonly renderer: THREE.WebGLRenderer;
+export class Player {
+	private readonly renderer: THREE.WebGLRenderer | WebGPURenderer;
 	private camera: THREE.PerspectiveCamera | undefined;
 	private scene: THREE.Scene | undefined;
-	controls:OrbitControls | undefined;
-	clock:THREE.Clock = new THREE.Clock();
-	dom:HTMLDivElement;
+	controls: OrbitControls | undefined;
+	clock: THREE.Clock = new THREE.Clock();
+	dom: HTMLDivElement;
 	private width: number;
 	private height: number;
 	private readonly vrButton: HTMLElement;
@@ -44,7 +46,8 @@ export class Player{
 		//this.dom.tabIndex = -1;
 		this.dom.appendChild(this.renderer.domElement);
 
-		this.vrButton = VRButton.createButton(this.renderer);
+		// @ts-ignore
+		this.vrButton = XRButton.createButton(this.renderer);
 
 		this.width = 500;
 		this.height = 500;
@@ -64,24 +67,38 @@ export class Player{
 		animateFn = this.animate.bind(this);
 	}
 
-	initRender(){
-		const renderer = new THREE.WebGLRenderer( { antialias: true } );
-		renderer.setPixelRatio( window.devicePixelRatio );
+	initRender() {
+		let renderer: THREE.WebGLRenderer | WebGPURenderer;
+		if (WebGPU.isAvailable()) {
+			console.log("使用WebGPU渲染器");
+			renderer = new WebGPURenderer({antialias: true});
+			renderer.toneMapping = THREE.ACESFilmicToneMapping;
+			renderer.toneMappingExposure = 1;
+		} else {
+			renderer = new THREE.WebGLRenderer({
+				antialias: true,
+				preserveDrawingBuffer: false
+			});
+		}
+
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.xr.enabled = true;
 
 		return renderer;
 	}
 
-	setScene(value:THREE.Scene){
+	setScene(value: THREE.Scene) {
+		console.log(value)
 		this.scene = value;
 	};
 
-	setCamera(value:THREE.PerspectiveCamera) {
+	setCamera(value: THREE.PerspectiveCamera) {
 		this.camera = value;
 		this.camera.aspect = this.width / this.height;
 		this.camera.updateProjectionMatrix();
 	};
 
-	setSize(width:number, height:number) {
+	setSize(width: number, height: number) {
 		this.width = width;
 		this.height = height;
 
@@ -90,10 +107,10 @@ export class Player{
 			this.camera.updateProjectionMatrix();
 		}
 
-		this.renderer.setSize( width, height );
+		this.renderer.setSize(width, height);
 	};
 
-	setupPreview(){
+	setupPreview() {
 		this.setSize(this.dom.clientWidth, this.dom.clientHeight);
 
 		this.camera = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
@@ -117,15 +134,15 @@ export class Player{
 	loadDefaultEnvAndBackground(definition = 1) {
 		window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (texture) => {
 			texture.mapping = THREE.EquirectangularReflectionMapping;
-			if(this.scene){
+			if (this.scene) {
 				this.scene.environment = texture;
 				this.scene.background = texture;
 			}
 		})
 	}
 
-	start(json){
-		if(json === undefined) {
+	start(json) {
+		if (json === undefined) {
 			window.$message?.error(window.$t("prompt['Parse failed']"));
 			return;
 		}
@@ -133,23 +150,23 @@ export class Player{
 		this.setSize(this.dom.clientWidth, this.dom.clientHeight);
 		this.play();
 
-		useAddSignal("sceneResize",sceneResizeFn);
+		useAddSignal("sceneResize", sceneResizeFn);
 	}
 
-	stop(){
+	stop() {
 		if (this.renderer.xr.enabled) this.vrButton.remove();
 
-		window.removeEventListener( 'keydown', onKeyDownFn );
-		window.removeEventListener( 'keyup', onKeyUpFn );
-		this.dom.removeEventListener( 'pointerdown', onPointerDownFn );
-		this.dom.removeEventListener( 'pointerup', onPointerUpFn );
-		this.dom.removeEventListener( 'pointermove', onPointerMoveFn );
+		window.removeEventListener('keydown', onKeyDownFn);
+		window.removeEventListener('keyup', onKeyUpFn);
+		this.dom.removeEventListener('pointerdown', onPointerDownFn);
+		this.dom.removeEventListener('pointerup', onPointerUpFn);
+		this.dom.removeEventListener('pointermove', onPointerMoveFn);
 
 		this.dispatch(events.stop, arguments);
 
 		this.renderer.setAnimationLoop(null);
 
-		useRemoveSignal("sceneResize",sceneResizeFn);
+		useRemoveSignal("sceneResize", sceneResizeFn);
 
 		this.camera = undefined;
 		this.scene = undefined;
@@ -159,11 +176,11 @@ export class Player{
 	load(json) {
 		const project = json.project;
 
-		if ( project.vr !== undefined ) this.renderer.xr.enabled = project.vr;
-		if ( project.shadows !== undefined ) this.renderer.shadowMap.enabled = project.shadows;
-		if ( project.shadowType !== undefined ) this.renderer.shadowMap.type = project.shadowType;
-		if ( project.toneMapping !== undefined ) this.renderer.toneMapping = project.toneMapping;
-		if ( project.toneMappingExposure !== undefined ) this.renderer.toneMappingExposure = project.toneMappingExposure;
+		if (project.vr !== undefined) this.renderer.xr.enabled = project.vr;
+		if (project.shadows !== undefined) this.renderer.shadowMap.enabled = project.shadows;
+		if (project.shadowType !== undefined) this.renderer.shadowMap.type = project.shadowType;
+		if (project.toneMapping !== undefined) this.renderer.toneMapping = project.toneMapping;
+		if (project.toneMappingExposure !== undefined) this.renderer.toneMappingExposure = project.toneMappingExposure;
 
 		this.setScene(loader.parse(json.scene) as THREE.Scene);
 		this.setCamera(loader.parse(json.camera) as THREE.PerspectiveCamera);
@@ -183,7 +200,7 @@ export class Player{
 			beforeUpdate: [],
 			update: [],
 			afterUpdate: [],
-			beforeDestroy:[],
+			beforeDestroy: [],
 			destroy: [],
 			onKeydown: [],
 			onKeyup: [],
@@ -214,13 +231,13 @@ export class Player{
 
 			for (let i = 0; i < scripts.length; i++) {
 				const script = scripts[i];
-				const functions = (new Function(scriptWrapParams, script.source + '\nreturn ' + scriptWrapResult + ';').bind(object))(helper,this.renderer, this.scene, this.camera,this.controls,this.clock);
+				const functions = (new Function(scriptWrapParams, script.source + '\nreturn ' + scriptWrapResult + ';').bind(object))(helper, this.renderer, this.scene, this.camera, this.controls, this.clock);
 
 				for (const name in functions) {
 					if (functions[name] === undefined) continue;
 
 					if (events[name] === undefined) {
-						console.warn( 'Player: Event type not supported (', name, ')' );
+						console.warn('Player: Event type not supported (', name, ')');
 						continue;
 					}
 
@@ -232,8 +249,8 @@ export class Player{
 		this.dispatch(events.init, arguments);
 	}
 
-	dispatch(array: any[], event:any) {
-		for (let i = 0, l = array.length; i < l; i ++) {
+	dispatch(array: any[], event: any) {
+		for (let i = 0, l = array.length; i < l; i++) {
 			array[i](event);
 		}
 	}
@@ -252,38 +269,42 @@ export class Player{
 		this.renderer.setAnimationLoop(animateFn);
 	}
 
-	setPixelRatio(pixelRatio:number) {
+	setPixelRatio(pixelRatio: number) {
 		this.renderer.setPixelRatio(pixelRatio);
 	};
 
-	sceneResize(){
+	sceneResize() {
 		this.setSize(this.dom.clientWidth, this.dom.clientHeight);
 	}
 
 	// 事件
-	onKeyDown(event:Event){
+	onKeyDown(event: Event) {
 		this.dispatch(events.onKeydown, event);
 	}
-	onKeyUp(event:Event) {
+
+	onKeyUp(event: Event) {
 		this.dispatch(events.onKeyup, event);
 	}
-	onPointerDown(event:MouseEvent) {
+
+	onPointerDown(event: MouseEvent) {
 		this.dispatch(events.onPointerdown, event);
 	}
-	onPointerUp(event:MouseEvent) {
-		this.dispatch( events.onPointerup, event );
+
+	onPointerUp(event: MouseEvent) {
+		this.dispatch(events.onPointerup, event);
 	}
-	onPointerMove(event:MouseEvent) {
-		this.dispatch( events.onPointermove, event );
+
+	onPointerMove(event: MouseEvent) {
+		this.dispatch(events.onPointermove, event);
 	}
 
 	animate() {
-		this.dispatch( events.beforeUpdate,arguments );
+		this.dispatch(events.beforeUpdate, arguments);
 
 		const delta = this.clock.getDelta();
 
 		const mixer = Helper.mixer;
-		if(mixer){
+		if (mixer) {
 			// @ts-ignore Animations
 			const actions = mixer.stats.actions;
 			if (actions.inUse > 0 || this.prevActionsInUse > 0) {
@@ -294,7 +315,7 @@ export class Player{
 		}
 
 		try {
-			this.dispatch( events.update, { time: this.clock.elapsedTime, delta: delta } );
+			this.dispatch(events.update, {time: this.clock.elapsedTime, delta: delta});
 		} catch (e: any) {
 			console.error((e.message || e), (e.stack || ''));
 		}
@@ -303,16 +324,16 @@ export class Player{
 
 		this.renderer.render(this.scene as THREE.Scene, this.camera as THREE.Camera);
 
-		this.dispatch( events.afterUpdate,arguments );
+		this.dispatch(events.afterUpdate, arguments);
 	}
 
-	render(time:number) {
-		this.dispatch( events.update, { time: time * 1000, delta: 0 /* TODO */ } );
+	render(time: number) {
+		this.dispatch(events.update, {time: time * 1000, delta: 0 /* TODO */});
 		this.renderer.render(this.scene as THREE.Scene, this.camera as THREE.Camera);
 	}
 
-	dispose(){
-		this.dispatch(events.beforeDestroy,arguments);
+	dispose() {
+		this.dispatch(events.beforeDestroy, arguments);
 
 		this.renderer.dispose();
 
@@ -330,6 +351,6 @@ export class Player{
 
 		animateFn = undefined;
 
-		this.dispatch(events.destroy,arguments);
+		this.dispatch(events.destroy, arguments);
 	}
 }
