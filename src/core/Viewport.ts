@@ -1,8 +1,9 @@
 import * as THREE from 'three';
-import {ViewHelper as ViewHelperBase} from 'three/examples/jsm/helpers/ViewHelper.js';
-import {EditorControls} from "@/core/EditorControls";
-
+// import {ViewHelper as ViewHelperBase} from 'three/examples/jsm/helpers/ViewHelper.js';
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
+
+import {EditorControls} from "@/core/EditorControls";
+import ViewCube from "./Viewport.Cube";
 import {SetPositionCommand} from "@/core/commands/SetPositionCommand";
 import {SetRotationCommand} from "@/core/commands/SetRotationCommand";
 import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
@@ -12,6 +13,7 @@ import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
 import { XR } from './Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
 import { ViewportPathtracer } from './Viewport.Pathtracer';
+import {TweenManger} from "@/core/utils/TweenManager";
 
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
@@ -136,8 +138,6 @@ export class Viewport {
     }
 
     protected initModules() {
-        this.modules["viewHelper"] = new ViewHelperBase(this.camera, this.container);
-
         let objectPositionOnDown = new THREE.Vector3();
         let objectRotationOnDown = new THREE.Euler();
         let objectScaleOnDown = new THREE.Vector3();
@@ -201,7 +201,13 @@ export class Viewport {
             useDispatchSignal("cameraChanged", this.camera);
             useDispatchSignal("refreshSidebarObject3D", this.camera);
         });
-        this.modules["viewHelper"].controls = this.modules["controls"];
+
+        // this.modules["viewHelper"] = new ViewHelperBase(this.camera, this.container);
+        // this.modules["viewHelper"].controls = this.modules["controls"];
+        this.modules["viewCube"] = new ViewCube(this.camera,this.container,this.modules["controls"]);
+
+        // 补间动画
+        this.modules["tweenManager"] = new TweenManger();
 
         // 注册signal
         this.modules["registerSignal"] = new ViewportSignals(this);
@@ -321,16 +327,20 @@ export class Viewport {
         }
 
         // View Helper
-        if (this.modules["viewHelper"].animating) {
-            this.modules["viewHelper"].update(delta);
-            needsUpdate = true;
-        }
+        // if (this.modules["viewHelper"].animating) {
+        //     this.modules["viewHelper"].update(delta);
+        //     needsUpdate = true;
+        // }
+
+        this.modules["viewCube"].update();
 
         if (this.renderer?.xr.isPresenting) {
             needsUpdate = true;
         }
 
         if (needsUpdate) this.render();
+
+        this.modules["tweenManager"].update(!needsUpdate);
 
         this.updatePT();
     }
@@ -371,7 +381,7 @@ export class Viewport {
             this.renderer.autoClear = false;
             if (this.grid.visible) this.renderer.render(this.grid, this.camera);
             if (this.showSceneHelpers) this.renderer.render(this.sceneHelpers, this.camera);
-            if (!this.renderer.xr.isPresenting) this.modules["viewHelper"].render(this.renderer);
+            // if (!this.renderer.xr.isPresenting) this.modules["viewHelper"].render(this.renderer);
             this.renderer.autoClear = true;
         }
 

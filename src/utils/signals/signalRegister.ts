@@ -94,6 +94,9 @@ const editorSignals: SignalRegister = {
 const viewportSignals:SignalRegister = {
 	loadDefaultEnvAndBackground:new Signal(),
 	IFCPropertiesVisible:new Signal(),
+	// 补间动画管理
+	tweenAdd:new Signal(),
+	tweenRemove:new Signal(),
 }
 
 /**

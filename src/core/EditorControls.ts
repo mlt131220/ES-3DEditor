@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 class EditorControls extends THREE.EventDispatcher {
 	public enabled:boolean;
-	private center:THREE.Vector3;
+	center:THREE.Vector3;
 	protected panSpeed:number;
 	protected zoomSpeed:number;
 	protected rotationSpeed:number;
@@ -44,7 +44,7 @@ class EditorControls extends THREE.EventDispatcher {
 		this.focus = function ( target ) {
 			let distance;
 			box.setFromObject( target );
-			if ( box.isEmpty() === false ) {
+			if ( !box.isEmpty() ) {
 				box.getCenter( center );
 				distance = box.getBoundingSphere( sphere ).radius;
 			} else {
