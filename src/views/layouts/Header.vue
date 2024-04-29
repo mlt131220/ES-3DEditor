@@ -1,38 +1,22 @@
 <script lang="ts" setup>
-import {h, ref, computed, onMounted} from 'vue';
-import {NMenu, NGradientText} from 'naive-ui';
+import {h, computed, onMounted} from 'vue';
 import {
   FileRegular as File,
-  EditRegular as Edit,
   Link as Help,
   Mixcloud
 } from '@vicons/fa';
 import {renderIcon} from "@/utils/common/render";
+import NavigationOperation from '@/components/header/NavigationOperation.vue';
 import RightOperation from '@/components/header/RightOperation.vue';
 import {MenubarFile} from "@/utils/menubar/menubar-file";
-import {MenubarEdit} from '@/utils/menubar/menubar-edit';
 import {MenubarNetwork} from "@/utils/menubar/menubar-network";
-import {useAddSignal} from "@/hooks/useSignal";
 import {t} from "@/language";
 
-let menubarFile, menubarEdit, menubarNetwork;
-const undoDisabled = ref(true);
-const redoDisabled = ref(true);
-const title = ref(import.meta.env.VITE_GLOB_APP_TITLE);
-
-function historyChanged() {
-  undoDisabled.value = window.editor.history.undos.length === 0;
-  redoDisabled.value = window.editor.history.redos.length === 0;
-}
+let menubarFile, menubarNetwork;
 
 onMounted(() => {
   menubarFile = new MenubarFile();
-  menubarEdit = new MenubarEdit();
   menubarNetwork = new MenubarNetwork();
-
-  useAddSignal("historyChanged", historyChanged);
-
-  historyChanged();
 })
 
 const menuOptions = computed(() => {
@@ -149,39 +133,6 @@ const menuOptions = computed(() => {
       ]
     },
     {
-      label: t("layout.header.Edit"),
-      key: 'tools-edit',
-      icon: renderIcon(Edit),
-      children: [
-        {
-          label: t("layout.header['Undo(Ctrl+Z)']"),
-          key: 'tools-edit-undo',
-          disabled: undoDisabled.value
-        },
-        {
-          label: t("layout.header['Redo(Ctrl+Y)']"),
-          key: 'tools-edit-redo',
-          disabled: redoDisabled.value
-        },
-        {
-          label: t("layout.header['Clear History']"),
-          key: 'tools-edit-clearHistory'
-        },
-        {
-          label: t("layout.header.Center"),
-          key: 'tools-edit-center'
-        },
-        {
-          label: t("layout.header.Clone"),
-          key: 'tools-edit-clone'
-        },
-        {
-          label: t("layout.header['Delete(Del)']"),
-          key: 'tools-edit-delete'
-        }
-      ]
-    },
-    {
       label: t("layout.header.Help"),
       key: 'tools-help',
       icon: renderIcon(Help),
@@ -221,24 +172,27 @@ function handlerMenuSelect(key: string) {
     case 'network':
       menubarNetwork.init(keyArr[2]);
       break;
-    case "edit":
-      menubarEdit.init(keyArr[2]);
-      break;
   }
 }
 </script>
 
 <template>
-  <n-gradient-text :size="24" type="success">{{ title }}</n-gradient-text>
+  <div class="flex items-center">
+    <img src="/static/images/logo/logo.svg" alt="logo" class="w-40px h-40px">
 
-  <n-menu value="" mode="horizontal" dropdown-placement="top-start" :options="menuOptions"
-          @update:value="handlerMenuSelect"/>
+    <n-menu mode="horizontal" dropdown-placement="top-start" :options="menuOptions"
+            @update:value="handlerMenuSelect"/>
+  </div>
 
-  <RightOperation/>
+  <NavigationOperation />
+
+  <RightOperation />
 </template>
 
 <style lang="less" scoped>
 .n-menu.n-menu--horizontal {
+  width: auto;
+
   :deep(.n-menu-item-content) {
     padding: 0 0.5rem;
   }

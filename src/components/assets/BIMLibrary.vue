@@ -2,7 +2,7 @@
   <div id="bim-library">
     <n-alert type="info" :show-icon="false" :bordered="false" class="mb-2 mx-2">
       <n-button quaternary round type="warning" @click="showHistoryModal = true">
-        {{ t("layout.footer.History") }}
+        {{ t("layout.sider.History") }}
       </n-button>
 
       <n-button quaternary circle type="primary" @click="showBIMUpload = true">
@@ -49,7 +49,7 @@
     </div>
 
     <n-modal v-model:show="showHistoryModal" class="!w-60vw" preset="dialog" display-directive="show"
-             :title="t('bim[\'BIM lightweight\']')+t('layout.footer.History')">
+             :title="t('bim[\'BIM lightweight\']')+t('layout.sider.History')">
       <n-data-table class="mt-20px" size="small" :loading="tableLoading"
                     :columns="columns" :data="objectList"></n-data-table>
       <div class="flex justify-end mt-15px">

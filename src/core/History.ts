@@ -1,8 +1,11 @@
 import * as Commands from './commands/Commands';
 import {useSignal} from "@/hooks/useSignal";
 import type { Object3D } from 'three';
+import {usePlayerStoreWithOut} from "@/store/modules/player";
 
 const {dispatch:useDispathSignal,setActive} = useSignal();
+
+const playerStore = usePlayerStoreWithOut();
 
 interface Undos{
 	id:number,
@@ -25,15 +28,12 @@ class History {
 	public redos:Array<Undos>;
 	protected lastCmdTime:number;
 	protected idCounter:number;
-	public historyDisabled:boolean;
 
 	constructor() {
 		this.undos = [];
 		this.redos = [];
 		this.lastCmdTime = Date.now();
 		this.idCounter = 0;
-
-		this.historyDisabled = false;
 	}
 
 	execute( cmd, optionalName ) {
@@ -78,8 +78,8 @@ class History {
 	}
 
 	undo() {
-		if ( this.historyDisabled ) {
-			window.$message?.warning(window.$t("core.history['Undo/Redo disabled while scene is playing']"))
+		if (playerStore.isPlaying) {
+			window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
 			return;
 		}
 
@@ -100,8 +100,8 @@ class History {
 	}
 
 	redo():Undos |undefined {
-		if ( this.historyDisabled ) {
-			window.$message?.warning(window.$t("core.history['Undo/Redo disabled while scene is playing']"))
+		if (playerStore.isPlaying) {
+			window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
 			return;
 		}
 
@@ -182,8 +182,8 @@ class History {
 	}
 
 	goToState( id:number ) {
-		if ( this.historyDisabled ) {
-			window.$message?.warning(window.$t("core.history['Undo/Redo disabled while scene is playing']"))
+		if (playerStore.isPlaying) {
+			window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
 			return;
 		}
 

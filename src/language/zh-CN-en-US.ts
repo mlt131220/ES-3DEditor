@@ -22,12 +22,9 @@ export default {
 			'Get The Project From The Server': '从服务器获取工程',
 			'Update Project To Server': '更新工程至服务器',
 			/* File 下的选项 End */
-			Edit: '编辑',
 			/* Edit 下的选项 */
 			'Undo(Ctrl+Z)': '撤销(Ctrl+Z)',
 			'Redo(Ctrl+Y)': '重做(Ctrl+Y)',
-			'Clear History': '清空历史记录',
-			Center: '居中',
 			Clone: '拷贝',
 			'Delete(Del)': '删除(Del)',
 			/* Edit 下的选项 End */
@@ -182,6 +179,11 @@ export default {
 				seconds: '秒',
 				render: '渲染',
 			},
+			History: '历史记录',
+			history:{
+				persistent: '本地存储',
+				'Clear History': '清空历史记录',
+			},
 			Object: '对象',
 			object:{
 				type: '类型',
@@ -323,8 +325,6 @@ export default {
 			Scale: '缩放',
 			Undo: '撤销',
 			Focus: '聚焦',
-			History: '历史记录',
-			persistent: '本地存储',
 		},
 		assets:{
 			'Resource library':"资源库",
@@ -339,10 +339,7 @@ export default {
 		editor:{
 			"Default Camera":"默认相机",
 			"Default Scene":"默认场景",
-		},
-		history: {
-			'Undo/Redo disabled while scene is playing': '当场景正在播放时禁用 撤销/重做.',
-		},
+		}
 	},
 	other: {
 		warning: '警告',
@@ -361,6 +358,7 @@ export default {
 	/* 提示 */
 	prompt: {
 		'Disable this function in the demonstration environment!':'演示环境下禁用该功能！',
+		'Disable when the scene is playing':'当场景正在播放时禁用',
 		'Drag or double click to add to scene':'拖拽或双击添加至场景中',
 		'No object selected.': '未选择任何对象。',
 		'No geometric data for the time being':'暂无几何数据',

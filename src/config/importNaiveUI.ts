@@ -37,7 +37,7 @@ import {
     NH3,
     NSlider,
     NSwitch,
-    NList, NListItem, NSpin,NAlert,NModal,NDataTable,NPagination,NResult
+    NList, NListItem, NSpin,NAlert,NModal,NDataTable,NPagination,NResult,NMenu
 } from 'naive-ui';
 
 export const naive = create({
@@ -76,6 +76,6 @@ export const naive = create({
         NP,
         NH3,
         NSlider,
-        NSwitch, NList, NListItem, NSpin,NAlert,NModal,NDataTable,NPagination,NResult
+        NSwitch, NList, NListItem, NSpin,NAlert,NModal,NDataTable,NPagination,NResult,NMenu
     ],
 });

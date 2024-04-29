@@ -1,14 +1,12 @@
 <script lang="ts" setup>
-import {ref, reactive, onMounted} from 'vue';
+import {reactive, onMounted} from 'vue';
 import {setLocale, t} from "@/language";
 import {Cogs} from '@vicons/fa';
 import {useGlobalConfigStore} from "@/store/modules/globalConfig";
-import {useAddSignal, useDispatchSignal} from "@/hooks/useSignal";
+import {useDispatchSignal} from "@/hooks/useSignal";
 import {RemoveObjectCommand} from '@/core/commands/RemoveObjectCommand';
-import {useThemeVars} from 'naive-ui';
 import Tip from '@/components/header/Tip.vue';
 
-const themeVars = useThemeVars();
 const {theme, setTheme, locale} = useGlobalConfigStore();
 
 const OtherForm = reactive({
@@ -32,35 +30,6 @@ function shortcutsKeyup(event, varName) {
   if (!isValidKeyBinding(event.key)) return;
   OtherForm[varName] = event.key;
   window.editor.config.setKey(`settings/shortcuts/${varName}`, event.key.toLowerCase());
-}
-
-//历史记录 -> 本地存储
-const persistent: boolean = ref(window.editor.config.getKey('settings/history'));
-const historyList = ref<Array<{ name: string, id: string, opacity?: number }>>([]);
-const selectedHistory = ref<{ name: string, id: string, opacity?: number }>({name: "", id: ''});
-
-// 历史记录 -> 本地存储 change
-function persistentChange(value) {
-  window.editor.config.setKey('settings/history', value);
-  if (value) {
-    const tip = t("prompt['The history will be preserved across sessions. This can have an impact on performance when working with textures.']");
-    window.$message?.warning(tip);
-
-    const lastUndoCmd = window.editor.history.undos[window.editor.history.undos.length - 1];
-    const lastUndoId = (lastUndoCmd !== undefined) ? lastUndoCmd.id : 0;
-    window.editor.history.enableSerialization(lastUndoId);
-  } else {
-    useDispatchSignal("historyChanged");
-  }
-}
-
-let ignoreObjectSelectedSignal = false;
-
-function historyItemClick(item) {
-  selectedHistory.value = item;
-  ignoreObjectSelectedSignal = true;
-  window.editor.history.goToState(parseInt(selectedHistory.value.id));
-  ignoreObjectSelectedSignal = false;
 }
 
 onMounted(() => {
@@ -102,46 +71,7 @@ onMounted(() => {
         break;
     }
   })
-
-  refreshUI();
-  signalsAdd();
 })
-
-const refreshUI = () => {
-  const options: any = [];
-
-  ((objects) => {
-    for (let i = 0, l = objects.length; i < l; i++) {
-      const object = objects[i];
-      options.push({
-        name: object.name,
-        id: object.id
-      });
-    }
-  })(window.editor.history.undos);
-
-  ((objects) => {
-    for (let i = objects.length - 1; i >= 0; i--) {
-      const object = objects[i];
-      options.push({
-        name: object.name,
-        id: object.id,
-        opacity: 0.3
-      });
-    }
-  })(window.editor.history.redos);
-
-  historyList.value = options;
-}
-
-function signalsAdd() {
-  useAddSignal("editorCleared", refreshUI);
-  useAddSignal("historyChanged", refreshUI);
-  useAddSignal("historyChanged", (cmd) => {
-    if (ignoreObjectSelectedSignal) return;
-    selectedHistory.value = cmd !== undefined ? cmd : {name: "", id: ''};
-  });
-}
 </script>
 
 <template>
@@ -151,7 +81,7 @@ function signalsAdd() {
                                                                                 src="https://upyun.mhbdng.cn/assets/logo/upyun-logo.png"
                                                                                 alt="又拍云">&nbsp;&nbsp;提供CDN加速/云存储服务</a>
     &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
-    ES 3DEditor · Version 0.8.0 · Made by 二三 &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<p><a href="https://beian.miit.gov.cn/" target="_blank">X ICP备xxxxxx号</a></p>
+    ES 3DEditor · Version 0.8.0 · Made by 二三 &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<p><a href="https://beian.miit.gov.cn/" target="_blank">X ICP备xxxxxxx号-1</a></p>
   </div>
   <n-popover trigger="click" placement="top-end" class="layout-footer-n-popover">
     <template #trigger>
@@ -229,27 +159,6 @@ function signalsAdd() {
                  @keyup="shortcutsKeyup($event, 'focus')"/>
       </n-form-item>
     </n-form>
-
-    <n-divider/>
-
-    <div class="setting-history">
-      <span>{{ t("layout.footer.History") }}</span>
-      <div class="flex items-center">
-        <n-switch v-model:value="persistent" @update:value="persistentChange">
-          <template #checked>{{ t("layout.footer.persistent") }}</template>
-          <template #unchecked>{{ t("layout.footer.persistent") }}</template>
-        </n-switch>
-      </div>
-    </div>
-    <n-card
-        :content-style="`padding: 0;height:10rem;overflow-y:auto;flex:unset;background-color:${themeVars.inputColorDisabled};`">
-      <n-list hoverable clickable>
-        <n-list-item v-for="(item, index) in historyList" :key="index" @click="historyItemClick(item)"
-                     :style="`background-color:${selectedHistory.id !== item.id ? themeVars.inputColorDisabled : themeVars.hoverColor};padding: 0.2rem 0.6rem;`">
-          {{ item.name }}
-        </n-list-item>
-      </n-list>
-    </n-card>
   </n-popover>
 </template>
 
@@ -261,13 +170,6 @@ function signalsAdd() {
 .n-button {
   width: 1.7rem;
   height: 1.7rem;
-}
-
-.setting-history {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  align-items: center;
 }
 </style>
 

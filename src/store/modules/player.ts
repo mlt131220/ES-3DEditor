@@ -4,7 +4,6 @@ import {reactive, toRefs} from "vue";
 import {Player} from "@/core/Player";
 
 interface IPlayerState {
-    playerInstance: Player | null;
     isPlaying: boolean;
 }
 
@@ -23,7 +22,6 @@ function initPlayer() {
  */
 export const usePlayerStore = defineStore('player',()=>{
     const state = reactive<IPlayerState>({
-        playerInstance: null,
         isPlaying: false,
     })
 
@@ -39,13 +37,11 @@ export const usePlayerStore = defineStore('player',()=>{
      **/
     const start = (json = undefined) => {
         state.isPlaying = true;
-        window.editor.history.historyDisabled = true;
 
         player().start(json || window.editor.toJSON());
     }
     const stop = () => {
         state.isPlaying = false;
-        window.editor.history.historyDisabled = false;
 
         player().stop();
     }

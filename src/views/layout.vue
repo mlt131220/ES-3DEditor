@@ -51,9 +51,7 @@ onMounted(() => {
             :native-scrollbar="false"
             show-trigger="bar"
             trigger-style="right:0;left:auto;transform: translateX(28px);"
-            collapsed-trigger-style="left:0;right:auto;transform: rotate(0deg);"
-            bordered
-        >
+            collapsed-trigger-style="left:0;right:auto;transform: rotate(0deg);">
           <Layout.Assets/>
         </n-layout-sider>
 
@@ -93,10 +91,11 @@ onMounted(() => {
 
   .n-layout {
     &-header {
-      height: 2.1rem;
-      line-height: 2.1rem;
-      display: flex;
+      height: var(--header-height);
+      line-height: var(--header-height);
       padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
     }
 
@@ -106,15 +105,15 @@ onMounted(() => {
     }
 
     &-center-layout {
-      top: 2.1rem;
-      bottom: 3.2rem;
+      top: var(--header-height);
+      bottom: var(--footer-height);
       width: 100%;
-      height: calc(100vh - 2.1rem - 2.2rem);
+      height: calc(100vh - var(--header-height) - var(--footer-height));
       overflow: hidden;
     }
 
     &-footer {
-      height: 2.2rem;
+      height: var(--footer-height);
       padding: 0 1rem;
       display: flex;
       align-items: center;

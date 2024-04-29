@@ -6,6 +6,15 @@
       <n-tab-pane name="library" :tab="t('layout.assets[\'Resource library\']')" display-directive="show">
         <AssetsLibrary></AssetsLibrary>
       </n-tab-pane>
+      <n-tab-pane name="drawing" :tab="t('layout.assets[\'Drawing library\']')" display-directive="show">
+        <DrawingLibrary></DrawingLibrary>
+      </n-tab-pane>
+      <n-tab-pane name="industrial" :tab="t('layout.assets[\'Scene library\']')" display-directive="show">
+        <SceneLibrary></SceneLibrary>
+      </n-tab-pane>
+      <n-tab-pane name="cad" tab="CAD" display-directive="show">
+        <CadLibrary />
+      </n-tab-pane>
       <n-tab-pane name="bim" tab="BIM" display-directive="show">
         <BIMLibrary />
       </n-tab-pane>
@@ -16,13 +25,17 @@
 <script lang="ts" setup>
 import {t} from "@/language";
 import AssetsLibrary from "@/components/assets/AssetsLibrary.vue";
+import DrawingLibrary from "@/components/assets/DrawingLibrary.vue";
+import SceneLibrary from "@/components/assets/SceneLibrary.vue";
 import BIMLibrary from "@/components/assets/BIMLibrary.vue";
 import SceneTree from "@/components/tree/SceneTree.vue";
+import CadLibrary from "@/components/assets/CadLibrary.vue";
 </script>
 
 <style scoped lang="less">
 #layout-assets {
-  height: calc(100vh - 2.1rem - 2.2rem);
+  height: calc(100vh - var(--header-height) - var(--footer-height));
+  border-right: 1px solid var(--n-border-color);
 
   .layout-assets-tab-pane{
     height: calc(100% - var(--n-pane-padding-top));

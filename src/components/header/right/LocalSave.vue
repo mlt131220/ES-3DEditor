@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import {Save} from "@vicons/carbon";
 import {t} from "@/language";
 import {zip} from "@/utils/common/pako";
 import {useDrawingStore} from "@/store/modules/drawing";
@@ -30,7 +31,14 @@ function saveState() {
 </script>
 
 <template>
-  <n-button :loading="loading" size="small" type="primary" @click="saveState">{{ t("layout.header['Save locally']") }}</n-button>
+  <n-button :loading="loading" @click="saveState">
+    <template #icon>
+      <n-icon>
+        <Save />
+      </n-icon>
+    </template>
+    {{ t("layout.header['Save locally']") }}
+  </n-button>
 </template>
 
 <style lang="less" scoped>

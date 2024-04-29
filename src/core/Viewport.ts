@@ -115,7 +115,9 @@ export class Viewport {
 
         this.pathtracer = new ViewportPathtracer(this.renderer);
 
-        this.container.appendChild(this.renderer.domElement);
+        // this.container.appendChild(this.renderer.domElement);
+        // 在container中最前面插入渲染器的dom元素
+        this.container.insertBefore(this.renderer.domElement, this.container.firstChild);
 
         this.loadDefaultEnvAndBackground();
 
@@ -263,7 +265,7 @@ export class Viewport {
     }
 
     onMouseDown(event: MouseEvent) {
-        // event.preventDefault();
+        event.preventDefault();
         const array = this.getMousePosition(this.container, event.clientX, event.clientY);
         onDownPosition.fromArray(array);
         mouseUpFn = this.onMouseUp.bind(this);

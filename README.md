@@ -91,5 +91,12 @@ Tips:
 ## 感谢🌹🌹🌹
 如果本项目帮助到了你，请在[这里](https://github.com/mlt131220/ES-3DEditor/issues/2)留下你的网址，让更多的人看到。您的回复将会是我继续更新维护下去的动力。
 
+## 权益声明
+本项目基于Apache-2.0协议开源，任何人可以免费使用，但任何情况下，请不要用于商业用途,商用用途请联系作者获得授权。
+
+## 免责声明
+本项目仅供学习交流使用，请勿用于任何非法用途，否则后果自负。
+作者对使用本项目(原始项目或二次创作后)产生的任何问题不承担任何法律责任。
+
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=mlt131220/ES-3DEditor&type=Date)](https://star-history.com/#mlt131220/ES-3DEditor&Date)

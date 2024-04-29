@@ -1,11 +1,19 @@
 <template>
-  <n-button :loading="loading" size="small" type="info" @click="handleCodeOut">{{ t("layout.header['Code out']") }}</n-button>
+  <n-button :loading="loading" @click="handleCodeOut">
+    <template #icon>
+      <n-icon>
+        <Code />
+      </n-icon>
+    </template>
+    {{ t("layout.header['Code out']") }}
+  </n-button>
 </template>
 
 <script setup lang="ts">
 import {ref} from "vue";
 import {LoadingManager,FileLoader} from "three";
 import {zipSync, strToU8} from 'three/examples/jsm/libs/fflate.module.js';
+import {Code} from "@vicons/carbon";
 import {t} from "@/language";
 import {downloadBlob} from "@/utils/common/utils";
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
@@ -51,7 +59,7 @@ function handleCodeOut(){
   });
 
   const loader = new FileLoader(manager);
-  loader.load('/release/index.html', function (content: any) {
+  loader.load('/release/index.html', function (content: string) {
     content = content.replace('{{ title }}', title);
     const includes = [];
     content = content.replace('{{ includes }}', includes.join('\n\t\t'));
@@ -71,13 +79,13 @@ function handleCodeOut(){
     content = content.replace('<edit_button />', editButton);
     toZip['index.html'] = strToU8(content);
   });
-  loader.load('/release/js/app.js', function (content) {
+  loader.load('/release/js/app.js', function (content:string) {
     toZip['js/app.js'] = strToU8(content);
   });
-  loader.load('/release/lib/three.module.js', function (content) {
+  loader.load('/release/lib/three.module.js', function (content:string) {
     toZip['js/three.module.js'] = strToU8(content);
   });
-  loader.load('/release/js/VRButton.js', function (content) {
+  loader.load('/release/js/VRButton.js', function (content:string) {
     toZip['js/VRButton.js'] = strToU8(content);
   });
 }

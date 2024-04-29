@@ -94,7 +94,6 @@ class ViewCubeController {
     private readonly camera: THREE.Camera;
     private readonly containerDom: HTMLDivElement;
     private viewCubeDom: HTMLDivElement;
-    private style: HTMLStyleElement;
     private readonly mat: THREE.Matrix4;
     private controls: EditorControls;
 
@@ -102,10 +101,9 @@ class ViewCubeController {
         this.camera = camera;
         this.controls = controls;
 
-        const { container,viewCube,style } = this.createViewCube(parentDom || document.body);
+        const { container,viewCube } = this.createViewCube(parentDom || document.body);
         this.containerDom = container;
         this.viewCubeDom = viewCube;
-        this.style = style;
 
         this.mat = new THREE.Matrix4();
     }
@@ -120,14 +118,14 @@ class ViewCubeController {
 
     createViewCube(parentDom: HTMLDivElement) {
         const container = document.createElement("div");
-        container.id = "view-cube-container";
+        container.id = "es-view-cube-container";
 
         const viewCube = document.createElement("div");
-        viewCube.className = "view-cube";
+        viewCube.className = "es-view-cube";
 
         Object.values(ViewCubeController.CubeOrientation).forEach((orientation) => {
             const face = document.createElement("div");
-            face.className = `view-cube-face view-cube-face--${orientation}`;
+            face.className = `es-view-cube-face es-view-cube-face--${orientation}`;
             face.innerText = ViewCubeController.CubeText[orientation];
             face.addEventListener("click", () => {
                 this.tweenCamera(ViewCubeController.ORIENTATIONS[orientation]);
@@ -140,78 +138,7 @@ class ViewCubeController {
         /*---------20240428:直接加在parentDom下无法触发点击事件-----------*/
         (parentDom.parentElement as HTMLDivElement).appendChild(container);
 
-        // 创建css标签写入head
-        const style = document.createElement("style");
-        style.type = "text/css";
-        style.innerHTML = `
-            #view-cube-container {
-               width: 120px;
-               height: 120px;
-               margin: 10px;
-               perspective: 600px;
-               position: absolute;
-               right: 0;
-               bottom: 0;
-               z-index: 9999;
-               display: block;
-            }
-
-            .view-cube {
-               width: 100px;
-               height: 100px;
-               position: relative;
-               transform-style: preserve-3d;
-               transform: translateZ(-300px);
-               text-transform: uppercase;
-            }
-            
-            .view-cube-face {
-               display: flex;
-               justify-content: center;
-               align-items: center;
-               position: absolute;
-               width: 120px;
-               height: 120px;
-               border: 1px dashed #808080;
-               line-height: 100px;
-               font-size: 25px;
-               font-weight: bold;
-               color: #7d7d7d;
-               text-align: center;
-               background: #fff;
-               transition: all 0.1s;
-               cursor: pointer;
-               user-select: none;
-            }
-            
-            .view-cube-face:hover {
-               background: #adadad;
-               color: #fff;
-            }
-
-            .view-cube-face--top {
-               transform: rotateY(0deg) rotateX(90deg) translateZ(-60px);
-            }
-            .view-cube-face--bottom {
-               transform: rotateX(270deg) translateZ(-60px);
-            }
-            .view-cube-face--left {
-               transform: rotateY(-90deg) rotateX(180deg) rotateZ(0deg) translateZ(-60px);
-            }
-            .view-cube-face--right {
-               transform: rotateY(90deg) rotateX(180deg) rotateZ(0deg) translateZ(-60px);
-            }
-            .view-cube-face--front {
-               transform: rotateX(180deg) translateZ(-60px);
-            }
-            .view-cube-face--back {
-               transform: rotateZ(180deg) translateZ(-60px);
-            }
-        `
-
-        document.getElementsByTagName("head").item(0)?.appendChild(style);
-
-        return {container,viewCube,style};
+        return {container,viewCube};
     }
 
     getCameraCSSMatrix(matrix) {
@@ -276,11 +203,8 @@ class ViewCubeController {
     }
 
     dispose() {
-        TWEEN.removeAll();
-
         if (this.containerDom) {
             this.containerDom.remove();
-            this.style.remove();
         }
     }
 }

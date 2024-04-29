@@ -1,3 +1,8 @@
+:root {
+    --header-height: 50px;
+    --footer-height: 40px;
+}
+
 * {
     padding: 0;
     margin: 0;
