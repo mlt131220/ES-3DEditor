@@ -4,6 +4,9 @@ import LocalSave from '@/components/header/right/LocalSave.vue';
 import CodeOut from '@/components/header/right/CodeOut.vue';
 import XR from '@/components/header/right/XR.vue';
 import {useDispatchSignal} from "@/hooks/useSignal";
+import Theme from "@/components/header/right/Theme.vue";
+import Locale from "@/components/header/right/Locale.vue";
+import Color from "@/components/header/right/Color.vue";
 
 const supportXr = ref(false);
 
@@ -31,6 +34,15 @@ onMounted(() => {
 
     <!-- XR -->
     <XR v-if="supportXr" />
+
+    <!--  国际化  -->
+    <Locale />
+
+    <!--  主题  -->
+    <Theme />
+
+    <!--  主色调  -->
+    <Color />
   </div>
 </template>
 

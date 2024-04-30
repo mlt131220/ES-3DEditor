@@ -1,0 +1,60 @@
+[
+  {
+    "CMYK": [56, 0, 19, 11],
+    "RGB": [99, 226, 183],
+    "hex": "#63E2B7",
+    "hexHover": "#63E2B7",
+    "hexPressed": "#63E2B7",
+    "hexSuppl": "#63E2B7",
+    "name": "\u9e23\u7fe0\u67f3",
+    "pinyin": "mingcuiliu"
+  },
+  {
+    "CMYK": [
+      95,
+      25,
+      20,
+      4
+    ],
+    "RGB": [
+      21,
+      139,
+      184
+    ],
+    "hex": "#158bb8",
+    "name": "\u9e22\u5c3e\u84dd",
+    "pinyin": "yuanweilan"
+  },
+  {
+    "CMYK": [
+      0,
+      84,
+      82,
+      0
+    ],
+    "RGB": [
+      243,
+      59,
+      31
+    ],
+    "hex": "#f33b1f",
+    "name": "\u6781\u5149\u7ea2",
+    "pinyin": "jiguanghong"
+  },
+  {
+    "CMYK": [
+      1,
+      28,
+      89,
+      0
+    ],
+    "RGB": [
+      246,
+      196,
+      48
+    ],
+    "hex": "#f6c430",
+    "name": "\u9e66\u9e49\u51a0\u9ec4",
+    "pinyin": "yingwuguanhuang"
+  }
+]

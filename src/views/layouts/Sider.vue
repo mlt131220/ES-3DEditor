@@ -19,13 +19,13 @@ const data = ref([
   {name:"render",icon:{text:'Renderer config',component:ChessBoard},component:SidebarRender},
   {name:"scene",icon:{text:'Scene config',component:GlobeAsia},component:SidebarScene},
   {name:"history",icon:{text:'History',component:ResultOld},component:SidebarHistory},
+  {name:"drawing",icon:{text:'Scene drawing',component:ImageRegular},component:SidebarDrawing},
   // 以下为动态项
   {name:"object",icon:{text:'Object',component:Uncharted},component:SidebarObject},
   {name:"geometry",icon:{text:'Geometry',component:DrawPolygon},component:SidebarGeometry},
   {name:"material",icon:{text:'Material',component:Delicious},component:SidebarMaterial},
   {name:"animations",icon:{text:'Animations',component:Draw},component:SidebarAnimations},
   {name:"script",icon:{text:'Script',component:Script},component:SidebarScript},
-  {name:"drawing",icon:{text:'Drawing',component:ImageRegular},component:SidebarDrawing},
 ])
 
 function iconTabName(text:string,icon:any){
@@ -53,7 +53,7 @@ function iconTabName(text:string,icon:any){
 
   // 配置按功能类型（常驻/动态） 分割
   :deep(.n-tabs-wrapper){
-    .n-tabs-tab-wrapper:nth-child(5){
+    .n-tabs-tab-wrapper:nth-child(6){
       margin-top: 10px;
       border-top: 1px solid var(--n-tab-border-color);
     }

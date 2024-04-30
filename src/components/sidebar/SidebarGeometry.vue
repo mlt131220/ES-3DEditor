@@ -100,7 +100,7 @@ const update = (method: string) => {
           </template>
           {{ geometryData.uuid }}
         </n-tooltip>
-        <n-button size="small" quaternary circle type="warning" v-if="geometryData.uuid" @click="update('uuid')">
+        <n-button size="small" quaternary circle type="primary" v-if="geometryData.uuid" @click="update('uuid')">
           <template #icon>
             <n-icon size="16">
               <ReloadCircleOutline/>

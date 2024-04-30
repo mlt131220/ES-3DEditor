@@ -93,7 +93,7 @@ onMounted(() => {
     &-header {
       height: var(--header-height);
       line-height: var(--header-height);
-      padding: 0 1rem;
+      padding: 0 0.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;

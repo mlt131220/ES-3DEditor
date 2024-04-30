@@ -59,6 +59,17 @@
                      :show-button="false" :min="0" :max="0.1" :decimal="3"
                      @change="onFogSettingsChanged"/>
     </div>
+
+    <!-- 网格 -->
+    <n-form-item :label="t('layout.sider.sceneConfig.Grid')">
+      <n-switch size="small" v-model:value="grid"
+                @update:value="useDispatchSignal('showGridChanged', grid)"/>
+    </n-form-item>
+    <!-- 辅助 -->
+    <n-form-item :label="t('layout.sider.sceneConfig.Helpers')">
+      <n-switch size="small" v-model:value="helpers"
+                @update:value="useDispatchSignal('showHelpersChanged',helpers)"/>
+    </n-form-item>
   </n-form>
 </template>
 
@@ -78,7 +89,6 @@ const backgroundEquirectangularTexture = ref({});
 const backgroundBlurriness = ref(0);
 const backgroundIntensity = ref(1);
 const backgroundRotation = ref(0);
-
 //环境
 const environmentSelect = ref("None");
 const environmentTexture = ref({})
@@ -88,6 +98,10 @@ const fogColor = ref("");
 const fogNear = ref(0.10);
 const fogFar = ref(50.00);
 const fogDensity = ref(0.05);
+// 网格
+const grid = ref(true);
+// 辅助
+const helpers = ref(true);
 
 onMounted(async () => {
   await nextTick();

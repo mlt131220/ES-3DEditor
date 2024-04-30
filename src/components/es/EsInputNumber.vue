@@ -1,16 +1,21 @@
 <template>
   <n-input-number ref="inRef" v-model:value="esNumber" :step="step" :min="min" :max="max" v-bind="attrs"
                   @update:value="handlerChange" @mousedown.stop="onMouseDown">
-    <template #suffix v-if="unit !== null">{{ unit }}</template>
+    <template #suffix v-if="unit !== null">
+      <n-text type="success">
+        {{ unit }}
+      </n-text>
+    </template>
   </n-input-number>
 </template>
 
 <script lang="ts" setup>
-import {ref, useAttrs, onMounted, watch} from "vue";
-import {NInputNumber, useThemeVars} from 'naive-ui';
+import {ref, useAttrs, onMounted, watch,computed} from "vue";
+import {NInputNumber} from 'naive-ui';
+import {useGlobalConfigStore} from "@/store/modules/globalConfig";
 
-const themeVars = useThemeVars();
-const primaryColor = themeVars.value.primaryColor;
+const globalConfigStore = useGlobalConfigStore();
+const primaryColor = computed(() => (globalConfigStore.mainColor as IConfig.Color).hex);
 
 const attrs = useAttrs();
 let props = withDefaults(defineProps<{
@@ -131,7 +136,7 @@ function onMouseUp(event) {
     }
   }
 
-  :deep(.n-input__input-el), :deep(.n-input__suffix) {
+  :deep(.n-input__input-el){
     color: v-bind(primaryColor) !important;
     cursor: ns-resize;
   }

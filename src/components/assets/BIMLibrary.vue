@@ -1,7 +1,7 @@
 <template>
   <div id="bim-library">
     <n-alert type="info" :show-icon="false" :bordered="false" class="mb-2 mx-2">
-      <n-button quaternary round type="warning" @click="showHistoryModal = true">
+      <n-button quaternary round type="primary" @click="showHistoryModal = true">
         {{ t("layout.sider.History") }}
       </n-button>
 

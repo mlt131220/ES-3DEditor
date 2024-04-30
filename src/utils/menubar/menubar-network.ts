@@ -220,7 +220,7 @@ export class MenubarNetwork {
                             {
                                 title: window.$t('other.Action'),
                                 key: 'actions',
-                                width: 140,
+                                width: 180,
                                 render(row) {
                                     return h(
                                         "div",
@@ -238,6 +238,14 @@ export class MenubarNetwork {
                                                     onClick: () => getScene(toRaw(row))
                                                 },
                                                 {default: () => window.$t('other.ok')}
+                                            ),
+                                            h(
+                                                NButton,
+                                                {
+                                                    size: 'small',
+                                                    onClick: () => previewScene(toRaw(row))
+                                                },
+                                                {default: () => window.$t('layout.header.Preview')}
                                             ),
                                             h(
                                                 NButton,
@@ -295,6 +303,12 @@ export class MenubarNetwork {
                 }
             })
             return;
+        }
+
+        //预览场景
+        const previewScene = (sceneInfo) => {
+            // 新窗口打开
+            window.open(window.location.origin + "/#/preview/" + sceneInfo.id, "ES 3D Editor");
         }
 
         //删除场景

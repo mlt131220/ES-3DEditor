@@ -11,6 +11,7 @@ import RightOperation from '@/components/header/RightOperation.vue';
 import {MenubarFile} from "@/utils/menubar/menubar-file";
 import {MenubarNetwork} from "@/utils/menubar/menubar-network";
 import {t} from "@/language";
+import Logo from "@/components/header/Logo.vue";
 
 let menubarFile, menubarNetwork;
 
@@ -148,7 +149,7 @@ const menuOptions = computed(() => {
           label: () => h('a', {
             href: "https://github.com/mlt131220",
             target: '_blank'
-          }, t("layout.header['Author GitHub']")),
+          }, t("layout.header.Author")),
           key: 'tools-help-author-github',
         },
         {
@@ -178,7 +179,7 @@ function handlerMenuSelect(key: string) {
 
 <template>
   <div class="flex items-center">
-    <img src="/static/images/logo/logo.svg" alt="logo" class="w-40px h-40px">
+    <Logo class="w-36px h-36px" />
 
     <n-menu mode="horizontal" dropdown-placement="top-start" :options="menuOptions"
             @update:value="handlerMenuSelect"/>

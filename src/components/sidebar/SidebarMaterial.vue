@@ -265,7 +265,7 @@ const handleUserDataClick = () => {
           </template>
           {{ objectData.uuid }}
         </n-tooltip>
-        <n-button size="small" quaternary circle type="warning" v-if="objectData.uuid" @click="newUUID">
+        <n-button size="small" quaternary circle type="primary" v-if="objectData.uuid" @click="newUUID">
           <template #icon>
             <n-icon size="16">
               <ReloadCircleOutline/>
@@ -320,7 +320,7 @@ const handleUserDataClick = () => {
 
     <!-- iridescenceThicknessMax -->
     <SidebarMaterialRangeValueProperty property="iridescenceThicknessRange" name="Thin-Film Thickness"
-                                          :isMin="false" :range="[0, Infinity]" unit="nm" :step="10"/>
+                                       :isMin="false" :range="[0, Infinity]" unit="nm" :step="10"/>
 
     <!-- sheen -->
     <SidebarMaterialNumberProperty property="sheen" name="Sheen" :range="[0, 1]"/>
@@ -348,7 +348,7 @@ const handleUserDataClick = () => {
 
     <!-- depth packing 深度包装 -->
     <SidebarMaterialConstantProperty property="depthPacking" name="Depth Packing"
-                                        :options="[{ label: 'Basic', value: [THREE.BasicDepthPacking] }, { label: 'RGBA', value: [THREE.RGBADepthPacking] }]"/>
+                                     :options="[{ label: 'Basic', value: [THREE.BasicDepthPacking] }, { label: 'RGBA', value: [THREE.RGBADepthPacking] }]"/>
 
     <!-- map 贴图 -->
     <SidebarMaterialMapProperty property="map" name="Map"/>

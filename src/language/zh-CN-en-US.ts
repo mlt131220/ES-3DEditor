@@ -21,6 +21,7 @@ export default {
 			'Save To The Server As A New Project': '作为新工程保存至服务器',
 			'Get The Project From The Server': '从服务器获取工程',
 			'Update Project To Server': '更新工程至服务器',
+			Preview: '预览',
 			/* File 下的选项 End */
 			/* Edit 下的选项 */
 			'Undo(Ctrl+Z)': '撤销(Ctrl+Z)',
@@ -68,15 +69,20 @@ export default {
 			/* Help 下的选项 */
 			Help: '帮助',
 			Document:"文档",
-			'Author GitHub': '作者GitHub',
+			'Author': '作者',
 			'Project Link': '项目地址',
-			/* 右侧操作 */
+			/* 中间快捷操作 */
 			Fullscreen: '全屏',
 			'Exit fullscreen': '退出全屏',
 			Play: '启动',
 			Stop: '停止',
+			/* 右侧操作 */
 			'Save locally': '本地保存',
 			'Code out':"出码",
+			"Use system theme":"跟随系统",
+			Undertint: '浅色',
+			Dark: '深色',
+			'Main color': '主色调',
 		},
 		scene: {
 			toolbar: {
@@ -172,6 +178,8 @@ export default {
 				Background: '背景',
 				Environment: '环境',
 				Fog: '雾',
+				Grid: '网格',
+				Helpers: '辅助',
 				Video: '视频',
 				resolution: '分辨率',
 				"frame rate":"帧率",
@@ -300,36 +308,31 @@ export default {
 				'Please enter the script name': '请输入脚本名称',
 				'The script name already exists': '脚本名称已存在',
 			},
-			Drawing:"图纸",
+			'Scene drawing':"场景图纸",
 			drawing:{
 				'Click to select or drag the drawing to this area': '点击选择或拖拽图纸到此区域',
 			}
 		},
-		footer: {
-			'Basic Setting': '基础设置',
-			Theme: '主题',
-			"Use system theme":"跟随系统",
-			Light: '浅色',
-			Dark: '深色',
-			Language: '语言',
-			'Please enter the server address': '请输入服务器地址',
-			'Export Pricision': '输出精度',
-			'Other Setting': '其他设置',
-			Viewport: '视窗',
-			Grid: '网格',
-			Helpers: '辅助',
+		assets:{
+			'Resource library':"资源库",
+			'Drawing library':"图纸库",
+			'Scene library':"场景库",
+		}
+	},
+	setting:{
+		'Setting': '设置',
+		Shortcuts: '快捷键',
+		shortcuts:{
 			'Please press a key': '请按下一个键位',
-			Shortcuts: '快捷键',
 			Translate: '移动',
 			Rotate: '旋转',
 			Scale: '缩放',
 			Undo: '撤销',
 			Focus: '聚焦',
 		},
-		assets:{
-			'Resource library':"资源库",
-			'Drawing library':"图纸库",
-			'Scene library':"场景库",
+		'System Setting':"系统设置",
+		system:{
+			'No system Settings are available': "暂无系统设置项"
 		}
 	},
 	core: {
@@ -353,7 +356,8 @@ export default {
 		Loading:"请稍后",
 		Load:"加载",
 		'Query failed':"查询失败",
-		"Under development":"开发中"
+		"Under development":"开发中",
+		'Related document':"相关文档"
 	},
 	/* 提示 */
 	prompt: {

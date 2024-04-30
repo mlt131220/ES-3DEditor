@@ -1,4 +1,6 @@
 <template>
+  <EsDocument url="http://editor-doc.mhbdng.cn/core/script.html" />
+
   <div v-if="isSelectObject3D">
     <n-list hoverable clickable>
       <n-list-item v-for="(script,index) in scripts" :key="index">
@@ -25,12 +27,14 @@
 <script setup lang="ts">
 import {onBeforeUnmount, onMounted, ref, toRaw, h} from "vue";
 import {NInput} from "naive-ui";
+import {Link} from "@vicons/carbon";
 import {t} from "@/language";
 import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
 import {SetScriptValueCommand, RemoveScriptCommand, AddScriptCommand} from "@/core/commands/Commands";
 import EsInput from "@/components/es/EsInput.vue";
 import Script from "@/components/code/Script.vue";
 import {Source} from "@/core/script/Source.js";
+import EsDocument from "@/components/es/EsDocument.vue";
 
 const isSelectObject3D = ref(false);
 const scripts = ref<IScript.IStruct[]>([]);

@@ -4,7 +4,7 @@ import { createI18n } from 'vue-i18n';
 import {useGlobalConfigStoreWithOut} from "@/store/modules/globalConfig";
 import {useDispatchSignal} from "@/hooks/useSignal";
 
-const {locale,setLocale:setGlobalLocale} = useGlobalConfigStoreWithOut();
+const globalConfigStore = useGlobalConfigStoreWithOut();
 
 //引入同级目录下所有语言文件
 const modules = (import.meta as any).glob('./*.ts', {eager: true});
@@ -91,7 +91,7 @@ const recursionSetLeaf = (obj:LangObj) =>{
 //注册i8n实例并引入语言文件
 const i18n = createI18n({
     legacy: false,
-    locale: locale,
+    locale: globalConfigStore.locale,
     messages: getLangAll(),
     sync: true
 })
@@ -112,8 +112,8 @@ export function cpt(key: string): ComputedRef<string> {
     return computed(() => i18n.global.t(key));
 }
 
-export function setLocale(locale: 'zh-CN' | 'en-US') {
+export function setLocale(locale: IConfig.Locale) {
     i18n.global.locale.value = locale;
-    setGlobalLocale(locale)
+    globalConfigStore.setLocale(locale)
     useDispatchSignal("changeLocaleLanguage",locale)
 }

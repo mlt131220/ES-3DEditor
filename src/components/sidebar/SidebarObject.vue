@@ -408,7 +408,7 @@ const handleUserDataClick = () => {
           </template>
           {{ objectData.uuid }}
         </n-tooltip>
-        <n-button size="small" quaternary circle type="warning" v-if="objectData.uuid" @click="update('uuid')">
+        <n-button size="small" quaternary circle type="primary" v-if="objectData.uuid" @click="update('uuid')">
           <template #icon>
             <n-icon size="16">
               <ReloadCircleOutline />

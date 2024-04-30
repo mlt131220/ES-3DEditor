@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, onMounted} from 'vue';
+import {computed, onMounted, provide} from 'vue';
 import * as THREE from 'three';
 import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
 import {
@@ -7,9 +7,8 @@ import {
   NMessageProvider,
   NLoadingBarProvider,
   NDialogProvider,
-  NNotificationProvider, useOsTheme,darkTheme
+  NNotificationProvider,GlobalThemeOverrides
 } from "naive-ui";
-import type { GlobalTheme } from 'naive-ui';
 import {Editor} from '@/core/Editor';
 import {useDrawingStore} from "@/store/modules/drawing";
 import {useGlobalConfigStore} from "@/store/modules/globalConfig";
@@ -27,9 +26,23 @@ const drawingStore = useDrawingStore();
 
 // 全局配置相关
 const globalConfigStore = useGlobalConfigStore();
-const osThemeRef = useOsTheme()
-const configTheme = computed(() => {
-  return globalConfigStore.theme === 'osTheme' ? (osThemeRef.value === 'dark' ? darkTheme : null) : globalConfigStore.theme === 'lightTheme'? null : darkTheme;
+
+const themeOverrides= computed<GlobalThemeOverrides>(() => {
+  const mainColor = globalConfigStore.mainColor as IConfig.Color;
+
+  return {
+    common: {
+      primaryColor: mainColor.hex,
+      primaryColorHover: mainColor.hexHover,
+      primaryColorPressed: mainColor.hexPressed,
+      primaryColorSuppl: mainColor.hexSuppl,
+      successColor: mainColor.hex,
+      successColorHover: mainColor.hexHover,
+      successColorPressed: mainColor.hexPressed,
+      successColorSuppl: mainColor.hexSuppl,
+      fontWeightStrong: '600'
+    }
+  }
 })
 
 onMounted(async () => {
@@ -87,7 +100,7 @@ onMounted(async () => {
 
 <template>
   <!-- 调整 naive-ui 的字重配置 -->
-  <n-config-provider :theme="configTheme as GlobalTheme" :theme-overrides="{ common: { fontWeightStrong: '600' } }">
+  <n-config-provider :theme="globalConfigStore.getProviderTheme()" :theme-overrides="themeOverrides">
     <n-loading-bar-provider>
       <n-dialog-provider>
         <n-notification-provider placement="bottom">
