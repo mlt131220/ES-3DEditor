@@ -140,7 +140,7 @@ const menuOptions = computed(() => {
       children: [
         {
           label: () => h('a', {
-            href: "//editor-doc.mhbdng.cn",
+            href: "http://editor-doc.mhbdng.cn",
             target: '_blank'
           }, t("layout.header.Document")),
           key: 'tools-help-doc',

@@ -313,6 +313,11 @@ export class MenubarNetwork {
 
         //删除场景
         const deleteScene = (id) => {
+            if (demoEnv) {
+                window.$message?.error(window.$t("prompt['Disable this function in the demonstration environment!']"));
+                return;
+            }
+
             window.$dialog.warning({
                 title: window.$t('other.warning'),
                 content: window.$t("prompt['Are you sure to delete the scene?']"),
