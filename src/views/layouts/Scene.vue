@@ -23,10 +23,10 @@ const bimInfo = ref({})
 //监听视窗变化（节流）
 let timer: NodeJS.Timeout | null = null;
 
-function onViewPortResize() {
+function onViewPortResize(width: number, height: number) {
   if (timer) return;
   timer = setTimeout(function () {
-    useDispatchSignal("sceneResize");
+    useDispatchSignal("sceneResize",width,height);
     timer = null;
   }, 10)
 }
@@ -100,7 +100,7 @@ onMounted(async () => {
   await nextTick();
 
   const resizeObserver = new ResizeObserver(() => {
-    onViewPortResize();
+    onViewPortResize(viewportRef.value.offsetWidth, viewportRef.value.offsetHeight);
   });
   resizeObserver.observe(viewportRef.value);
 

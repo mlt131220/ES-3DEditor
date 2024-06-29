@@ -1,6 +1,6 @@
 <template>
   <div id="preview" class="w-full h-full">
-<!--    <Layout.Header class="preview-header"/>-->
+    <!--    <Layout.Header class="preview-header"/>-->
 
     <div id="player" class="w-full h-full"></div>
   </div>
@@ -13,6 +13,7 @@ import {t} from "@/language";
 import {EsLoader} from "@/utils/esloader/EsLoader";
 import {fetchGetOneScene} from "@/http/api/scenesZip";
 import {usePlayerStore} from "@/store/modules/player";
+import {useDispatchSignal} from "@/hooks/useSignal";
 
 const route = useRoute()
 const playerState = usePlayerStore();
@@ -50,10 +51,15 @@ function getScene(sceneInfo){
       const esLoader = new EsLoader();
       esLoader.unpack(r as Blob).then((sceneJson) => {
         notice.content = window.$t("scene['Parsing to editor']");
-        /*加载到场景中*/
-        playerState.start(sceneJson)
 
-        notice.destroy();
+        /*加载到场景中*/
+        window.editor.fromJSON(sceneJson).then(() => {
+          useDispatchSignal("sceneLoadComplete");
+
+          playerState.start(sceneJson);
+
+          notice.destroy();
+        });
       });
     }
   })

@@ -296,6 +296,8 @@ export class MenubarNetwork {
                         notice.content = window.$t("scene['Parsing to editor']");
                         /*加载到场景中*/
                         window.editor.fromJSON(editorJson).then(() => {
+                            useDispatchSignal("sceneLoadComplete");
+
                             sceneInfoStore.setSceneInfo(sceneInfo);
                             notice.destroy();
                         });

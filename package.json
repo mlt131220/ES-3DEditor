@@ -29,7 +29,7 @@
     "signals": "1.0.0",
     "splitpanes": "3.1.5",
     "three": "0.163.0",
-    "three-gpu-pathtracer": "0.0.19",
+    "three-gpu-pathtracer": "0.0.22",
     "three-mesh-bvh": "0.7.3",
     "vue": "3.3.4",
     "vue-hooks-plus": "1.8.9",

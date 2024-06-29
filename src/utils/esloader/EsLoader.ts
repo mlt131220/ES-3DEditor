@@ -176,6 +176,9 @@ export class EsLoader {
             editorJson.drawingInfo = null;
         }
 
+        // 解包时需要还原的编辑器场景信息
+        editorJson.metadata = window.editor.metadata;
+
         esData.push({name: "scene.json", json: JSON.stringify(editorJson)});
         this.zip(esData, (zip) => {
             onComplete && onComplete(zip);

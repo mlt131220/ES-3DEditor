@@ -50,7 +50,7 @@ const editorSignals: SignalRegister = {
 	cameraAdded: new Signal(),
 	cameraRemoved: new Signal(),
 	cameraChanged: new Signal(),
-	cameraReseted: new Signal(),
+	cameraResetted: new Signal(),
 
 	geometryChanged: new Signal(),
 
@@ -85,6 +85,14 @@ const editorSignals: SignalRegister = {
 	viewportShadingChanged: new Signal(),
 
 	intersectionsDetected: new Signal(),
+
+	pathTracerUpdated: new Signal(),
+
+	// 实例化ShaderMaterial类型内置材质
+	instantiateShaderMaterial: new Signal(),
+
+	// 场景加载完成
+	sceneLoadComplete: new Signal(),
 };
 
 /**

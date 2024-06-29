@@ -2267,10 +2267,10 @@ strip-final-newline@^2.0.0:
   resolved "https://registry.npmmirror.com/strip-final-newline/-/strip-final-newline-2.0.0.tgz#89b852fb2fcbe936f6f4b3187afb0a12c1ab58ad"
   integrity sha512-BrpvfNAE3dcvq7ll3xVumzjKjZQ5tI1sEUIKr3Uoks0XUl45St3FlatVqef9prk4jRDzhW6WZg+3bk93y6pLjA==
 
-three-gpu-pathtracer@0.0.19:
-  version "0.0.19"
-  resolved "https://registry.npmmirror.com/three-gpu-pathtracer/-/three-gpu-pathtracer-0.0.19.tgz#29a2e4ab461984bc131eea102ed520085e0006e2"
-  integrity sha512-GaYUyzPe9pQHJKOCGfUI2WCF5p5Pp7c7644WXuOSFLfpotPLLKSbptp7gD1gm7ozF4Y9U8x3Dh/o+Y6Utbki3Q==
+three-gpu-pathtracer@0.0.22:
+  version "0.0.22"
+  resolved "https://registry.npmmirror.com/three-gpu-pathtracer/-/three-gpu-pathtracer-0.0.22.tgz#7c4b6a890af79dd5b675a93e1ebef72edb1719e4"
+  integrity sha512-blKolyzKGmhcIYPVv+I6IRndXLBri7i6U0/ZRIApwFoyPWaRVHuEIECH0UPYOO5CYGdnKL49EUScScUOQ/XagQ==
 
 three-mesh-bvh@0.5.21:
   version "0.5.21"

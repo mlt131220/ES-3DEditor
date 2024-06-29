@@ -1,13 +1,13 @@
 import * as THREE from 'three';
-import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
+// import WebGPU from 'three/examples/jsm/capabilities/WebGPU.js';
 import WebGPURenderer from 'three/examples/jsm/renderers/webgpu/WebGPURenderer.js';
 import {XRButton} from "three/examples/jsm/webxr/XRButton.js";
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import Helper from "@/core/script/Helper";
 import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
+import {ShaderMaterialManager} from "@/core/shaderMaterial/ShaderMaterialManager";
 
 let sceneResizeFn, onKeyDownFn, onKeyUpFn, onPointerDownFn, onPointerUpFn, onPointerMoveFn, animateFn;
-const loader = new THREE.ObjectLoader();
 let events = {
 	init: [],
 	start: [],
@@ -33,12 +33,16 @@ export class Player {
 	dom: HTMLDivElement;
 	private width: number;
 	private height: number;
+	private modules: any = {};
 	private readonly vrButton: HTMLElement;
 
 	// animations
 	prevActionsInUse = 0;
 
 	constructor() {
+		this.scene = window.editor.scene;
+		this.camera = window.editor.camera;
+
 		this.renderer = this.initRender();
 
 		this.dom = document.getElementById("player") as HTMLDivElement;
@@ -51,6 +55,8 @@ export class Player {
 
 		this.width = 500;
 		this.height = 500;
+
+		this.initModules();
 
 		window.addEventListener('resize', () => {
 			this.setSize(this.dom.clientWidth, this.dom.clientHeight);
@@ -69,17 +75,17 @@ export class Player {
 
 	initRender() {
 		let renderer: THREE.WebGLRenderer | WebGPURenderer;
-		if (WebGPU.isAvailable()) {
-			console.log("使用WebGPU渲染器");
-			renderer = new WebGPURenderer({antialias: true});
-			renderer.toneMapping = THREE.ACESFilmicToneMapping;
-			renderer.toneMappingExposure = 1;
-		} else {
-			renderer = new THREE.WebGLRenderer({
-				antialias: true,
-				preserveDrawingBuffer: false
-			});
-		}
+		// if (WebGPU.isAvailable()) {
+		//     console.log("使用WebGPU渲染器");
+		//     renderer = new WebGPURenderer({antialias: true});
+		//     renderer.toneMapping = THREE.ACESFilmicToneMapping;
+		//     renderer.toneMappingExposure = 1;
+		// } else {
+		renderer = new THREE.WebGLRenderer({
+			antialias: true,
+			preserveDrawingBuffer: false
+		});
+		// }
 
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.xr.enabled = true;
@@ -87,16 +93,9 @@ export class Player {
 		return renderer;
 	}
 
-	setScene(value: THREE.Scene) {
-		console.log(value)
-		this.scene = value;
-	};
-
-	setCamera(value: THREE.PerspectiveCamera) {
-		this.camera = value;
-		this.camera.aspect = this.width / this.height;
-		this.camera.updateProjectionMatrix();
-	};
+	initModules() {
+		this.modules["ShaderMaterialManager"] = new ShaderMaterialManager();
+	}
 
 	setSize(width: number, height: number) {
 		this.width = width;
@@ -112,11 +111,6 @@ export class Player {
 
 	setupPreview() {
 		this.setSize(this.dom.clientWidth, this.dom.clientHeight);
-
-		this.camera = new THREE.PerspectiveCamera(50, 1, 0.01, 1000);
-		this.camera.position.set(4.6, 0, 10);
-		this.camera.lookAt(new THREE.Vector3());
-		this.scene = new THREE.Scene();
 
 		this.loadDefaultEnvAndBackground();
 
@@ -181,9 +175,6 @@ export class Player {
 		if (project.shadowType !== undefined) this.renderer.shadowMap.type = project.shadowType;
 		if (project.toneMapping !== undefined) this.renderer.toneMapping = project.toneMapping;
 		if (project.toneMappingExposure !== undefined) this.renderer.toneMappingExposure = project.toneMappingExposure;
-
-		this.setScene(loader.parse(json.scene) as THREE.Scene);
-		this.setCamera(loader.parse(json.camera) as THREE.PerspectiveCamera);
 
 		// 加入控制器
 		this.controls = new OrbitControls(this.camera as THREE.PerspectiveCamera, this.renderer.domElement);
@@ -321,6 +312,8 @@ export class Player {
 		}
 
 		this.controls?.update();
+
+		this.modules["ShaderMaterialManager"].update();
 
 		this.renderer.render(this.scene as THREE.Scene, this.camera as THREE.Camera);
 

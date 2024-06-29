@@ -2,10 +2,8 @@
   <n-tabs v-model:value="currentNav" type='line' size="small" justify-content="space-around"
           class="h-full" pane-class="h-full overflow-y-auto">
     <n-tab-pane
-        v-for="panel in nav" :key="panel.key"
-        :name="panel.key"
-        display-directive="show"
-    >
+        v-for="panel in nav" :key="panel.key" :name="panel.key"
+        display-directive="show">
       <template #tab>
         <n-tooltip trigger="hover" placement="bottom">
           <template #trigger>
@@ -23,18 +21,22 @@
 
 <script lang="ts" setup>
 import {ref} from "vue";
-import {CubeOutline,SunnyOutline,VideocamOutline,CloudOutline,ImageOutline} from "@vicons/ionicons5";
+import {CubeOutline,SunnyOutline,VideocamOutline,CloudOutline} from "@vicons/ionicons5";
+import {Delicious} from "@vicons/fa";
+import {cpt} from "@/language";
 import Object3d from "./assetsLibrary/Object3d.vue";
 import Lights from "./assetsLibrary/Lights.vue";
 import Cameras from "./assetsLibrary/Cameras.vue";
+import Material from "./assetsLibrary/Material.vue";
+
 
 const currentNav = ref("object3d");
 const nav = ref([
-  {key:"object3d",name:"3D对象",icon:CubeOutline,component:Object3d},
-  {key:"light",name:"灯光",icon:SunnyOutline,component:Lights},
-  {key:"camera",name:"相机",icon:VideocamOutline,component:Cameras},
-  {key:"texture",name:"贴图",icon:ImageOutline,component:""},
-  {key:"model-library",name:"云端模型库",icon:CloudOutline,component:""}
+  {key:"object3d",name:cpt("layout.header.Object3D"),icon:CubeOutline,component:Object3d},
+  {key:"light",name:cpt("layout.header.Light"),icon:SunnyOutline,component:Lights},
+  {key:"camera",name:cpt("layout.header.Camera"),icon:VideocamOutline,component:Cameras},
+  {key:"material",name:cpt("layout.sider.Material"),icon:Delicious,component:Material},
+  // {key:"model-library",name:"云端模型库",icon:CloudOutline,component:""}
 ])
 </script>
 

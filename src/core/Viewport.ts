@@ -12,8 +12,9 @@ import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
 
 import { XR } from './Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
-import { ViewportPathtracer } from './Viewport.Pathtracer';
+import { ViewportPathTracer } from './Viewport.PathTracer';
 import {TweenManger} from "@/core/utils/TweenManager";
+import {ShaderMaterialManager} from "@/core/shaderMaterial/ShaderMaterialManager";
 
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
@@ -36,7 +37,7 @@ export class Viewport {
     private sceneHelpers: THREE.Scene;
     private renderer: THREE.WebGLRenderer | undefined;
     private pmremGenerator: THREE.PMREMGenerator | undefined;
-    private pathtracer:ViewportPathtracer | undefined;
+    private pathtracer:ViewportPathTracer | undefined;
     private modules: any;
     private showSceneHelpers: boolean = true;
 
@@ -113,7 +114,7 @@ export class Viewport {
         this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
         this.pmremGenerator.compileEquirectangularShader();
 
-        this.pathtracer = new ViewportPathtracer(this.renderer);
+        this.pathtracer = new ViewportPathTracer(this.renderer);
 
         // this.container.appendChild(this.renderer.domElement);
         // 在container中最前面插入渲染器的dom元素
@@ -125,16 +126,15 @@ export class Viewport {
     }
 
     protected initGrid() {
-        const grid1 = new THREE.GridHelper(1000, 1000, 0x888888);
+        const grid1 = new THREE.GridHelper(1000, 1000);
         // @ts-ignore
-        grid1.material.color.setHex(0x888888);
+        grid1.material.color.setHex(0x999999);
         (grid1.material as THREE.Material).vertexColors = false;
         this.grid.add(grid1);
 
-        const grid2 = new THREE.GridHelper(1000, 2, 0x222222);
+        const grid2 = new THREE.GridHelper(1000, 2);
         // @ts-ignore
-        grid2.material.color.setHex(0x222222);
-        (grid2.material as THREE.Material).depthFunc = THREE.AlwaysDepth;
+        grid2.material.color.setHex(0x777777);
         (grid2.material as THREE.Material).vertexColors = false;
         this.grid.add(grid2);
     }
@@ -213,11 +213,28 @@ export class Viewport {
 
         // 注册signal
         this.modules["registerSignal"] = new ViewportSignals(this);
+
+        this.modules["ShaderMaterialManager"] = new ShaderMaterialManager();
     }
 
     updateAspectRatio() {
-        this.camera.aspect = this.container.offsetWidth / this.container.offsetHeight;
-        this.camera.updateProjectionMatrix();
+        for (const uuid in window.editor.cameras) {
+            const camera = window.editor.cameras[uuid];
+
+            const aspect = this.container.offsetWidth / this.container.offsetHeight;
+
+            if (camera.isPerspectiveCamera) {
+                camera.aspect = aspect;
+            } else {
+                camera.left = - aspect;
+                camera.right = aspect;
+            }
+
+            camera.updateProjectionMatrix();
+
+            const cameraHelper = window.editor.helpers[camera.id];
+            if (cameraHelper) cameraHelper.update();
+        }
     }
 
     /**
@@ -335,6 +352,10 @@ export class Viewport {
         // }
 
         this.modules["viewCube"].update();
+        this.modules["ShaderMaterialManager"].update();
+        if(this.modules["ShaderMaterialManager"].needRender){
+            needsUpdate = true;
+        }
 
         if (this.renderer?.xr.isPresenting) {
             needsUpdate = true;
@@ -355,19 +376,26 @@ export class Viewport {
 
     updatePTBackground() {
         if (window.editor.viewportShading === 'realistic') {
-            this.pathtracer?.setBackground(this.scene.background,this.scene.backgroundBlurriness);
+            this.pathtracer?.setBackground();
         }
     }
 
     updatePTEnvironment() {
         if (window.editor.viewportShading === 'realistic') {
-            this.pathtracer?.setEnvironment(this.scene.environment);
+            this.pathtracer?.setEnvironment();
+        }
+    }
+
+    updatePTMaterials() {
+        if (window.editor.viewportShading === 'realistic' ) {
+            this.pathtracer?.updateMaterials();
         }
     }
 
     updatePT() {
         if (window.editor.viewportShading === 'realistic') {
             this.pathtracer?.update();
+            useDispatchSignal("pathTracerUpdated",this.pathtracer?.getSamples())
         }
     }
 

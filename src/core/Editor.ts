@@ -40,6 +40,7 @@ class Editor {
 	public selected;
 	public helpers;
 	public cameras: { [uuid: string]: THREE.Camera };
+	metadata: Object;
 	protected viewportCamera: THREE.Camera;
 	protected viewportShading: string;
 
@@ -85,6 +86,9 @@ class Editor {
 		this.cameras = {};
 		this.viewportCamera = this.camera;
 		this.viewportShading = 'default';
+
+		// 编辑器场景元数据
+		this.metadata = {};
 
 		this.addCamera(this.camera);
 
@@ -407,7 +411,7 @@ class Editor {
 		this.history.clear();
 		this.storage.clear();
 		this.camera.copy(_DEFAULT_CAMERA);
-		dispatch('cameraReseted');
+		dispatch('cameraResetted');
 		this.scene.name = window.$t("core.editor['Default Scene']");
 		this.scene.position.set(0,0,0);
 		this.scene.rotation.set(0,0,0);
@@ -455,6 +459,8 @@ class Editor {
 		// 清除图纸状态
 		drawingStore.$reset();
 
+		this.metadata = json.metadata;
+
 		if (json.drawingInfo) {
 			drawingStore.setImgSrc(json.drawingInfo.imgSrc);
 			drawingStore.setMarkList(json.drawingInfo.markList);
@@ -484,7 +490,7 @@ class Editor {
 		let camera = await loader.parseAsync(json.camera);
 
 		this.camera.copy(camera as THREE.Camera);
-		dispatch('cameraReseted');
+		dispatch('cameraResetted');
 
 		this.history.fromJSON(json.history);
 		this.scripts = json.scripts;

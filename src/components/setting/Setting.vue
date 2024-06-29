@@ -12,13 +12,13 @@
     {{ t("setting.Setting") }}
   </n-tooltip>
 
-  <n-modal v-model:show="show" class="w-100 h-40vh">
+  <n-modal v-model:show="show" display-directive="show" :z-index="zIndex" class="w-100 h-40vh">
     <n-card size="small">
       <n-tabs type="line" animated default-value="shortcuts">
-        <n-tab-pane name="system" :tab="t('setting.System Setting')">
+        <n-tab-pane name="system" :tab="t('setting.System Setting')" display-directive="show">
           <SystemSetting />
         </n-tab-pane>
-        <n-tab-pane name="shortcuts" :tab="t('setting.Shortcuts')">
+        <n-tab-pane name="shortcuts" :tab="t('setting.Shortcuts')" display-directive="show">
           <Shortcuts />
         </n-tab-pane>
 
@@ -37,13 +37,18 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref,onMounted} from "vue";
 import {Settings,Close} from "@vicons/carbon";
 import {t} from "@/language";
 import Shortcuts from "./components/Shortcuts.vue";
 import SystemSetting from "@/components/setting/components/SystemSetting.vue";
 
-const show = ref(false);
+const show = ref(true);
+const zIndex = ref<number | undefined>(-1);
+onMounted(() => {
+  show.value = false;
+  zIndex.value = undefined;
+});
 </script>
 
 <style scoped lang="less">

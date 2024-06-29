@@ -187,6 +187,8 @@ export class MenubarFile {
             if(fileInput.files && fileInput.files.length > 0){
                 esLoader.unpack(fileInput.files[0]).then((sceneJson) => {
                     window.editor.fromJSON(sceneJson).then(() => {
+                        useDispatchSignal("sceneLoadComplete");
+
                         form.reset();
                     })
                 });

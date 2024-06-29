@@ -294,6 +294,10 @@ export default {
 				'Depth Write': '深度缓冲',
 				Wireframe: '线框',
 			},
+			"Scene theme":"场景主题",
+			sceneTheme:{
+				'Blue tone': '蓝田日暖玉生烟',
+			},
 			Animations: '动画',
 			animation:{
 				Play: '播放',

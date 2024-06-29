@@ -30,7 +30,7 @@ export class ViewportSignals {
         useAddSignal("sceneFogSettingsChanged", this.sceneFogSettingsChanged.bind(this));
         useAddSignal("sceneGraphChanged", this.sceneGraphChanged.bind(this));
         useAddSignal("cameraChanged", this.cameraChanged.bind(this));
-        useAddSignal("cameraReseted", this.viewport.updateAspectRatio.bind(this.viewport));
+        useAddSignal("cameraResetted", this.viewport.updateAspectRatio.bind(this.viewport));
         useAddSignal("viewportCameraChanged", this.viewportCameraChanged.bind(this));
         useAddSignal("viewportShadingChanged", this.viewportShadingChanged.bind(this));
 
@@ -248,6 +248,10 @@ export class ViewportSignals {
      */
     viewportCameraChanged(){
         const viewportCamera = window.editor.viewportCamera;
+        if ( viewportCamera.isPerspectiveCamera || viewportCamera.isOrthographicCamera ) {
+            this.viewport.updateAspectRatio();
+        }
+
         if (viewportCamera.isPerspectiveCamera) {
             viewportCamera.aspect = window.editor.camera.aspect;
             viewportCamera.projectionMatrix.copy(window.editor.camera.projectionMatrix);
@@ -257,6 +261,8 @@ export class ViewportSignals {
 
         // 设置用户Camera时禁用EditorControls
         this.viewport.modules["controls"].enabled = (viewportCamera === window.editor.camera);
+
+        this.viewport.initPT();
         this.render();
     }
 
@@ -357,7 +363,7 @@ export class ViewportSignals {
      * material 变更
      */
     materialChanged(){
-        this.viewport.initPT();
+        this.viewport.updatePTMaterials();
         this.render();
     }
 
@@ -367,7 +373,7 @@ export class ViewportSignals {
     sceneResize(){
         this.viewport.updateAspectRatio();
         this.viewport.renderer?.setSize(this.viewport.container.offsetWidth,this.viewport.container.offsetHeight);
-        this.viewport.pathtracer.setSize(this.viewport.container.offsetWidth,this.viewport.container.offsetHeight);
+        this.viewport.pathtracer.setSize();
         this.render();
     }
 
