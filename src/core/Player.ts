@@ -162,8 +162,6 @@ export class Player {
 
 		useRemoveSignal("sceneResize", sceneResizeFn);
 
-		this.camera = undefined;
-		this.scene = undefined;
 		this.controls = undefined;
 	}
 

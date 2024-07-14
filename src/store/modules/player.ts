@@ -45,12 +45,18 @@ export const usePlayerStore = defineStore('player',()=>{
 
         player().stop();
     }
+    const dispose = () => {
+        state.isPlaying = false;
+
+        player().dispose();
+    }
 
     return {
         ...toRefs(state),
         player,
         start,
         stop,
+        dispose
     }
 });
 
