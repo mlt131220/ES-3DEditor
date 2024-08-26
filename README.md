@@ -23,20 +23,27 @@
 本编辑器开源版本更新至2024.06.29，后续版本只进行功能基础维护，不再进行新功能的增加<b>（赞叹工作的时间剥削）</b>；
 * 关于非开源版本ES 3D Editor最新功能，可以查看文档[更新日志](http://editor-doc.mhbdng.cn/update/logs/)，或者[在线体验](https://editor.mhbdng.cn/)
 
+## 交流
+<img src="/public/static/images/WeChat/微信图片_20240826205957.jpg" width="500px">
+
 ***
 
 ## 主要功能：
 - [x] 模型导入展示，支持OBJ、FBX、GLTF、GLB、RVT、IFC、SEA、3DM、3DS、3MF、AMF、DAE、DRC、PLY、SVG、JSON等30+格式；
 - [x] BIM模型（RVT、IFC）轻量化展示；
 - [x] CAD图纸（DWG、DXF）解析关联；
-- [x] 场景网络存储读取；
+- [x] 场景分包存储读取；
 - [x] WebSocket 协作；
 - [x] 又拍云 USS 存储；
 - [x] Golang + MySQL 后端支持;
 - [x] 运行脚本;
+- [ ] 动画编辑器
+- [ ] 物理引擎支持
+- [ ] 粒子系统支持
 - [ ] WebGPU 支持 (:tada:开发阶段)；
 - [ ] 数据组件 (暂定支持：API接口、WebSocket，不支持：前端SQL、GraphQL)；
-- [ ] VUE / React 组件动态导入为面板UI；
+- [ ] VUE / React 组件支持
+- [ ] 低代码数据大屏
 
 ## 工程结构
 ```
