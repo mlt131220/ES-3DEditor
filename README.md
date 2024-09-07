@@ -24,7 +24,7 @@
 * 关于非开源版本ES 3D Editor最新功能，可以查看文档[更新日志](http://editor-doc.mhbdng.cn/update/logs/)，或者[在线体验](https://editor.mhbdng.cn/)
 
 ## 交流
-<img src="/public/static/images/WeChat/微信图片_20240826205957.jpg" width="500px">
+<img src="/public/static/images/WeChat/WeChatGroup.jpg" width="500px">
 
 ***
 
