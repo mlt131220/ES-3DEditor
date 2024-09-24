@@ -20,8 +20,8 @@
 ***
 
 ## 维护说明
-本编辑器开源版本更新至2024.06.29，后续版本只进行功能基础维护，不再进行新功能的增加<b>（赞叹工作的时间剥削）</b>；
-* 关于非开源版本ES 3D Editor最新功能，可以查看文档[更新日志](http://editor-doc.mhbdng.cn/update/logs/)，或者[在线体验](https://editor.mhbdng.cn/)
+本编辑器开源版本更新至2024.06.29，后续版本只进行功能基础维护，不再进行新功能的增加;
+* 关于ES 3D Editor最新功能，可以查看文档[更新日志](http://editor-doc.mhbdng.cn/update/logs/)，或者[在线体验](https://editor.mhbdng.cn/)
 
 ## 交流
 <img src="/public/static/images/WeChat/WeChatGroup.jpg" width="500px">
