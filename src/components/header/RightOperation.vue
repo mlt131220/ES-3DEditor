@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import {ref,onMounted} from 'vue';
-import LocalSave from '@/components/header/right/LocalSave.vue';
-import CodeOut from '@/components/header/right/CodeOut.vue';
 import XR from '@/components/header/right/XR.vue';
 import {useDispatchSignal} from "@/hooks/useSignal";
-import Theme from "@/components/header/right/Theme.vue";
-import Locale from "@/components/header/right/Locale.vue";
-import Color from "@/components/header/right/Color.vue";
+import CommonSetting from "@/components/setting/CommonSetting.vue";
+import SaveToService from "@/components/header/right/SaveToService.vue";
+import {t} from "@/language";
+import {Airplay} from "@vicons/carbon";
+import {useSceneInfoStore} from "@/store/modules/sceneInfo";
+
+const sceneInfoStore = useSceneInfoStore();
 
 const supportXr = ref(false);
 
@@ -22,27 +24,31 @@ onMounted(() => {
     supportXr.value = false;
   }
 });
+
+function handlePreview(){
+  // 新窗口打开
+  window.open(window.location.origin + "/#/preview/" + sceneInfoStore.data.id, "_blank");
+}
 </script>
 
 <template>
   <div id="rightOperation">
-    <!--本地保存-->
-    <LocalSave class="mr-2" />
+    <!--  保存至服务器  -->
+    <SaveToService class="mr-2" />
 
-    <!-- 出码 -->
-    <CodeOut />
+    <!-- 预览 -->
+    <n-button @click="handlePreview">
+      <template #icon>
+        <n-icon><Airplay /></n-icon>
+      </template>
+      {{ t("home.Preview") }}
+    </n-button>
 
     <!-- XR -->
     <XR v-if="supportXr" />
 
-    <!--  国际化  -->
-    <Locale />
-
-    <!--  主题  -->
-    <Theme />
-
-    <!--  主色调  -->
-    <Color />
+    <!--  通用配置项  -->
+    <CommonSetting />
   </div>
 </template>
 

@@ -1,6 +1,7 @@
 :root {
     --header-height: 50px;
     --footer-height: 40px;
+    --animate-duration: .25s;
 }
 
 * {

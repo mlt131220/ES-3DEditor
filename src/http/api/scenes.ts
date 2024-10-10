@@ -1,40 +1,38 @@
 import {request} from "@/http/request";
+import {Service} from "~/network";
 
 /**
- * 获取所有场景
+ * 获取所有工程信息
  */
 export function fetchGetAllScenes(params) {
-    return request.get("/editor3d/scenes/getAll",{params});
+    return request.get<Service.ListPageResult<ISceneFetchData>>("/editor3d/scenes/getAll",{params});
 }
 
 /**
- * 获取单个贴图
- * @param {object} params {sceneId:string, uuid:string}
+ * 获取工程
  */
-export function fetchGetImage(params) {
-    return request.get(`/editor3d/scenesImages/get`,{params});
+export function fetchGetOneScene(id) {
+    return request.get<ISceneFetchData>(`/editor3d/scenes/get/${id}`);
 }
 
 /**
- * 获取单个几何信息
- * @param {object} params {sceneId:string, uuid:string}
+ * 保存工程
  */
-export function fetchGetGeometry(params) {
-    return request.get(`/editor3d/scenesGeometry/get`,{params});
+export function fetchAddScene(data) {
+    return request.post<ISceneFetchData>(`/editor3d/scenes/add`,data);
 }
 
 /**
- * 获取单个模型信息
- * @param {object} params {sceneId:string, uuid:string}
+ * 更新工程
  */
-export function fetchGetModel(params) {
-    return request.get(`/editor3d/scenesModels/get`,{params});
+export function fetchUpdateScene(id:number,data:ISceneFetchData) {
+    return request.put<ISceneFetchData>(`/editor3d/scenes/update/${id}`,data);
 }
 
 /**
- * 删除场景（后端会同时删除相关贴图、模型、几何数据）
- * @param {object} params {sceneId:string}
+ * 删除工程
+ * @param {number} id
  */
-export function fetchDeleteScenes(params) {
-    return request.delete(`/editor3d/scenes/del`,{params});
+export function fetchDeleteScenes(id: number) {
+    return request.delete(`/editor3d/scenes/del/${id}`,{});
 }

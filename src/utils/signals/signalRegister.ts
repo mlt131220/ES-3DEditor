@@ -47,7 +47,7 @@ const editorSignals: SignalRegister = {
 	sceneGraphChanged: new Signal(),
 	sceneRendered: new Signal(),
 
-	cameraAdded: new Signal(),
+    cameraAdded: new Signal(),
 	cameraRemoved: new Signal(),
 	cameraChanged: new Signal(),
 	cameraResetted: new Signal(),
@@ -105,28 +105,30 @@ const viewportSignals:SignalRegister = {
 	// 补间动画管理
 	tweenAdd:new Signal(),
 	tweenRemove:new Signal(),
+	// 相机飞行
+	flyTo:new Signal(),
 }
 
 /**
  * 网络请求相关
  */
 const netWorkSignals:SignalRegister = {
-	switchViewportLoading:new Signal(),
-	changeViewportLoadingText:new Signal(),
+    toggleGlobalLoading:new Signal(),
+    setGlobalLoadingText:new Signal(),
 }
 
 /**
  * cesium 相关页面使用的
  */
 const cesiumSignals:SignalRegister = {
-	// cesium/viewPort.ts 停止渲染循环
-	cesium_stopLoop:new Signal(),
-	// cesium融合场景下的threejs scene点击事件
-	cesium_clickThreeScene:new Signal(),
-	//销毁viewPort
-	cesium_destroy:new Signal(),
-	// 飞行定位
-	cesium_flyTo: new Signal(),
+    // cesium/viewPort.ts 停止渲染循环
+    cesium_stopLoop:new Signal(),
+    // cesium融合场景下的threejs scene点击事件
+    cesium_clickThreeScene:new Signal(),
+    //销毁viewPort
+    cesium_destroy:new Signal(),
+    // 飞行定位
+    cesium_flyTo: new Signal(),
 }
 
 /**
@@ -135,6 +137,13 @@ const cesiumSignals:SignalRegister = {
 const drawingSignals:SignalRegister = {
 	drawingMarkDone:new Signal(),  // 新增/编辑 图纸标记完成回调
 	cadViewerResize:new Signal(), // 图纸面板移动
+}
+
+/**
+ * 预览相关
+ */
+const previewSignals:SignalRegister = {
+	autoRotateConfigModal:new Signal(), // 自动旋转配置弹窗
 }
 
 /**
@@ -149,9 +158,10 @@ const otherSignals:SignalRegister = {
 
 export const SignalsRegister: SignalRegister = {
 	...editorSignals,
-	...viewportSignals,
-	...netWorkSignals,
-	...cesiumSignals,
+    ...viewportSignals,
+    ...netWorkSignals,
+    ...cesiumSignals,
 	...drawingSignals,
+	...previewSignals,
 	...otherSignals
 };

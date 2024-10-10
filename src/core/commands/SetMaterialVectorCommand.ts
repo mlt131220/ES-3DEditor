@@ -1,4 +1,4 @@
-import { Command } from '../Command';
+import { Command } from './Command';
 import { useDispatchSignal } from "@/hooks/useSignal";
 
 class SetMaterialVectorCommand extends Command {
@@ -18,19 +18,23 @@ class SetMaterialVectorCommand extends Command {
 		this.object = object;
 		this.material = window.editor.getObjectMaterial( object, materialSlot );
 
-		this.oldValue = ( this.material !== undefined ) ? this.material[ attributeName ].toArray() : undefined;
-		this.newValue = newValue;
-
 		this.attributeName = attributeName;
+
+		this.oldValue = (this.material !== undefined) ? this.attribute.toArray() : undefined;
+		this.newValue = newValue;
+	}
+
+	get attribute() {
+		return this.attributeName.split('.').reduce((obj, key) => obj[key], this.material);
 	}
 
 	execute() {
-		this.material[ this.attributeName ].fromArray( this.newValue );
+		this.attribute.fromArray(this.newValue);
 		useDispatchSignal("materialChanged",this.material)
 	}
 
 	undo() {
-		this.material[ this.attributeName ].fromArray( this.oldValue );
+		this.attribute.fromArray(this.oldValue);
 		useDispatchSignal("materialChanged",this.material)
 	}
 

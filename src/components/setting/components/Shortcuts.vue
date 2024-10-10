@@ -19,11 +19,11 @@
     <n-form-item :label="t('setting.shortcuts.Undo')">
       <n-input v-model:value="form.undo" readonly maxlength="1"
                :placeholder="t('setting.shortcuts.Please press a key')" @keyup="shortcutsKeyup($event, 'undo')"/>
-      <Tip class="ml-1">
+      <EsTip class="ml-1">
         {{
           `${!IS_MAC ? 'ctrl' : 'meta'} + ${form.undo} ${t('other.undo')},${!IS_MAC ? 'ctrl' : 'meta'} + shift + ${form.undo} ${t('other.redo')}`
         }}
-      </Tip>
+      </EsTip>
     </n-form-item>
     <n-form-item :label="t('setting.shortcuts.Focus')">
       <n-input v-model:value="form.focus" readonly maxlength="1"
@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import {reactive,onMounted} from "vue";
 import {t} from "@/language";
-import Tip from "@/components/header/Tip.vue";
+import EsTip from "@/components/es/EsTip.vue";
 import {RemoveObjectCommand} from "@/core/commands/RemoveObjectCommand";
 import {useDispatchSignal} from "@/hooks/useSignal";
 

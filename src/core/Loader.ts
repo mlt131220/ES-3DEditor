@@ -121,30 +121,30 @@ class Loader {
 			manager.addHandler( /\.tga$/i, new TGALoader() );
 			manager.addHandler( /\.mtl$/i, new MTLLoader() );
 
-			/** 2023/02/03 二三：判断是否存在mtl文件，存在则提前解析 **/
-				// @ts-ignore
-			const mtlIndex = Object.values(files).findIndex((item:File) => item.name?.split( '.' ).pop().toLowerCase() === "mtl");
-			let mtlMaterials:MaterialCreator | null = null;
-			if(mtlIndex !== -1){
-				const mtlLoader = new MTLLoader();
-				const reader = new FileReader();
-				reader.addEventListener( 'load',  ( event ) => {
-					const contents = event.target?.result as string;
-					const materials = mtlLoader.parse( contents,"" );
-					materials.preload();
-					mtlMaterials = materials;
-					for ( let i = 0; i < files.length; i ++ ) {
-						this.loadFile( files[ i ], manager,mtlMaterials );
-					}
-					complete();
-				}, false );
-				reader.readAsText( files[ mtlIndex ] );
-			}else{
-				for ( let i = 0; i < files.length; i ++ ) {
-					this.loadFile( files[ i ], manager,null );
-				}
-				complete();
-			}
+            /** 2023/02/03 二三：判断是否存在mtl文件，存在则提前解析 **/
+            // @ts-ignore
+            const mtlIndex = Object.values(files).findIndex((item:File) => item.name?.split( '.' ).pop().toLowerCase() === "mtl");
+            let mtlMaterials:MaterialCreator | null = null;
+            if(mtlIndex !== -1){
+                const mtlLoader = new MTLLoader();
+                const reader = new FileReader();
+                reader.addEventListener( 'load',  ( event ) => {
+                    const contents = event.target?.result as string;
+                    const materials = mtlLoader.parse( contents,"" );
+                    materials.preload();
+                    mtlMaterials = materials;
+                    for ( let i = 0; i < files.length; i ++ ) {
+                        this.loadFile( files[ i ], manager,mtlMaterials );
+                    }
+                    complete();
+                }, false );
+                reader.readAsText( files[ mtlIndex ] );
+            }else{
+                for ( let i = 0; i < files.length; i ++ ) {
+                    this.loadFile( files[ i ], manager,null );
+                }
+                complete();
+            }
 		}
 	}
 
@@ -441,12 +441,12 @@ class Loader {
 					const contents = event.target?.result as string;
 
 					const { OBJLoader } = await import( 'three/examples/jsm/loaders/OBJLoader.js' );
-					const objLoader = new OBJLoader();
+                    const objLoader = new OBJLoader();
 
-					/** 2023/02/03 二三：判断是否存在已解析的mtl文件 **/
-					if(mtlMaterials !== null){
-						objLoader.setMaterials(mtlMaterials);
-					}
+                    /** 2023/02/03 二三：判断是否存在已解析的mtl文件 **/
+                    if(mtlMaterials !== null){
+                        objLoader.setMaterials(mtlMaterials);
+                    }
 
 					const object = objLoader.parse( contents );
 					object.name = filename;
@@ -456,9 +456,9 @@ class Loader {
 				reader.readAsText( file );
 
 				break;
-			case 'mtl':
-				//mtl文件已经提前预加载
-				break;
+            case 'mtl':
+                //mtl文件已经提前预加载
+                break;
 			case 'pcd':
 				reader.addEventListener( 'load', async function ( event ) {
 					const contents = event.target?.result as ArrayBuffer;

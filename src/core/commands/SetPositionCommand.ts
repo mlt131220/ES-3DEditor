@@ -1,5 +1,5 @@
 import { useDispatchSignal } from '@/hooks/useSignal';
-import { Command } from '../Command';
+import { Command } from './Command';
 import { Vector3 } from 'three';
 
 /**

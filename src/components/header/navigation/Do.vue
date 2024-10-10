@@ -1,7 +1,7 @@
 <template>
   <n-tooltip trigger="hover">
     <template #trigger>
-      <n-button text class="mr-2" :disabled="undoDisabled || playerStore.isPlaying" @click="handleUndo()">
+      <n-button text class="mr-2" :disabled="undoDisabled" @click="handleUndo()">
         <template #icon>
           <n-icon size="22" class="cursor-pointer">
             <Undo />
@@ -14,7 +14,7 @@
 
   <n-tooltip trigger="hover">
     <template #trigger>
-      <n-button text class="mr-5" :disabled="redoDisabled || playerStore.isPlaying" @click="handleRedo()">
+      <n-button text class="mr-5" :disabled="redoDisabled" @click="handleRedo()">
         <template #icon>
           <n-icon size="22" class="cursor-pointer">
             <Redo />
@@ -32,9 +32,6 @@ import {NIcon, NTooltip} from "naive-ui";
 import {Undo,Redo} from "@vicons/carbon";
 import {t} from "@/language";
 import {useAddSignal} from "@/hooks/useSignal";
-import {usePlayerStore} from "@/store/modules/player";
-
-const playerStore = usePlayerStore();
 
 const undoDisabled = ref(true);
 const redoDisabled = ref(true);

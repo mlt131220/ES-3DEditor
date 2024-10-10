@@ -1,7 +1,7 @@
 <template>
   <n-tooltip trigger="hover">
     <template #trigger>
-      <n-button text class="mr-5" :disabled="disabled || playerStore.isPlaying" @click="handleDelete()">
+      <n-button text class="mr-2" :disabled="disabled" @click="handleDelete()">
         <template #icon>
           <n-icon size="22" class="cursor-pointer">
             <Delete />
@@ -20,9 +20,6 @@ import {NIcon, NTooltip} from "naive-ui";
 import {t} from "@/language";
 import {RemoveObjectCommand} from "@/core/commands/RemoveObjectCommand";
 import {useAddSignal} from "@/hooks/useSignal";
-import {usePlayerStore} from "@/store/modules/player";
-
-const playerStore = usePlayerStore();
 
 const disabled = ref(true);
 
@@ -35,11 +32,6 @@ onMounted(() => {
 })
 
 function handleDelete() {
-  if (playerStore.isPlaying) {
-    window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
-    return;
-  }
-
   const object = window.editor.selected;
 
   if (object !== null && object.parent !== null) {

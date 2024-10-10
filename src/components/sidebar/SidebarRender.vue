@@ -82,11 +82,11 @@ function createRenderer() {
   //   // @ts-ignore
   //   currentRenderer.useLegacyLights = false;
   // } else {
-  currentRenderer = new THREE.WebGLRenderer({
-    antialias: renderModel.antialias,
-    //想把canvas画布上内容下载到本地，需要设置为true
-    preserveDrawingBuffer: true
-  });
+    currentRenderer = new THREE.WebGLRenderer({
+      antialias: renderModel.antialias,
+      //TODO 想把canvas画布上内容下载到本地，需要设置为true。不清除画布缓存，费性能，SDK完善后设置为false
+      preserveDrawingBuffer: true
+    });
   // }
   // @ts-ignore
   currentRenderer.toneMapping = renderModel.toneMapping;

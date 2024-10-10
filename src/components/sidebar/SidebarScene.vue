@@ -14,9 +14,8 @@
       <SidebarSceneSetting class="px-2" />
     </n-collapse-item>
     <!--  视频录制  -->
-    <n-collapse-item :title="t('layout.sider.sceneConfig.Video')" name="video" v-if="videoIsShow">
-      <SiderSceneVideo class="px-2" />
-    </n-collapse-item>
+<!--    <n-collapse-item :title="t('layout.sider.sceneConfig.Video')" name="video" v-if="videoIsShow">-->
+<!--    </n-collapse-item>-->
   </n-collapse>
 </template>
 
@@ -27,7 +26,6 @@ import {CaretForwardOutline} from "@vicons/ionicons5";
 import {t} from "@/language";
 import SidebarSceneProjectSetting from "@/components/sidebar/sidebarScene/SidebarSceneProjectSetting.vue";
 import SidebarSceneSetting from "@/components/sidebar/sidebarScene/SidebarSceneSetting.vue";
-import SiderSceneVideo from "@/components/sidebar/sidebarScene/SiderSceneVideo.vue";
 import {onMounted} from "vue";
 
 //是否显示视频模块,默认false

@@ -1,6 +1,5 @@
 import JSZip from "jszip";
 import {BASE64_TYPES, TYPED_ARRAYS} from "@/utils/common/constant";
-import {getAnimations} from "@/utils/common/scenes";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {unzip, zip} from "@/utils/common/pako";
 
@@ -23,80 +22,6 @@ export class EsLoader {
         this.imgFolder = this.jszip.folder("Textures") as JSZip;
         this.drawingFolder = this.jszip.folder("Drawing") as JSZip;
         this.geometriesFolder = this.jszip.folder("Geometries") as JSZip;
-    }
-
-    // 打包为glb zip
-    public async packGlb(sceneJson, onComplete?: (zip: Blob) => void) {
-        const scene = window.editor.scene;
-        const animations = getAnimations();
-
-        const {GLTFExporter} = await import('three/examples/jsm/exporters/GLTFExporter.js');
-
-        const exporter = new GLTFExporter();
-
-        exporter.parse(
-            scene,
-            function (result) {
-                let fileBlob = new Blob([result as ArrayBuffer], {type: 'application/octet-stream'});
-
-                const zip = new JSZip();
-                const imgFolder = zip.folder("Textures") as JSZip;
-                const drawingFolder = zip.folder("Drawing") as JSZip;
-
-                // 图纸
-                if (sceneJson.drawingInfo) {
-                    // 图片
-                    drawingFolder.file(sceneJson.sceneInfo.sceneId + `.${BASE64_TYPES[sceneJson.drawingInfo.imgSrc.split(",")[0]]}`,sceneJson.drawingInfo.imgSrc,{
-                        compression: "DEFLATE",//"STORE",//"DEFLATE
-                        compressionOptions: {
-                            level: 9
-                        }
-                    })
-                    drawingFolder.file("drawingMark.txt",sceneJson.drawingInfo.markList,{
-                        compression: "DEFLATE",//"STORE",//"DEFLATE
-                        compressionOptions: {
-                            level: 9
-                        }
-                    })
-
-                    sceneJson.drawingInfo = null;
-                    delete sceneJson.drawingInfo;
-                }
-
-                // 环境贴图及背景
-                const env = window.editor.scene.environment;
-                if(env){
-                    imgFolder.file(env.uuid + ".env", env.image,{})
-                }
-                const background = window.editor.scene.background;
-                if(background && background.uuid !== env.uuid){
-                    if(background.constructor.name === "Color"){
-                        imgFolder.file("background.env", background,{})
-                    }else{
-                        imgFolder.file(background.uuid + ".env", background.image,{})
-                    }
-                }
-
-                zip.file("scene.json", JSON.stringify(sceneJson), {
-                    compression: "DEFLATE",//"STORE",//"DEFLATE
-                    compressionOptions: {
-                        level: 9
-                    }
-                });
-                zip.file("scene.glb", fileBlob, {
-                    compression: "DEFLATE",//"STORE",//"DEFLATE
-                    compressionOptions: {
-                        level: 9
-                    }
-                });
-
-
-                zip.generateAsync({type: "blob"}).then(onComplete);
-            },
-            () => {
-            },
-            {binary: true, animations: animations}
-        );
     }
 
     // 处理几何数据json
@@ -187,7 +112,7 @@ export class EsLoader {
     }
 
     private async zip(sourceData: SourceData[], onComplete: (zip: Blob) => void) {
-        useDispatchSignal("changeViewportLoadingText", window.$t("scene['Scene is being compressed...']"));
+        useDispatchSignal("setGlobalLoadingText", window.$t("scene['Scene is being compressed...']"));
 
         let geometryData: SourceData[] = [];
         sourceData.forEach((item) => {

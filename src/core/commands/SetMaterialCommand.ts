@@ -1,4 +1,4 @@
-import { Command } from '../Command';
+import { Command } from './Command';
 import { ObjectLoader } from 'three';
 import {useDispatchSignal} from "@/hooks/useSignal";
 

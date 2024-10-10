@@ -1,11 +1,8 @@
 import * as Commands from './commands/Commands';
 import {useSignal} from "@/hooks/useSignal";
 import type { Object3D } from 'three';
-import {usePlayerStoreWithOut} from "@/store/modules/player";
 
 const {dispatch:useDispathSignal,setActive} = useSignal();
-
-const playerStore = usePlayerStoreWithOut();
 
 interface Undos{
 	id:number,
@@ -78,11 +75,6 @@ class History {
 	}
 
 	undo() {
-		if (playerStore.isPlaying) {
-			window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
-			return;
-		}
-
 		let cmd:Undos | undefined = undefined;
 		if (this.undos.length > 0) {
 			cmd = this.undos.pop() as Undos;
@@ -100,11 +92,6 @@ class History {
 	}
 
 	redo():Undos |undefined {
-		if (playerStore.isPlaying) {
-			window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
-			return;
-		}
-
 		let cmd:Undos |undefined = undefined;
 		if ( this.redos.length > 0 ) {
 			cmd = this.redos.pop() as Undos;
@@ -156,7 +143,7 @@ class History {
 			cmd.name = cmdJSON.name;
 			this.undos.push( cmd );
 			//设置最后使用的idCounter
-			this.idCounter = ( cmdJSON.id > this.idCounter ) ? cmdJSON.id : this.idCounter;
+			this.idCounter = ( cmdJSON.id > this.idCounter ) ? cmdJSON.id : this.idCounter; 
 		}
 
 		for ( let i = 0; i < json.redos.length; i ++ ) {
@@ -182,11 +169,6 @@ class History {
 	}
 
 	goToState( id:number ) {
-		if (playerStore.isPlaying) {
-			window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
-			return;
-		}
-
 		setActive("sceneGraphChanged",false);
 		setActive("historyChanged",false);
 

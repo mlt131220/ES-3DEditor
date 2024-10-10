@@ -19,14 +19,20 @@
     "experimentalDecorators": true,
     "lib": ["dom", "esnext"],
     "types": ["vite/client","naive-ui/volar"],
-    "typeRoots": ["./node_modules/@types/", "./types"],
+    "typeRoots": ["./node_modules/@types/", "./types","./public/sdk/types"],
     "noImplicitAny": false,
     "skipLibCheck": true,
     "paths": {
+      "~/*": [
+        "types/*"
+      ],
       "@/*": [
         "src/*"
       ]
-    }
+    },
+    "emitDeclarationOnly": true, // 只输出声明文件(ts 产物)
+    "declaration": true, // 自动生成声明文件
+    "declarationDir": "types", // 声明文件生成的目录
   },
   "include": [
     "src/**/*.ts",
@@ -35,6 +41,8 @@
     "src/**/*.vue",
     "types/*.d.ts",
     "types/**/*.d.ts",
+    "build/**/*.ts",
+    "public/sdk/**/*.d.ts"
   ],
   "exclude": ["node_modules",  "dist"]
 }

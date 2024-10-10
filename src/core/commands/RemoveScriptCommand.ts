@@ -1,5 +1,5 @@
 import {Object3D} from "three";
-import { Command } from '../Command';
+import { Command } from './Command';
 import { useDispatchSignal } from "@/hooks/useSignal";
 
 /**

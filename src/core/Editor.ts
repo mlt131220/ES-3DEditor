@@ -1,14 +1,13 @@
 import * as THREE from 'three';
 import { useSignal} from '@/hooks/useSignal';
+import {Storage} from "@/core/Storage";
 import { Config } from './Config';
-import { Session } from './Session';
 import { Loader } from './Loader';
 import { Resource } from './Resource';
 import { History as _History } from './History';
-import { Storage as _Storage } from './Storage';
 import { Selector } from './Viewport.Selector';
 import {useDrawingStoreWithOut} from "@/store/modules/drawing";
-import {useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
+import {DefaultSceneData, useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
 
 const { add:addSignal,dispatch, setActive } = useSignal();
 
@@ -21,15 +20,15 @@ _DEFAULT_CAMERA.lookAt(new THREE.Vector3());
 
 class Editor {
 	public config: Config;
-	public session: Session;
-	public storage;
+	storage: Storage;
 	public selector: Selector;
 	public history: _History;
 	public loader;
 	public resource: Resource;
-	public camera: THREE.Camera;
+	public camera: THREE.PerspectiveCamera;
 	public scene: THREE.Scene;
 	public sceneHelpers: THREE.Scene;
+
 	public object;
 	public geometries;
 	public materials;
@@ -39,20 +38,19 @@ class Editor {
 	public mixer;
 	public selected;
 	public helpers;
-	public cameras: { [uuid: string]: THREE.Camera };
+	public cameras: { [uuid: string]: THREE.PerspectiveCamera | THREE.OrthographicCamera };
 	metadata: Object;
-	protected viewportCamera: THREE.Camera;
+	protected viewportCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
 	protected viewportShading: string;
 
 	constructor() {
 		_DEFAULT_CAMERA.name = window.$t("core.editor['Default Camera']");
 
+		// 本地DB
+		this.storage = new Storage();
+
 		//localStorage
 		this.config = new Config();
-		//sessionStorage
-		this.session = new Session();
-		//indexDB
-		this.storage = _Storage();
 
 		this.selector = new Selector(this);
 
@@ -407,14 +405,26 @@ class Editor {
 		this.focus(this.objectByUuid(uuid));
 	}
 
+	// 遍历平铺所有子级mesh
+	traverseMeshToArr(object) {
+		if (object.isMesh) return [object];
+		const arr: THREE.Mesh[] = [];
+		object.traverse((item: THREE.Mesh) => {
+			if (item.isMesh) {
+				arr.push(item);
+			}
+		})
+
+		return arr;
+	}
+
 	clear() {
 		this.history.clear();
-		this.storage.clear();
 		this.camera.copy(_DEFAULT_CAMERA);
 		dispatch('cameraResetted');
 		this.scene.name = window.$t("core.editor['Default Scene']");
-		this.scene.position.set(0,0,0);
-		this.scene.rotation.set(0,0,0);
+        this.scene.position.set(0,0,0);
+        this.scene.rotation.set(0,0,0);
 		this.scene.userData = {};
 		this.scene.background = null;
 		this.scene.environment = null;
@@ -445,6 +455,10 @@ class Editor {
 		// 清空场景
 		this.clear();
 
+		if(window.viewer.reset){
+			window.viewer.reset();
+		}
+
 		// 清除图纸pinia状态
 		drawingStore.$reset();
 
@@ -459,7 +473,8 @@ class Editor {
 		// 清除图纸状态
 		drawingStore.$reset();
 
-		this.metadata = json.metadata;
+		this.metadata = json.metadata || {};
+		json.metadata = undefined;
 
 		if (json.drawingInfo) {
 			drawingStore.setImgSrc(json.drawingInfo.imgSrc);
@@ -468,36 +483,23 @@ class Editor {
 			drawingStore.setIsUploaded(true);
 
 			json.drawingInfo = undefined;
-			delete json.drawingInfo;
 		}
 
 		//重新设置场景信息
-		if(json.sceneInfo){
-			sceneInfoStore.setId(json.sceneInfo.id);
-			sceneInfoStore.setName(json.sceneInfo.sceneName);
-			sceneInfoStore.setVersion(json.sceneInfo.sceneVersion);
-			sceneInfoStore.setIntroduction(json.sceneInfo.sceneIntroduction);
-			sceneInfoStore.setIsCesium(Boolean(json.sceneInfo.isCesium));
-		}else{
-			sceneInfoStore.setId(0);
-			sceneInfoStore.setName("");
-			sceneInfoStore.setVersion(1);
-			sceneInfoStore.setIntroduction("");
-			sceneInfoStore.setIsCesium(false);
-		}
+		sceneInfoStore.setData(json.sceneInfo || DefaultSceneData);
 
 		let loader = new THREE.ObjectLoader();
 		let camera = await loader.parseAsync(json.camera);
 
-		this.camera.copy(camera as THREE.Camera);
+		this.camera.copy(camera as THREE.PerspectiveCamera);
 		dispatch('cameraResetted');
 
-		this.history.fromJSON(json.history);
-		this.scripts = json.scripts;
+		//this.history.fromJSON(json.history);
+		if(json.scripts){ this.scripts = json.scripts;}
 
 		this.setScene(await loader.parseAsync(json.scene));
 
-		window.$message?.success(window.$t("scene['Loading completed!']"));
+		return {initCamera:camera}
 	}
 
 	toJSON() {
@@ -517,7 +519,7 @@ class Editor {
 			project: {
 				shadows: this.config.getKey('project/renderer/shadows'),
 				shadowType: this.config.getKey('project/renderer/shadowType'),
-				vr: this.config.getKey('project/vr'),
+				xr: this.config.getKey('project/xr'),
 				physicallyCorrectLights: this.config.getKey(
 					'project/renderer/physicallyCorrectLights'
 				),
@@ -527,7 +529,7 @@ class Editor {
 			camera: this.camera.toJSON(),
 			scene: this.scene.toJSON(),
 			scripts: this.scripts,
-			history: this.history.toJSON(),
+			//history: this.history.toJSON(),
 		};
 	}
 
@@ -536,7 +538,7 @@ class Editor {
 		return this.scene.getObjectByProperty('uuid', uuid);
 	}
 
-	execute(cmd, optionalName) {
+	execute(cmd, optionalName = undefined) {
 		this.history.execute(cmd, optionalName);
 	}
 

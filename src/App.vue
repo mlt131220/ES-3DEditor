@@ -1,18 +1,10 @@
 <script lang="ts" setup>
-import {computed, onMounted, provide} from 'vue';
+import {computed, onMounted} from 'vue';
 import * as THREE from 'three';
 import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
-import {
-  NConfigProvider,
-  NMessageProvider,
-  NLoadingBarProvider,
-  NDialogProvider,
-  NNotificationProvider,GlobalThemeOverrides
-} from "naive-ui";
+import {GlobalThemeOverrides} from "naive-ui";
 import {Editor} from '@/core/Editor';
-import {useDrawingStore} from "@/store/modules/drawing";
 import {useGlobalConfigStore} from "@/store/modules/globalConfig";
-import {unzip} from "@/utils/common/pako";
 import {connectWebSocket} from "@/hooks/useWebSocket";
 import Index from "@/views/index.vue";
 
@@ -21,13 +13,10 @@ const editor = new Editor();
 window.editor = editor; // 将编辑器暴露到控制台
 window.VRButton = VRButton;
 
-// 图纸相关状态存储
-const drawingStore = useDrawingStore();
-
 // 全局配置相关
 const globalConfigStore = useGlobalConfigStore();
 
-const themeOverrides= computed<GlobalThemeOverrides>(() => {
+const themeOverrides = computed<GlobalThemeOverrides>(() => {
   const mainColor = globalConfigStore.mainColor as IConfig.Color;
 
   return {
@@ -46,32 +35,6 @@ const themeOverrides= computed<GlobalThemeOverrides>(() => {
 })
 
 onMounted(async () => {
-  //初始化IndexDB
-  editor.storage.init(function () {
-    editor.storage.get(function (state: any) {
-      if (isLoadingFromHash) return;
-      if (state !== undefined) {
-        editor.fromJSON(state);
-      }
-      const selected = editor.config.getKey('selected');
-      if (selected !== undefined) {
-        editor.selectByUuid(selected);
-      }
-    });
-
-    // 获取图纸
-    editor.storage.getDrawing(function (state: any) {
-      if (state !== undefined) {
-        drawingStore.setIsUploaded(true)
-        drawingStore.setImgSrc(state.imgSrc);
-        drawingStore.setMarkList(unzip(state.markList));
-        drawingStore.setSelectedRectIndex(state.selectedRectIndex);
-        drawingStore.setImgInfo(JSON.parse(state.imgInfo));
-      }
-    });
-  });
-
-  let isLoadingFromHash = false;
   const hash = window.location.hash;
 
   if (hash.slice(1, 6) === 'file=') {
@@ -88,7 +51,6 @@ onMounted(async () => {
           editor.clear();
           editor.fromJSON(JSON.parse((text as string)));
         });
-        isLoadingFromHash = true;
       },
     });
   }
@@ -103,11 +65,13 @@ onMounted(async () => {
   <n-config-provider :theme="globalConfigStore.getProviderTheme()" :theme-overrides="themeOverrides">
     <n-loading-bar-provider>
       <n-dialog-provider>
-        <n-notification-provider placement="bottom">
-          <n-message-provider>
-            <Index />
-          </n-message-provider>
-        </n-notification-provider>
+        <n-modal-provider>
+          <n-notification-provider placement="bottom">
+            <n-message-provider>
+              <Index/>
+            </n-message-provider>
+          </n-notification-provider>
+        </n-modal-provider>
       </n-dialog-provider>
     </n-loading-bar-provider>
   </n-config-provider>

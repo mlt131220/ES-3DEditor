@@ -11,6 +11,7 @@ const osThemeRef = useOsTheme();
  * 全局配置
  */
 export const useGlobalConfigStore = defineStore('global-config',()=>{
+    /* 主题 */
     const [themeLocal, setThemeLocal] = useLocalStorageState<IConfig.Theme>("es-theme", {
         defaultValue: "darkTheme",
     });
@@ -34,10 +35,12 @@ export const useGlobalConfigStore = defineStore('global-config',()=>{
         setThemeLocal(<IConfig.Theme>themeLink[current].next);
     }
 
+    /* i18n */
     const [localeLocal, setLocaleLocal] = useLocalStorageState<IConfig.Locale>("es-locale", {
         defaultValue: "zh-CN"
     });
 
+    /* 主色 */
     const [mainColor, setMainColor] = useLocalStorageState<IConfig.Color>("es-main-color", {
         defaultValue: {
             "CMYK": [56, 0, 19, 11],

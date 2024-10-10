@@ -1,5 +1,5 @@
 import {request} from "@/http/request";
-import {Service} from "../../../types/network";
+import {Service} from "~/network";
 import {useWebsocketStore} from "@/store/modules/websocket";
 
 const websocketStore = useWebsocketStore();

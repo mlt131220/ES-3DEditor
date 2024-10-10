@@ -1,15 +1,17 @@
-import Layout from "@/views/layout.vue";
-import Preview from "@/views/preview.vue";
-
 export const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Layout
+        component: () => import('@/views/home/index.vue')
+    },
+    {
+        path: '/editor/:id',
+        name: 'Editor',
+        component: () => import("@/views/editor/index.vue")
     },
     {
         path: '/preview/:id',
         name: 'Preview',
-        component: Preview
+        component: () => import("@/views/preview/index.vue")
     }
 ];

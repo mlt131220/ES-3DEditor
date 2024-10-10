@@ -22,8 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted} from "vue";
-import {MenubarAdd} from "@/utils/menubar/menubar-add";
+import {BasicObject3D} from "@/core/objects/basicObject3D";
 import {t,cpt} from "@/language";
 import {useDragStore} from "@/store/modules/drag";
 import {screenToWorld} from "@/utils/common/scenes";
@@ -49,14 +48,11 @@ const objectList = [//配图使用平行光灯光颜色 rgb(35,49,221)
   {key:"teapot",img:"/static/images/assetsLibrary/object3d/teapot.png",name:cpt("layout.header.Teapot")},
 ]
 
-let menubarAdd:MenubarAdd;
-onMounted(()=>{
-  menubarAdd = new MenubarAdd();
-})
+let basicObject3D  = new BasicObject3D();
 
 //双击添加至场景..
 function addToScene(key){
-  menubarAdd.init(key);
+  basicObject3D.init(key);
 }
 
 // 开始拖拽事件
@@ -70,7 +66,7 @@ function dragEnd(e){
   if(dragStore.getActionTarget !== "addToScene") return;
 
   const position = screenToWorld(e.clientX,e.clientY);
-  menubarAdd.init(dragStore.getData, {position:position});
+  basicObject3D.init(dragStore.getData, {position:position});
   dragStore.setActionTarget("");
 }
 </script>

@@ -180,6 +180,8 @@ export class SlowSmokeShaderMaterial {
     }
 
     static Update() {
+        if(!SlowSmokeShaderMaterial._ShaderMaterial) return;
+
         SlowSmokeShaderMaterial._ShaderMaterial.uniforms.uTime.value += .01
     }
 

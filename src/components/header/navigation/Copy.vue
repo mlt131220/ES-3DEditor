@@ -1,7 +1,7 @@
 <template>
   <n-tooltip trigger="hover">
     <template #trigger>
-      <n-button text class="mr-2" :disabled="disabled || playerStore.isPlaying" @click="handleClone()">
+      <n-button text class="mr-2" :disabled="disabled" @click="handleClone()">
         <template #icon>
           <n-icon size="22" class="cursor-pointer">
             <Copy />
@@ -20,9 +20,7 @@ import {NIcon, NTooltip} from "naive-ui";
 import {t} from "@/language";
 import {useAddSignal} from "@/hooks/useSignal";
 import { AddObjectCommand } from '@/core/commands/AddObjectCommand';
-import {usePlayerStore} from "@/store/modules/player";
 
-const playerStore = usePlayerStore();
 const disabled = ref(true);
 
 function objectSelected(object){
@@ -34,11 +32,6 @@ onMounted(() => {
 })
 
 function handleClone() {
-  if (playerStore.isPlaying) {
-    window.$message?.warning(window.$t("prompt.Disable when the scene is playing"))
-    return;
-  }
-
   let object = window.editor.selected;
 
   //避免复制相机或场景

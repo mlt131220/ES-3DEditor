@@ -33,12 +33,12 @@ class TweenManger {
     this.tweenList.remove(tween);
   }
 
-  update(needsUpdate:boolean) {
+  update() {
     if (this.tweenList.getAll().length === 0) return;
 
     this.tweenList.update();
 
-    needsUpdate && useDispatchSignal("sceneGraphChanged")
+    useDispatchSignal("sceneGraphChanged")
   }
 }
 export { TweenManger };

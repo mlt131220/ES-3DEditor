@@ -80,6 +80,7 @@ class Selector {
 		this.editor.config.setKey( 'selected', uuid );
 
 		useDispatchSignal("objectSelected",object);
+		useDispatchSignal("sceneGraphChanged");
 	}
 
 	deselect() {

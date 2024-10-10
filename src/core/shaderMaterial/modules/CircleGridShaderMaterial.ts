@@ -105,6 +105,8 @@ export class CircleGridShaderMaterial {
     }
 
     static Update() {
+        if(!CircleGridShaderMaterial._ShaderMaterial) return;
+
         CircleGridShaderMaterial._ShaderMaterial.uniforms.uTime.value += .01
     }
 

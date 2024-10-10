@@ -83,6 +83,8 @@ export class StreamerWallShaderMaterial{
     }
 
     static Update() {
+        if(!StreamerWallShaderMaterial._ShaderMaterial) return;
+
         StreamerWallShaderMaterial._ShaderMaterial.uniforms.uTime.value += .01
     }
 

@@ -1,4 +1,4 @@
-import {Vector2, Vector3, BufferGeometry, Object3D} from "three";
+import {Vector2, Vector3, BufferGeometry, Object3D,InstancedMesh,Mesh,Matrix4} from "three";
 
 export interface IModel extends Object3D{
 	metadata: Object;
@@ -40,6 +40,38 @@ export function getObjectType( object ) {
 }
 
 /**
+ * InstancedMesh 解出所有 mesh
+ */
+export function getMeshByInstancedMesh(instancedMesh:InstancedMesh){
+	const meshes:Mesh[] = [];
+	// if (instancedMesh.material === undefined) return meshes;
+
+	const matrixWorld = instancedMesh.matrixWorld;
+	const count = instancedMesh.count;
+
+	for (let instanceId = 0; instanceId < count; instanceId++) {
+		const _mesh = new Mesh();
+		const _instanceLocalMatrix = new Matrix4();
+		const _instanceWorldMatrix = new Matrix4();
+
+		_mesh.geometry = instancedMesh.geometry;
+		_mesh.material = instancedMesh.material;
+
+		// 计算每个实例的世界矩阵
+		instancedMesh.getMatrixAt(instanceId, _instanceLocalMatrix);
+
+		_instanceWorldMatrix.multiplyMatrices(matrixWorld, _instanceLocalMatrix);
+
+		// 网格表示这个单一实例
+		_mesh.matrixWorld = _instanceWorldMatrix;
+
+		meshes.push(_mesh);
+	}
+
+	return meshes;
+}
+
+/**
  * 获取当前选中模型 path
  */
 export function getSelectedModelPath() {
@@ -55,6 +87,11 @@ export function getSelectedModelPath() {
 	getPath(window.editor.selected);
 
 	return pathArr.join(' !! ');
+}
+
+export function getMousePosition(dom: HTMLElement, x: number, y: number) {
+	const rect = dom.getBoundingClientRect();
+	return [(x - rect.left) / rect.width, (y - rect.top) / rect.height];
 }
 
 // 屏幕坐标转世界坐标
@@ -110,6 +147,13 @@ export function reBufferGeometryUv(geometry:BufferGeometry) {
 
 	// 通知three.js更新
 	uv.needsUpdate = true;
+}
+
+/**
+ * 判断是否是group,因为导入有可能存在被定义为Object3D类型的group
+ */
+export function isGroup(object3D){
+	return (object3D.isGroup || object3D.children.length > 0)
 }
 
 export function setUserData(object:IModel, key:string, value:any) {

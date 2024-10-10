@@ -90,6 +90,8 @@ export class DynamicCheckerboardShaderMaterial {
     }
 
     static Update() {
+        if(!DynamicCheckerboardShaderMaterial._ShaderMaterial) return;
+
         DynamicCheckerboardShaderMaterial._ShaderMaterial.uniforms.uTime.value += .01
     }
 

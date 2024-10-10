@@ -358,6 +358,7 @@ class TeapotGeometry extends BufferGeometry {
 
 		super();
 
+		// @ts-ignore
 		this.type = "TeapotGeometry";
 
 		this._parameters = {

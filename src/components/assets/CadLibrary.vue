@@ -25,8 +25,8 @@
             <template #description>
               正在解析...
             </template>
-            <img :src="item.thumbnail ? item.thumbnail : '/static/images/占位图.png'" :alt="item.fileName"
-               draggable="false">
+            <img :src="item.thumbnail ? item.thumbnail : '/static/images/placeholder/占位图.png'" :alt="item.fileName"
+                 draggable="false">
             <n-tag :color="{ color: '#F1C3CC', textColor: '#D03050' }" :bordered="false"
                    size="small" class="absolute top-33px w-full" v-if="item.conversionStatus === 2">
               解析失败
@@ -58,7 +58,7 @@
     </n-modal>
 
     <!--  CAD文件上传  -->
-    <UploadDialog v-model:show="showCadUpload" @refreshList="getCadList" ref="uploadDialogRef"/>
+    <CadUploadDialog v-model:show="showCadUpload" @refreshList="getCadList" ref="uploadDialogRef"/>
   </div>
 </template>
 
@@ -73,7 +73,6 @@ import {useDrawingStore} from "@/store/modules/drawing";
 import {fetchGetCadList} from "@/http/api/cad";
 import {onWebSocket, offWebSocket} from "@/hooks/useWebSocket";
 import {useWebsocketStore} from "@/store/modules/websocket";
-import UploadDialog from "./cadLibrary/UploadDialog.vue";
 
 const websocketStore = useWebsocketStore();
 const drawingStore = useDrawingStore();

@@ -1,59 +1,50 @@
 import { defineStore } from 'pinia';
 import { store } from '@/store';
 
+interface ISceneInfo {
+    // sceneInfo
+    data:ISceneFetchData,
+    // 工程（场景截图）Url
+    screenshot:string
+}
+
+export const DefaultSceneData = {
+    id:0,
+    sceneName:"",
+    sceneType:"其他",
+    sceneIntroduction:"",
+    sceneVersion:1,
+    projectType:0, // 默认 Web3D 项目
+    coverPicture:"",
+    hasDrawing:0,
+    zip:"",
+    zipSize:"0",
+    cesiumConfig:undefined
+}
+
+export const DefaultScreenshot = "/static/images/placeholder/截屏占位图.png";
+
 /**
  * 场景相关信息
  */
 export const useSceneInfoStore = defineStore({
     id: 'sceneInfo',
     state: () => <ISceneInfo>({
-        id: 0,
-        // 场景类型
-        type: "其他",
-        // 场景名称
-        name:"",
-        // 场景描述
-        introduction:"",
-        // 场景版本
-        version:1,
-        // 是否是 cesium 场景
-        isCesium:false
+        data:DefaultSceneData,
+        screenshot:DefaultScreenshot
     }),
     getters:{
-        getId:state=> state.id,
-        getType:state=> state.type,
-        getName:state=> state.name,
-        getIntroduction:state=> state.introduction,
-        getVersion:state=> state.version,
-        getIsCesium:state=> state.isCesium,
-        getSceneInfo:state=> state,
+        isCesiumScene:state=> state.data.projectType === 1,
+        cesiumConfig:state => state.data.cesiumConfig as ICesiumConfig,
     },
     actions: {
-        setId(id:number){
-            this.id = id;
+        setDataFieldValue(field:string,value:string | number){
+            if(!this.data[field]) return;
+
+            this.data[field] = value;
         },
-        setType(type:string){
-            this.type = type;
-        },
-        setName(name:string){
-            this.name = name;
-        },
-        setIntroduction(introduction:string){
-            this.introduction = introduction;
-        },
-        setVersion(version:number){
-            this.version = version;
-        },
-        setIsCesium(isCesium:boolean){
-            this.isCesium = isCesium;
-        },
-        setSceneInfo(sceneInfo){
-            this.id = sceneInfo.id;
-            this.type = sceneInfo.sceneType;
-            this.name = sceneInfo.sceneName;
-            this.introduction = sceneInfo.sceneIntroduction;
-            this.version = sceneInfo.sceneVersion;
-            this.isCesium = sceneInfo.isCesium;
+        setData(sceneData:ISceneFetchData){
+            this.data = sceneData;
         }
     }
 })

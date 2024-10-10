@@ -1,6 +1,6 @@
 <template>
   <n-modal :show="show" @update:show="(s) => emits('update:show',s)" class="!w-60vw" preset="dialog"
-           :title="t('layout.sider.scene.userdata')" :showIcon="false">
+           :title="t('layout.sider.object.userdata')" :showIcon="false">
     <div ref="MonacoEditorUserdata" class="h-600px"></div>
 
     <div class="float-right mt-10px">

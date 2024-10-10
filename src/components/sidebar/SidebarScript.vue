@@ -1,5 +1,5 @@
 <template>
-  <EsDocument url="http://editor-doc.mhbdng.cn/core/script.html" />
+  <EsDocument url="http://editor-doc.mhbdng.cn/guide/components/script.html" />
 
   <div v-if="isSelectObject3D">
     <n-list hoverable clickable>
@@ -27,7 +27,6 @@
 <script setup lang="ts">
 import {onBeforeUnmount, onMounted, ref, toRaw, h} from "vue";
 import {NInput} from "naive-ui";
-import {Link} from "@vicons/carbon";
 import {t} from "@/language";
 import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
 import {SetScriptValueCommand, RemoveScriptCommand, AddScriptCommand} from "@/core/commands/Commands";

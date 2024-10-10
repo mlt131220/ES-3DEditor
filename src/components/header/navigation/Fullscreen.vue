@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center mr-2">
+  <div class="flex items-center mr-5">
     <n-tooltip trigger="hover" v-if="!isFullscreen">
       <template #trigger>
         <n-button text>

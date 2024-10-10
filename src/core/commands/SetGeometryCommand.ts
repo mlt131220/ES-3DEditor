@@ -1,4 +1,4 @@
-import { Command } from '../Command';
+import { Command } from './Command';
 import { ObjectLoader,BufferGeometry,Mesh, InstancedBufferGeometry} from 'three';
 import {useDispatchSignal} from "@/hooks/useSignal";
 

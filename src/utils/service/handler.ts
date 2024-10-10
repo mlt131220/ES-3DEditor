@@ -1,4 +1,4 @@
-import {Service} from "../../../types/network";
+import {Service} from "~/network";
 
 /** 统一失败和成功的请求结果的数据类型 */
 export async function handleServiceResult(error: Service.RequestError | null, data: any, other?: any) {

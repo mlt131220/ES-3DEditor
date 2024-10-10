@@ -109,3 +109,26 @@ export function throttle(func, wait) {
 export function pow1024(num) {
     return Math.pow(1024, num)
 }
+
+/**
+ * 动态添加script
+ * @param src
+ * @param async
+ */
+export function loadScript(src:string,async:boolean = true){
+    return new Promise((resolve,reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = async;
+
+        script.onload = () => {
+            resolve("");
+        };
+
+        script.onerror = () => {
+            reject(`${src} 加载失败!`);
+        };
+
+        document.head.appendChild(script);
+    })
+}

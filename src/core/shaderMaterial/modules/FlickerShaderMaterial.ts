@@ -79,6 +79,8 @@ export class FlickerShaderMaterial{
     }
 
     static Update() {
+        if(!FlickerShaderMaterial._ShaderMaterial) return;
+
         FlickerShaderMaterial._ShaderMaterial.uniforms.uTime.value += .02
     }
 

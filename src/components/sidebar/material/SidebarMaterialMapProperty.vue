@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import {ref, onMounted, onUnmounted, nextTick, toRaw} from "vue";
-import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
-import {EquirectangularReflectionMapping, SRGBColorSpace} from "three";
+import {ref, reactive,watch,onMounted, onUnmounted, nextTick, toRaw} from "vue";
+import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
+import {EquirectangularReflectionMapping, SRGBColorSpace,RepeatWrapping,ClampToEdgeWrapping,MirroredRepeatWrapping  } from "three";
 import type {Material, BufferGeometry} from "three";
+import {SettingsAdjust} from "@vicons/carbon";
 import {SetMaterialMapCommand} from '@/core/commands/SetMaterialMapCommand';
 import {SetMaterialValueCommand} from '@/core/commands/SetMaterialValueCommand';
 import {SetMaterialVectorCommand} from '@/core/commands/SetMaterialVectorCommand';
@@ -29,12 +30,38 @@ let material: Material;
 let mapType;
 const colorMaps = [ 'map', 'emissiveMap', 'sheenColorMap', 'specularColorMap', 'envMap' ];
 let currentMaterialSlot = 0;
+
 const intensity = ref();
 const scale = ref();
 const scaleX = ref();
 const scaleY = ref();
 const rangeMin = ref();
 const rangeMax = ref();
+// 纹理重复（U、V方向重复）
+const repeat = reactive({
+  has:false,
+  wrap:RepeatWrapping,
+  x: 1,
+  y: 1,
+});
+// 纹理重复方式
+const wrapOptions = [
+  {label: t('layout.sider.material.Repeat wrapping'), value: RepeatWrapping },
+  {label: t('layout.sider.material.Edge stretching'), value: ClampToEdgeWrapping },
+  {label: t('layout.sider.material.Mirror duplication'), value: MirroredRepeatWrapping },
+]
+
+const showConfig = ref(false)
+watch(() => enabled.value, () => {
+  if(!enabled.value){
+    showConfig.value = false;
+    return;
+  }
+
+  if(repeat.has || ['aoMap','bumpMap','displacementMap','normalMap','clearcoatNormalMap','iridescenceThicknessMap'].includes(props.property)){
+    showConfig.value = true;
+  }
+})
 
 onMounted(() => {
   useAddSignal("objectSelected", handleObjectSelected);
@@ -70,6 +97,14 @@ async function update() {
   if (props.property in material) {
     if (material[props.property] !== null) {
       texture.value = material[props.property];
+
+      // 贴图是否存在纹理重复属性
+      if(material[props.property].repeat){
+        repeat.has = true;
+        repeat.wrap = material[props.property].wrapS;
+        repeat.x = material[props.property].repeat.x;
+        repeat.y = material[props.property].repeat.y;
+      }
     }
 
     enabled.value = material[props.property] !== null;
@@ -120,6 +155,7 @@ function onChange() {
 // 贴图change
 function onMapChange(texture) {
   if (texture !== null) {
+    // 修正色彩空间
     if (colorMaps.includes(props.property) && !texture.isDataTexture && texture.colorSpace !== SRGBColorSpace) {
       texture.encoding = SRGBColorSpace;
       material.needsUpdate = true;
@@ -128,6 +164,30 @@ function onMapChange(texture) {
 
   enabledDisabled.value = false;
   onChange();
+}
+
+// 纹理重复change
+function onRepeatChange() {
+  if(!repeat.has) return;
+
+  if(material[props.property].repeat.x !== repeat.x || material[props.property].repeat.y !== repeat.y){
+    window.editor.execute(new SetMaterialVectorCommand(object, `${props.property}.repeat`, [repeat.x, repeat.y], 0));
+  }
+}
+
+// 纹理回环change
+function onRepeatWrapChange() {
+  if(!repeat.has) return;
+
+  if(material[props.property].wrapS !== repeat.wrap || material[props.property].wrapT !== repeat.wrap){
+    // TODO: 后面应该改用window.editor.execute命令调用，写入历史记录以回滚
+    material[props.property].wrapS = repeat.wrap;
+    material[props.property].wrapT = repeat.wrap;
+
+    material[props.property].needsUpdate = true;
+
+    useDispatchSignal("materialChanged")
+  }
 }
 
 function onIntensityChange() {
@@ -167,55 +227,87 @@ function onRangeChange() {
         <n-checkbox size="small" v-model:checked="enabled" :disabled="enabledDisabled"
                     @update:checked="onChange"/>
         <EsTexture ref="esTextureRef" v-model:texture="texture" @change="onMapChange"/>
-      </div>
-    </div>
 
-    <!-- aoMap -->
-    <div class="sider-scene-material-map-property-item" v-if="property === 'aoMap'">
-      <span></span>
-      <div>
-        <EsInputNumber v-model:value="intensity" size="tiny" :show-button="false"
-                       @change="onIntensityChange"/>
-      </div>
-    </div>
+        <n-popover v-if="showConfig" trigger="hover" placement="top-start" :width="240"
+                   content-style="padding: 0;">
+          <template #trigger>
+            <n-button quaternary circle class="ml-15px">
+              <template #icon>
+                <n-icon><SettingsAdjust /></n-icon>
+              </template>
+            </n-button>
+          </template>
 
-    <!-- displacementMap | bumpMap -->
-    <div class="sider-scene-material-map-property-item"
-         v-if="property === 'bumpMap' || property === 'displacementMap'">
-      <span></span>
-      <div>
-        <EsInputNumber v-model:value="scale" size="tiny" :show-button="false"
-                       @change="onScaleChange"/>
-      </div>
-    </div>
+          <!-- repeat(纹理重复) -->
+          <div class="sider-scene-material-map-property-item" v-if="repeat.has">
+            <span>{{ t("layout.sider.material.repeat") }}(U, V)</span>
+            <div>
+              <EsInputNumber v-model:value="repeat.x" size="tiny" :show-button="false"
+                             @change="onRepeatChange"/>
+              <EsInputNumber v-model:value="repeat.y" size="tiny" :show-button="false"
+                             @change="onRepeatChange"/>
+            </div>
+          </div>
 
-    <!-- clearcoatNormalMap | normalMap  -->
-    <div class="sider-scene-material-map-property-item"
-         v-if="property === 'normalMap' || property === 'clearcoatNormalMap'">
-      <span></span>
-      <div>
-        <EsInputNumber v-model:value="scaleX" size="tiny" :show-button="false"
-                       @change="onScaleXYChange"/>
-        <EsInputNumber v-model:value="scaleY" size="tiny" :show-button="false"
-                       @change="onScaleXYChange"/>
-      </div>
-    </div>
+          <!-- 纹理回环(重复纹理的方式) -->
+          <div class="sider-scene-material-map-property-item" v-if="repeat.has">
+            <span>{{ t("layout.sider.material.repetitive mode") }}</span>
+            <div>
+              <n-select size="small" v-model:value="repeat.wrap" :options="wrapOptions" @update:value="onRepeatWrapChange"/>
+            </div>
+          </div>
 
-    <!-- iridescenceThicknessMap -->
-    <div class="sider-scene-material-map-property-item" v-if="property === 'iridescenceThicknessMap'">
-      <span>min:</span>
-      <div>
-        <EsInputNumber v-model:value="rangeMin" size="tiny" :show-button="false" :min="0"
-                       :max="Infinity" :step="10" @change="onRangeChange"/>
-        <span>nm</span>
-      </div>
-    </div>
-    <div class="sider-scene-material-map-property-item" v-if="property === 'iridescenceThicknessMap'">
-      <span>max:</span>
-      <div>
-        <EsInputNumber v-model:value="rangeMax" size="tiny" :show-button="false" :min="0"
-                       :max="Infinity" :step="10" @change="onRangeChange"/>
-        <span>nm</span>
+          <!-- aoMap(环境遮挡贴图) -->
+          <div class="sider-scene-material-map-property-item" v-if="property === 'aoMap'">
+            <span>{{ t("layout.sider.object.intensity") }}</span>
+            <div>
+              <EsInputNumber v-model:value="intensity" size="tiny" :show-button="false"
+                             @change="onIntensityChange"/>
+            </div>
+          </div>
+
+          <!-- displacementMap(置换贴图) | bumpMap(凹凸贴图) -->
+          <div class="sider-scene-material-map-property-item"
+               v-if="property === 'bumpMap' || property === 'displacementMap'">
+            <span>{{ t("layout.sider.object.scale") }}</span>
+            <div>
+              <EsInputNumber v-model:value="scale" size="tiny" :show-button="false"
+                             @change="onScaleChange"/>
+            </div>
+          </div>
+
+          <!-- clearcoatNormalMap(透明法线贴图) | normalMap(法线贴图)  -->
+          <div class="sider-scene-material-map-property-item"
+               v-if="property === 'normalMap' || property === 'clearcoatNormalMap'">
+            <span>{{ t("layout.sider.object.scale") }}(X, Y)</span>
+            <div>
+              <EsInputNumber v-model:value="scaleX" size="tiny" :show-button="false"
+                             @change="onScaleXYChange"/>
+              <EsInputNumber v-model:value="scaleY" size="tiny" :show-button="false"
+                             @change="onScaleXYChange"/>
+            </div>
+          </div>
+
+          <!-- iridescenceThicknessMap(彩虹色厚度贴图) -->
+          <template v-if="property === 'iridescenceThicknessMap'">
+            <div class="sider-scene-material-map-property-item">
+              <span>min:</span>
+              <div>
+                <EsInputNumber v-model:value="rangeMin" size="tiny" :show-button="false" :min="0"
+                               :max="Infinity" :step="10" @change="onRangeChange"/>
+                <span>nm</span>
+              </div>
+            </div>
+            <div class="sider-scene-material-map-property-item">
+              <span>max:</span>
+              <div>
+                <EsInputNumber v-model:value="rangeMax" size="tiny" :show-button="false" :min="0"
+                               :max="Infinity" :step="10" @change="onRangeChange"/>
+                <span>nm</span>
+              </div>
+            </div>
+          </template>
+        </n-popover>
       </div>
     </div>
   </div>
@@ -229,17 +321,18 @@ function onRangeChange() {
   align-items: center;
 
   & > span {
-    min-width: 80px;
+    width: 35%;
   }
 
   & > div {
-    width: 150px;
+    width: 63%;
+    margin-left: 2%;
     // color: rgb(165, 164, 164);
     display: flex;
     align-items: center;
 
     .es-texture {
-      margin-left: 0.5rem;
+      margin-left: 8px;
     }
   }
 }

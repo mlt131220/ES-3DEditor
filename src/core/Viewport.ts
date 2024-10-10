@@ -2,19 +2,21 @@ import * as THREE from 'three';
 // import {ViewHelper as ViewHelperBase} from 'three/examples/jsm/helpers/ViewHelper.js';
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 
-import {EditorControls} from "@/core/EditorControls";
+import {EditorControls} from "@/core/controls/EditorControls";
 import ViewCube from "./Viewport.Cube";
 import {SetPositionCommand} from "@/core/commands/SetPositionCommand";
 import {SetRotationCommand} from "@/core/commands/SetRotationCommand";
 import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
-
+import {getMousePosition} from "@/utils/common/scenes";
 import { XR } from './Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
 import { ViewportPathTracer } from './Viewport.PathTracer';
 import {TweenManger} from "@/core/utils/TweenManager";
 import {ShaderMaterialManager} from "@/core/shaderMaterial/ShaderMaterialManager";
+import {Package} from "@/core/loader/Package";
+import FlyTo from "@/core/utils/FlyTo";
 
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
@@ -38,7 +40,6 @@ export class Viewport {
     private renderer: THREE.WebGLRenderer | undefined;
     private pmremGenerator: THREE.PMREMGenerator | undefined;
     private pathtracer:ViewportPathTracer | undefined;
-    private modules: any;
     private showSceneHelpers: boolean = true;
 
     private grid: THREE.Group;
@@ -46,14 +47,24 @@ export class Viewport {
     private selectionBox: THREE.Box3Helper;
     private raycaster: THREE.Raycaster;
 
+    private modules: {
+        xr:XR,
+        controls:EditorControls,
+        transformControls:TransformControls,
+        viewCube:ViewCube,
+        fly:FlyTo,
+        package:Package,
+        tweenManager:TweenManger,
+        registerSignal:ViewportSignals,
+        shaderMaterialManager:ShaderMaterialManager
+    };
+
     constructor(container: HTMLDivElement) {
         this.container = container;
 
         this.scene = window.editor.scene;
         this.camera = window.editor.camera;
         this.sceneHelpers = window.editor.sceneHelpers;
-
-        this.modules = {};
 
         /** helpers **/
         this.grid = new THREE.Group();
@@ -71,7 +82,7 @@ export class Viewport {
         //Raycaster 将只从它遇到的第一个对象中获取信息
         //this.raycaster.firstHitOnly = true;
 
-        this.initModules();
+        this.modules = this.initModules();
 
         this.container.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.container.addEventListener('touchstart', this.onTouchStart.bind(this));
@@ -140,6 +151,12 @@ export class Viewport {
     }
 
     protected initModules() {
+        const controls = new EditorControls(this.camera, this.container);
+        controls.addEventListener("change", () => {
+            useDispatchSignal("cameraChanged", this.camera);
+            useDispatchSignal("refreshSidebarObject3D", this.camera);
+        });
+
         let objectPositionOnDown = new THREE.Vector3();
         let objectRotationOnDown = new THREE.Euler();
         let objectScaleOnDown = new THREE.Vector3();
@@ -167,7 +184,7 @@ export class Viewport {
             objectRotationOnDown = object.rotation.clone();
             objectScaleOnDown = object.scale.clone();
 
-            this.modules["controls"].enabled = false;
+            this.modules.controls.enabled = false;
         })
         transformControls.addEventListener("mouseUp", () => {
             const object = transformControls.object as THREE.Object3D;
@@ -191,30 +208,28 @@ export class Viewport {
                         break;
                 }
             }
-            this.modules["controls"].enabled = true;
+            this.modules.controls.enabled = true;
         })
-        this.modules["transformControls"] = transformControls;
         this.sceneHelpers.add(transformControls);
 
-        this.modules["xr"] = new XR(this.modules["transformControls"]);
+        // const viewHelper = new ViewHelperBase(this.camera, this.container);
+        // viewHelper.controls = controls;
 
-        this.modules["controls"] = new EditorControls(this.camera, this.container);
-        this.modules["controls"].addEventListener("change", () => {
-            useDispatchSignal("cameraChanged", this.camera);
-            useDispatchSignal("refreshSidebarObject3D", this.camera);
-        });
-
-        // this.modules["viewHelper"] = new ViewHelperBase(this.camera, this.container);
-        // this.modules["viewHelper"].controls = this.modules["controls"];
-        this.modules["viewCube"] = new ViewCube(this.camera,this.container,this.modules["controls"]);
-
-        // 补间动画
-        this.modules["tweenManager"] = new TweenManger();
-
-        // 注册signal
-        this.modules["registerSignal"] = new ViewportSignals(this);
-
-        this.modules["ShaderMaterialManager"] = new ShaderMaterialManager();
+        return {
+            xr: new XR(transformControls),
+            controls,
+            transformControls,
+            viewCube: new ViewCube(this.camera,this.container,controls),
+            // viewHelper,
+            // 相机飞行
+            fly: new FlyTo(this.camera,controls),
+            package: new Package(),
+            // 补间动画
+            tweenManager: new TweenManger(),
+            // 注册signal
+            registerSignal: new ViewportSignals(this),
+            shaderMaterialManager: new ShaderMaterialManager()
+        }
     }
 
     updateAspectRatio() {
@@ -268,11 +283,6 @@ export class Viewport {
         return this.raycaster.intersectObjects(objects, false);
     }
 
-    getMousePosition(dom: HTMLElement, x: number, y: number) {
-        const rect = dom.getBoundingClientRect();
-        return [(x - rect.left) / rect.width, (y - rect.top) / rect.height];
-    }
-
     handleClick() {
         if (onDownPosition.distanceTo(onUpPosition) === 0) {
             const intersects = this.getIntersects(onUpPosition);
@@ -283,14 +293,14 @@ export class Viewport {
 
     onMouseDown(event: MouseEvent) {
         event.preventDefault();
-        const array = this.getMousePosition(this.container, event.clientX, event.clientY);
+        const array = getMousePosition(this.container, event.clientX, event.clientY);
         onDownPosition.fromArray(array);
         mouseUpFn = this.onMouseUp.bind(this);
         document.addEventListener('mouseup', mouseUpFn);
     }
 
     onMouseUp(event: MouseEvent) {
-        const array = this.getMousePosition(this.container, event.clientX, event.clientY);
+        const array = getMousePosition(this.container, event.clientX, event.clientY);
         onUpPosition.fromArray(array);
         this.handleClick();
         document.removeEventListener('mouseup', mouseUpFn);
@@ -299,7 +309,7 @@ export class Viewport {
 
     onTouchStart(event: TouchEvent) {
         const touch = event.changedTouches[0];
-        const array = this.getMousePosition(this.container, touch.clientX, touch.clientY);
+        const array = getMousePosition(this.container, touch.clientX, touch.clientY);
         onDownPosition.fromArray(array);
         mouseUpFn = this.onTouchEnd.bind(this);
         document.addEventListener('touchend', mouseUpFn);
@@ -307,7 +317,7 @@ export class Viewport {
 
     onTouchEnd(event: TouchEvent) {
         const touch = event.changedTouches[0];
-        const array = this.getMousePosition(this.container, touch.clientX, touch.clientY);
+        const array = getMousePosition(this.container, touch.clientX, touch.clientY);
         onUpPosition.fromArray(array);
         this.handleClick();
         document.removeEventListener('touchend', mouseUpFn);
@@ -315,7 +325,7 @@ export class Viewport {
     }
 
     onDoubleClick(event: MouseEvent) {
-        const array = this.getMousePosition(this.container, event.clientX, event.clientY);
+        const array = getMousePosition(this.container, event.clientX, event.clientY);
         onDoubleClickPosition.fromArray(array);
         const intersects = this.getIntersects(onDoubleClickPosition);
         if (intersects.length > 0) {
@@ -325,6 +335,8 @@ export class Viewport {
     }
 
     animate() {
+        this.modules.tweenManager?.update();
+
         const mixer = window.editor.mixer;
         const delta = clock.getDelta();
 
@@ -345,15 +357,9 @@ export class Viewport {
             }
         }
 
-        // View Helper
-        // if (this.modules["viewHelper"].animating) {
-        //     this.modules["viewHelper"].update(delta);
-        //     needsUpdate = true;
-        // }
-
-        this.modules["viewCube"].update();
-        this.modules["ShaderMaterialManager"].update();
-        if(this.modules["ShaderMaterialManager"].needRender){
+        this.modules.viewCube.update();
+        this.modules.shaderMaterialManager.update();
+        if(this.modules.shaderMaterialManager.needRender){
             needsUpdate = true;
         }
 
@@ -362,8 +368,6 @@ export class Viewport {
         }
 
         if (needsUpdate) this.render();
-
-        this.modules["tweenManager"].update(!needsUpdate);
 
         this.updatePT();
     }
