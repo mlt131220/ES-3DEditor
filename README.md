@@ -26,6 +26,9 @@
 
 ***
 
+## 后端
+* Go实现: [ES3DEditorGoBack](https://github.com/mlt131220/ES3DEditorGoBack)
+
 ## 特性：
 - [x] 模型导入展示，支持OBJ、FBX、GLTF、GLB、RVT、IFC、SEA、3DM、3DS、3MF、AMF、DAE、DRC、PLY、SVG、JSON等30+格式;
 - [x] BIM模型（RVT、IFC）轻量化展示;
