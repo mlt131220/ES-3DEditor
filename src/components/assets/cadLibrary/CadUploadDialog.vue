@@ -114,10 +114,10 @@ let notice: null | NotificationReactive = null;
 const getNotice = () => notice;
 // 提交
 function submit(e) {
-  if (demoEnv) {
-    window.$message?.error(window.$t("prompt['Disable this function in the demonstration environment!']"));
-    return;
-  }
+  // if (demoEnv) {
+  //   window.$message?.error(window.$t("prompt['Disable this function in the demonstration environment!']"));
+  //   return;
+  // }
 
   e.preventDefault();
   formRef.value?.validate(async (errors) => {
