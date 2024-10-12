@@ -22,7 +22,7 @@
 ***
 
 ## WeChat Group
-<img src="/public/static/images/contact/WeChatGroup.jpg" width="500px">
+<img src="https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg" width="500px">
 
 ***
 
@@ -106,9 +106,9 @@ Tips:
 
 ## Thanks for sponsoring🌹🌹🌹
 If the project is to help to you, please leave you in [here](https://github.com/mlt131220/ES-3DEditor/issues/2) site, let more people see. Your reply will be the motivation for me to continue updating and maintaining。 </br></br>
-This project code is completely open source and free to learn & use, if you are happy and want to donate, you can scan the QR code below：
-<img src="/public/static/images/contact/alipay.jpg" width="420px">
-<img src="/public/static/images/contact/wepay.jpg" width="420px">
+This project code is completely open source and free to learn & use, if you are happy and want to donate, you can scan the QR code below：</br>
+<img src="https://upyun.mhbdng.cn/static/images/alipay.jpg" width="320px">
+<img src="https://upyun.mhbdng.cn/static/images/wepay.jpg" width="320px">
 
 ## Declaration of interest
 This project is open source based on the Apache-2.0 protocol, anyone can use it for free, but in any case, please do not use it for commercial purposes, please contact the author for authorization.

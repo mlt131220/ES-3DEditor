@@ -22,7 +22,7 @@
 ***
 
 ## 交流
-<img src="/public/static/images/contact/WeChatGroup.jpg" width="500px">
+<img src="https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg" width="500px">
 
 ***
 
@@ -106,9 +106,9 @@ Tips:
 
 ## 感谢 || 赞助🌹🌹🌹
 如果本项目帮助到了你，请在[这里](https://github.com/mlt131220/ES-3DEditor/issues/2)留下你的网址，让更多的人看到。您的回复将会是我继续更新维护下去的动力。 </br></br>
-本项目代码完全开源并且免费学习&使用，如果你开心并且想要打赏赞助，可扫描下方二维码：
-<img src="/public/static/images/contact/alipay.jpg" width="420px">
-<img src="/public/static/images/contact/wepay.jpg" width="420px">
+本项目代码完全开源并且免费学习&使用，如果你开心并且想要打赏赞助，可扫描下方二维码：</br>
+<img src="https://upyun.mhbdng.cn/static/images/alipay.jpg" width="320px">
+<img src="https://upyun.mhbdng.cn/static/images/wepay.jpg" width="320px">
 
 ## 权益声明
 本项目基于Apache-2.0协议开源，任何人可以免费使用，但任何情况下，请不要用于商业用途,商用用途请联系作者获得授权。
