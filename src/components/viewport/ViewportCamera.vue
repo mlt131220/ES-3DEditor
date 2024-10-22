@@ -118,8 +118,45 @@ const options = ref<IOption[]>()
 const sceneCamera = ref<IOption[]>();
 
 function handlerChange(value: IOption) {
+  // @ts-ignore
   current.value = value;
-  window.editor.setViewportCamera(current.value.uuid);
+
+  const cameraManage = window.viewer.modules.cameraManage;
+  switch (value.uuid){
+    case "Front":
+      cameraManage.front().then((camera:Camera) => {
+        window.editor.setViewportCamera(camera.uuid);
+      })
+      break;
+    case "Back":
+      cameraManage.rear().then((camera:Camera) => {
+        window.editor.setViewportCamera(camera.uuid);
+      })
+      break;
+    case "Left":
+      cameraManage.left().then((camera:Camera) => {
+        window.editor.setViewportCamera(camera.uuid);
+      })
+      break;
+    case "Right":
+      cameraManage.right().then((camera:Camera) => {
+        window.editor.setViewportCamera(camera.uuid);
+      })
+      break;
+    case "Top":
+      cameraManage.top().then((camera:Camera) => {
+        window.editor.setViewportCamera(camera.uuid);
+      })
+      break;
+    case "Bottom":
+      cameraManage.bottom().then((camera:Camera) => {
+        window.editor.setViewportCamera(camera.uuid);
+      })
+      break;
+    default:
+      window.editor.setViewportCamera(current.value.uuid);
+      break;
+  }
 }
 
 function handlerOptionsUpdate() {
@@ -129,6 +166,10 @@ function handlerOptionsUpdate() {
   const cameras = window.editor.cameras;
   for (const key in cameras) {
     const camera = cameras[key];
+
+    // 六视图相机不展示
+    if(camera.name === "View OrthographicCamera") continue;
+
     if(camera.uuid === window.editor.camera.uuid){
       // 默认透视相机
       options.value.unshift({
@@ -159,6 +200,7 @@ function handlerOptionsUpdate() {
     })
   }
 
+  // @ts-ignore
   !current.value.uuid && (current.value = options.value[0]);
 }
 

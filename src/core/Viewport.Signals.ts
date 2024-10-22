@@ -36,6 +36,7 @@ export class ViewportSignals {
 
         useAddSignal("objectSelected", this.objectSelected.bind(this));
         useAddSignal("objectFocused", this.objectFocused.bind(this));
+        useAddSignal("objectAdded", this.objectAdded.bind(this));
         useAddSignal("objectChanged", this.objectChanged.bind(this));
         useAddSignal("objectRemoved", this.objectRemoved.bind(this));
 
@@ -316,12 +317,21 @@ export class ViewportSignals {
     }
 
     /**
+     * 场景新增模型
+     */
+    objectAdded(){
+        this.viewport.computedSceneBox3();
+    }
+
+    /**
      * 模型属性变更
      * @param object
      */
     objectChanged(object){
         if (window.editor.selected === object) {
             this.viewport.box.setFromObject(object, true);
+
+            this.viewport.computedSceneBox3();
         }
         if (object.isPerspectiveCamera) {
             object.updateProjectionMatrix();
@@ -344,6 +354,8 @@ export class ViewportSignals {
         if (object === this.viewport.modules["transformControls"].object) {
             this.viewport.modules["transformControls"].detach();
         }
+
+        this.viewport.computedSceneBox3();
     }
 
     /**

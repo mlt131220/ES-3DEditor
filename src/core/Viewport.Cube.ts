@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import TWEEN from "@tweenjs/tween.js";
-import {useDispatchSignal} from "@/hooks/useSignal";
+import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
+// @ts-ignore
 import {EditorControls} from "@/core/EditorControls";
 
 export type Orientation = {
@@ -63,6 +64,8 @@ function epsilon(value) {
     return Math.abs(value) < 1e-10 ? 0 : value;
 }
 
+let viewportCameraChangedFn;
+
 class ViewCubeController {
     static CubeOrientation = {
         Top: "top",
@@ -106,6 +109,9 @@ class ViewCubeController {
         this.viewCubeDom = viewCube;
 
         this.mat = new THREE.Matrix4();
+
+        viewportCameraChangedFn = this.viewportCameraChanged.bind(this);
+        useAddSignal("viewportCameraChanged", viewportCameraChangedFn);
     }
 
     set visible(value: boolean) {
@@ -114,6 +120,10 @@ class ViewCubeController {
 
     get visible() {
         return this.containerDom.style.display !== "none";
+    }
+
+    viewportCameraChanged(){
+        this.visible = window.editor.viewportCamera?.uuid === this.camera.uuid;
     }
 
     createViewCube(parentDom: HTMLDivElement) {
@@ -205,6 +215,11 @@ class ViewCubeController {
     dispose() {
         if (this.containerDom) {
             this.containerDom.remove();
+        }
+
+        if(viewportCameraChangedFn){
+            useRemoveSignal("viewportCameraChanged",viewportCameraChangedFn);
+            viewportCameraChangedFn = null;
         }
     }
 }

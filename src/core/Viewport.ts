@@ -13,10 +13,13 @@ import {getMousePosition} from "@/utils/common/scenes";
 import { XR } from './Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
 import { ViewportPathTracer } from './Viewport.PathTracer';
+import { ViewportCameraManage } from './Viewport.CameraManage';
 import {TweenManger} from "@/core/utils/TweenManager";
 import {ShaderMaterialManager} from "@/core/shaderMaterial/ShaderMaterialManager";
 import {Package} from "@/core/loader/Package";
 import FlyTo from "@/core/utils/FlyTo";
+import {PluginManager} from "@/plugin/plugin";
+
 
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
@@ -48,7 +51,9 @@ export class Viewport {
     private raycaster: THREE.Raycaster;
 
     private modules: {
+        plugin:PluginManager,
         xr:XR,
+        cameraManage:ViewportCameraManage,
         controls:EditorControls,
         transformControls:TransformControls,
         viewCube:ViewCube,
@@ -58,6 +63,11 @@ export class Viewport {
         registerSignal:ViewportSignals,
         shaderMaterialManager:ShaderMaterialManager
     };
+
+    /**
+     * 整个主场景的box3
+     */
+    sceneBox3 = new THREE.Box3();
 
     constructor(container: HTMLDivElement) {
         this.container = container;
@@ -216,7 +226,10 @@ export class Viewport {
         // viewHelper.controls = controls;
 
         return {
+            // 插件系统
+            plugin: new PluginManager(),
             xr: new XR(transformControls),
+            cameraManage:new ViewportCameraManage(this),
             controls,
             transformControls,
             viewCube: new ViewCube(this.camera,this.container,controls),
@@ -232,6 +245,13 @@ export class Viewport {
         }
     }
 
+    /**
+     * 计算整个场景的Box3
+     */
+    computedSceneBox3(){
+        this.sceneBox3.setFromObject(this.scene);
+    }
+
     updateAspectRatio() {
         for (const uuid in window.editor.cameras) {
             const camera = window.editor.cameras[uuid];
@@ -240,9 +260,6 @@ export class Viewport {
 
             if (camera.isPerspectiveCamera) {
                 camera.aspect = aspect;
-            } else {
-                camera.left = - aspect;
-                camera.right = aspect;
             }
 
             camera.updateProjectionMatrix();
@@ -257,7 +274,7 @@ export class Viewport {
      * @param definition 分辨率
      */
     loadDefaultEnvAndBackground(definition = 2) {
-        window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (texture) => {
+        window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (texture:THREE.Texture) => {
             texture.mapping = THREE.EquirectangularReflectionMapping;
             this.scene.environment = texture;
             this.scene.background = texture;
@@ -411,6 +428,7 @@ export class Viewport {
         this.renderer.setViewport(0, 0, this.container.offsetWidth, this.container.offsetHeight);
         this.renderer.render(this.scene, window.editor.viewportCamera);
 
+        // 非默认相机不渲染网格和辅助
         if (this.camera === window.editor.viewportCamera) {
             this.renderer.autoClear = false;
             if (this.grid.visible) this.renderer.render(this.grid, this.camera);
