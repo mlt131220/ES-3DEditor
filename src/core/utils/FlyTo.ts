@@ -6,6 +6,7 @@
  */
 import * as THREE from 'three'
 import TWEEN from "@tweenjs/tween.js";
+import type CameraControls from 'camera-controls';
 import {useSignal} from '@/hooks';
 
 const {add: addSignal, dispatch, remove} = useSignal();
@@ -15,7 +16,7 @@ export default class FlyTo {
     private camera: THREE.PerspectiveCamera;
     private controls: any;
 
-    constructor(camera, controls) {
+    constructor(camera:THREE.PerspectiveCamera, controls:CameraControls) {
         this.camera = camera;
         this.controls = controls;
 
@@ -96,7 +97,10 @@ export default class FlyTo {
         delta.applyQuaternion(targetCamera.quaternion);
         targetCamera.position.copy(center).add(delta);
 
-        const controlsToTarget = new TWEEN.Tween(this.controls.target);
+        const controlTarget = new THREE.Vector3();
+        this.controls.getTarget(controlTarget);
+
+        const controlsToTarget = new TWEEN.Tween(controlTarget);
         controlsToTarget.to(center, runTime / 2);
         controlsToTarget.onComplete(() => {
             dispatch("tweenRemove", controlsToTarget);
@@ -105,11 +109,6 @@ export default class FlyTo {
         dispatch("tweenAdd", controlsToTarget);
 
         this.flyToCamera(targetCamera, runTime, done);
-
-        // 改变控制器中心点
-        // setTimeout(() => {
-        //     this.controls.target.copy(center);
-        // }, 50);
     }
 
     dispose() {

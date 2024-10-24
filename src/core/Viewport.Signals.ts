@@ -52,7 +52,7 @@ export class ViewportSignals {
      * 编辑器清空
      */
     editorCleared() {
-        this.viewport.modules["controls"].center.set(0, 0, 0);
+        this.viewport.modules.controls.setTarget(0, 0, 0,true);
         this.viewport.pathtracer.reset();
 
         this.viewport.initPT();
@@ -261,7 +261,10 @@ export class ViewportSignals {
         }
 
         // 设置用户Camera时禁用EditorControls
-        this.viewport.modules["controls"].enabled = (viewportCamera === window.editor.camera);
+        this.viewport.modules.controls.enabled = (viewportCamera === window.editor.camera);
+
+        // 替换控制器相机
+        // this.viewport.modules.controls.camera = viewportCamera;
 
         this.viewport.initPT();
         this.render();
@@ -313,7 +316,7 @@ export class ViewportSignals {
      * @param object
      */
     objectFocused(object){
-        this.viewport.modules["controls"].focus(object);
+        this.viewport.modules.controls.fitToBox(object,true);
     }
 
     /**
@@ -350,7 +353,7 @@ export class ViewportSignals {
      * @param object
      */
     objectRemoved(object){
-        this.viewport.modules["controls"].enabled = true;
+        this.viewport.modules.controls.enabled = true;
         if (object === this.viewport.modules["transformControls"].object) {
             this.viewport.modules["transformControls"].detach();
         }

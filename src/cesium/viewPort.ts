@@ -10,6 +10,7 @@ import {SetRotationCommand} from "@/core/commands/SetRotationCommand";
 import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
 import {NIcon} from "naive-ui";
 import { GolfOutline } from '@vicons/ionicons5'
+import {getMousePosition} from "@/utils/common/scenes";
 
 /**
  * @Date 2023-02-06
@@ -188,7 +189,7 @@ export default class ViewPort {
                 if (helper !== undefined && !helper.isSkeletonHelper) {
                     helper.update();
                 }
-                useDispatchSignal("refreshSidebarObject3D", object);
+                useDispatchSignal("objectChanged", object);
 
                 // 绑定物体不能去到地下
                 if(object.position.y < 0){
@@ -318,7 +319,7 @@ export default class ViewPort {
         let rayCaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
 
-        const array = this.app.getMousePosition(threeCanvas, event.clientX, event.clientY);
+        const array = getMousePosition(threeCanvas, event.clientX, event.clientY);
         onDownPosition.fromArray(array);
 
         mouse.set( ( onDownPosition.x * 2 ) - 1, - ( onDownPosition.y * 2 ) + 1 );
@@ -374,7 +375,7 @@ export default class ViewPort {
         this._three.camera.matrixAutoUpdate = false;
         // 注意这里，three高版本这行代码需要放在 three.camera.matrixWorld 之前
         this._three.camera.lookAt(0, 0, 0);
-        
+
         let w = this.cesiumParentElement.offsetWidth;
         let h = this.cesiumParentElement.offsetHeight;
         this._three.camera.aspect = w / h;

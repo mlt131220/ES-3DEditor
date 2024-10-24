@@ -21,6 +21,7 @@
     "@vicons/ionicons5": "^0.12.0",
     "animate.css": "^4.1.1",
     "axios": "1.6.0",
+    "camera-controls": "^2.9.0",
     "cesium": "1.107.0",
     "js-base64": "^3.7.5",
     "jszip": "3.10.1",

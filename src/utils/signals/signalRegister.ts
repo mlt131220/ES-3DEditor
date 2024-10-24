@@ -47,7 +47,7 @@ const editorSignals: SignalRegister = {
 	sceneGraphChanged: new Signal(),
 	sceneRendered: new Signal(),
 
-    cameraAdded: new Signal(),
+	cameraAdded: new Signal(),
 	cameraRemoved: new Signal(),
 	cameraChanged: new Signal(),
 	cameraResetted: new Signal(),
@@ -78,7 +78,6 @@ const editorSignals: SignalRegister = {
 
 	showGridChanged: new Signal(),
 	showHelpersChanged: new Signal(),
-	refreshSidebarObject3D: new Signal(),
 	historyChanged: new Signal(),
 
 	viewportCameraChanged: new Signal(),
@@ -113,22 +112,22 @@ const viewportSignals:SignalRegister = {
  * 网络请求相关
  */
 const netWorkSignals:SignalRegister = {
-    toggleGlobalLoading:new Signal(),
-    setGlobalLoadingText:new Signal(),
+	toggleGlobalLoading:new Signal(),
+	setGlobalLoadingText:new Signal(),
 }
 
 /**
  * cesium 相关页面使用的
  */
 const cesiumSignals:SignalRegister = {
-    // cesium/viewPort.ts 停止渲染循环
-    cesium_stopLoop:new Signal(),
-    // cesium融合场景下的threejs scene点击事件
-    cesium_clickThreeScene:new Signal(),
-    //销毁viewPort
-    cesium_destroy:new Signal(),
-    // 飞行定位
-    cesium_flyTo: new Signal(),
+	// cesium/viewPort.ts 停止渲染循环
+	cesium_stopLoop:new Signal(),
+	// cesium融合场景下的threejs scene点击事件
+	cesium_clickThreeScene:new Signal(),
+	//销毁viewPort
+	cesium_destroy:new Signal(),
+	// 飞行定位
+	cesium_flyTo: new Signal(),
 }
 
 /**
@@ -158,9 +157,9 @@ const otherSignals:SignalRegister = {
 
 export const SignalsRegister: SignalRegister = {
 	...editorSignals,
-    ...viewportSignals,
-    ...netWorkSignals,
-    ...cesiumSignals,
+	...viewportSignals,
+	...netWorkSignals,
+	...cesiumSignals,
 	...drawingSignals,
 	...previewSignals,
 	...otherSignals

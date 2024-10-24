@@ -1,8 +1,7 @@
 import * as THREE from 'three';
-// import {ViewHelper as ViewHelperBase} from 'three/examples/jsm/helpers/ViewHelper.js';
+import CameraControls from 'camera-controls';
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 
-import {EditorControls} from "@/core/controls/EditorControls";
 import ViewCube from "./Viewport.Cube";
 import {SetPositionCommand} from "@/core/commands/SetPositionCommand";
 import {SetRotationCommand} from "@/core/commands/SetRotationCommand";
@@ -10,16 +9,29 @@ import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
 import {getMousePosition} from "@/utils/common/scenes";
-import { XR } from './Viewport.XR';
+import {XR} from './Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
-import { ViewportPathTracer } from './Viewport.PathTracer';
-import { ViewportCameraManage } from './Viewport.CameraManage';
+import {ViewportPathTracer} from './Viewport.PathTracer';
+import {ViewportCameraManage} from './Viewport.CameraManage';
 import {TweenManger} from "@/core/utils/TweenManager";
 import {ShaderMaterialManager} from "@/core/shaderMaterial/ShaderMaterialManager";
 import {Package} from "@/core/loader/Package";
 import FlyTo from "@/core/utils/FlyTo";
 import {PluginManager} from "@/plugin/plugin";
 
+CameraControls.install({
+    THREE: {
+        Vector2: THREE.Vector2,
+        Vector3: THREE.Vector3,
+        Vector4: THREE.Vector4,
+        Quaternion: THREE.Quaternion,
+        Matrix4: THREE.Matrix4,
+        Spherical: THREE.Spherical,
+        Box3: THREE.Box3,
+        Sphere: THREE.Sphere,
+        Raycaster: THREE.Raycaster,
+    }
+});
 
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
@@ -42,7 +54,7 @@ export class Viewport {
     private sceneHelpers: THREE.Scene;
     private renderer: THREE.WebGLRenderer | undefined;
     private pmremGenerator: THREE.PMREMGenerator | undefined;
-    private pathtracer:ViewportPathTracer | undefined;
+    private pathtracer: ViewportPathTracer | undefined;
     private showSceneHelpers: boolean = true;
 
     private grid: THREE.Group;
@@ -51,17 +63,17 @@ export class Viewport {
     private raycaster: THREE.Raycaster;
 
     private modules: {
-        plugin:PluginManager,
-        xr:XR,
-        cameraManage:ViewportCameraManage,
-        controls:EditorControls,
-        transformControls:TransformControls,
-        viewCube:ViewCube,
-        fly:FlyTo,
-        package:Package,
-        tweenManager:TweenManger,
-        registerSignal:ViewportSignals,
-        shaderMaterialManager:ShaderMaterialManager
+        plugin: PluginManager,
+        xr: XR,
+        cameraManage: ViewportCameraManage,
+        controls: CameraControls,
+        transformControls: TransformControls,
+        viewCube: ViewCube,
+        fly: FlyTo,
+        package: Package,
+        tweenManager: TweenManger,
+        registerSignal: ViewportSignals,
+        shaderMaterialManager: ShaderMaterialManager
     };
 
     /**
@@ -137,9 +149,10 @@ export class Viewport {
 
         this.pathtracer = new ViewportPathTracer(this.renderer);
 
-        // this.container.appendChild(this.renderer.domElement);
         // 在container中最前面插入渲染器的dom元素
         this.container.insertBefore(this.renderer.domElement, this.container.firstChild);
+        // 控制器绑定
+        this.modules.controls.connect(this.renderer.domElement);
 
         this.loadDefaultEnvAndBackground();
 
@@ -161,10 +174,9 @@ export class Viewport {
     }
 
     protected initModules() {
-        const controls = new EditorControls(this.camera, this.container);
-        controls.addEventListener("change", () => {
+        const controls = new CameraControls(this.camera);
+        controls.addEventListener("update", () => {
             useDispatchSignal("cameraChanged", this.camera);
-            useDispatchSignal("refreshSidebarObject3D", this.camera);
         });
 
         let objectPositionOnDown = new THREE.Vector3();
@@ -177,12 +189,7 @@ export class Viewport {
             if (object !== undefined) {
                 this.box.setFromObject(object, true);
 
-                const helper = window.editor.helpers[object.id];
-                if (helper !== undefined && !helper.isSkeletonHelper) {
-                    helper.update();
-                }
-
-                useDispatchSignal("refreshSidebarObject3D", object);
+                useDispatchSignal("objectChanged", object);
             }
 
             this.render();
@@ -222,20 +229,17 @@ export class Viewport {
         })
         this.sceneHelpers.add(transformControls);
 
-        // const viewHelper = new ViewHelperBase(this.camera, this.container);
-        // viewHelper.controls = controls;
-
         return {
             // 插件系统
             plugin: new PluginManager(),
             xr: new XR(transformControls),
-            cameraManage:new ViewportCameraManage(this),
+            cameraManage: new ViewportCameraManage(this),
             controls,
             transformControls,
-            viewCube: new ViewCube(this.camera,this.container,controls),
+            viewCube: new ViewCube(this.camera, this.container, controls),
             // viewHelper,
             // 相机飞行
-            fly: new FlyTo(this.camera,controls),
+            fly: new FlyTo(this.camera, controls),
             package: new Package(),
             // 补间动画
             tweenManager: new TweenManger(),
@@ -248,7 +252,7 @@ export class Viewport {
     /**
      * 计算整个场景的Box3
      */
-    computedSceneBox3(){
+    computedSceneBox3() {
         this.sceneBox3.setFromObject(this.scene);
     }
 
@@ -274,7 +278,7 @@ export class Viewport {
      * @param definition 分辨率
      */
     loadDefaultEnvAndBackground(definition = 2) {
-        window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (texture:THREE.Texture) => {
+        window.editor.resource.loadURLTexture(`/upyun/assets/texture/hdr/kloofendal_48d_partly_cloudy_puresky_${definition}k.hdr`, (texture: THREE.Texture) => {
             texture.mapping = THREE.EquirectangularReflectionMapping;
             this.scene.environment = texture;
             this.scene.background = texture;
@@ -357,7 +361,8 @@ export class Viewport {
         const mixer = window.editor.mixer;
         const delta = clock.getDelta();
 
-        let needsUpdate = false;
+        let needsUpdate = this.modules.controls.update(delta);
+
         // Animations
         const actions = mixer.stats.actions;
         if (actions.inUse > 0 || prevActionsInUse > 0) {
@@ -368,15 +373,15 @@ export class Viewport {
 
             if (window.editor.selected !== null) {
                 // 避免某些蒙皮网格的帧延迟效应(e.g. Michelle.glb)
-                window.editor.selected.updateWorldMatrix( false, true );
+                window.editor.selected.updateWorldMatrix(false, true);
                 //  选择框应反映当前动画状态
-                this.selectionBox.box.setFromObject(window.editor.selected, true );
+                this.selectionBox.box.setFromObject(window.editor.selected, true);
             }
         }
 
         this.modules.viewCube.update();
         this.modules.shaderMaterialManager.update();
-        if(this.modules.shaderMaterialManager.needRender){
+        if (this.modules.shaderMaterialManager.needRender) {
             needsUpdate = true;
         }
 
@@ -408,7 +413,7 @@ export class Viewport {
     }
 
     updatePTMaterials() {
-        if (window.editor.viewportShading === 'realistic' ) {
+        if (window.editor.viewportShading === 'realistic') {
             this.pathtracer?.updateMaterials();
         }
     }
@@ -416,7 +421,7 @@ export class Viewport {
     updatePT() {
         if (window.editor.viewportShading === 'realistic') {
             this.pathtracer?.update();
-            useDispatchSignal("pathTracerUpdated",this.pathtracer?.getSamples())
+            useDispatchSignal("pathTracerUpdated", this.pathtracer?.getSamples())
         }
     }
 
@@ -433,7 +438,6 @@ export class Viewport {
             this.renderer.autoClear = false;
             if (this.grid.visible) this.renderer.render(this.grid, this.camera);
             if (this.showSceneHelpers) this.renderer.render(this.sceneHelpers, this.camera);
-            // if (!this.renderer.xr.isPresenting) this.modules["viewHelper"].render(this.renderer);
             this.renderer.autoClear = true;
         }
 

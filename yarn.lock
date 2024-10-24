@@ -1381,6 +1381,11 @@ call-bind@^1.0.0:
     function-bind "^1.1.1"
     get-intrinsic "^1.0.2"
 
+camera-controls@^2.9.0:
+  version "2.9.0"
+  resolved "https://registry.npmmirror.com/camera-controls/-/camera-controls-2.9.0.tgz#c3f67e702c2b68ae87418ca047c867e6494be2e8"
+  integrity sha512-TpCujnP0vqPppTXXJRYpvIy0xq9Tro6jQf2iYUxlDpPCNxkvE/XGaTuwIxnhINOkVP/ob2CRYXtY3iVYXeMEzA==
+
 cesium@*, cesium@1.107.0:
   version "1.107.0"
   resolved "https://registry.npmmirror.com/cesium/-/cesium-1.107.0.tgz#eed2c54c934aed9f22bb68d8b86a09087de52e4c"

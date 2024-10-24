@@ -98,11 +98,6 @@ onMounted(() => {
     if (object !== window.editor.selected) return;
     updateUI(object);
   })
-
-  useAddSignal("refreshSidebarObject3D", (object) => {
-    if (object !== window.editor.selected) return;
-    updateUI(object);
-  })
 })
 
 function updateRows(object) {

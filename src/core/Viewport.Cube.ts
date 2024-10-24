@@ -1,8 +1,6 @@
 import * as THREE from "three";
-import TWEEN from "@tweenjs/tween.js";
-import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
-// @ts-ignore
-import {EditorControls} from "@/core/EditorControls";
+import type CameraControls from 'camera-controls';
+import {useAddSignal, useRemoveSignal} from "@/hooks/useSignal";
 
 export type Orientation = {
     offsetFactor: {
@@ -98,9 +96,9 @@ class ViewCubeController {
     private readonly containerDom: HTMLDivElement;
     private viewCubeDom: HTMLDivElement;
     private readonly mat: THREE.Matrix4;
-    private controls: EditorControls;
+    private controls: CameraControls;
 
-    constructor(camera: THREE.Camera, parentDom: HTMLDivElement,controls:EditorControls) {
+    constructor(camera: THREE.Camera, parentDom: HTMLDivElement,controls:CameraControls) {
         this.camera = camera;
         this.controls = controls;
 
@@ -177,7 +175,8 @@ class ViewCubeController {
         const {offsetFactor} = orientation;
 
         if (this.camera) {
-            const controlCenter = this.controls.center.clone();
+            const controlCenter = new THREE.Vector3();
+            this.controls.getTarget(controlCenter);
 
             const offsetUnit = this.camera.position.distanceTo(controlCenter);
             const offset = new THREE.Vector3(
@@ -189,21 +188,7 @@ class ViewCubeController {
             const center = controlCenter.clone();
             const finishPosition = center.add(offset);
 
-            // 摄像机应该始终注视的目标位置
-            const targetPosition = controlCenter.clone();
-
-            const positionTween = new TWEEN.Tween(this.camera.position)
-                .to(finishPosition, 300)
-                .easing(TWEEN.Easing.Cubic.InOut)
-                .onUpdate(() => {
-                    // 更新相机旋转以查看目标位置
-                    this.camera.lookAt(targetPosition);
-                }).onComplete(() => {
-                    useDispatchSignal("tweenRemove", positionTween)
-                });
-
-            positionTween.start();
-            useDispatchSignal("tweenAdd", positionTween)
+            this.controls.setPosition(...finishPosition.toArray(),true);
         }
     }
 
