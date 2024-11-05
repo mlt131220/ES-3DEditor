@@ -9,7 +9,7 @@ declare interface ICesiumConfig{
 }
 
 declare interface ISceneFetchData {
-    id:number,
+    id:string, // 场景id，使用uuid
     sceneType:string, // 场景分类  城市、园区、工厂、楼宇、设备、其他...
     sceneName:string,
     sceneIntroduction:string, // 场景描述

@@ -18,13 +18,13 @@ type ErrorStatus = keyof typeof ERROR_STATUS;
  * @param actions 每一种可能执行的操作
  */
 export function exeStrategyActions(actions: Common.StrategyAction[]) {
-    actions.some(item => {
-        const [flag, action] = item;
-        if (flag) {
-            action();
-        }
-        return flag;
-    });
+  actions.some(item => {
+    const [flag, action] = item;
+    if (flag) {
+      action();
+    }
+    return flag;
+  });
 }
 
 /**
@@ -58,7 +58,8 @@ export function handleAxiosError(axiosError: AxiosError) {
       Boolean(axiosError.response),
       () => {
         const errorCode: ErrorStatus = (axiosError.response?.status as ErrorStatus) || 'DEFAULT';
-        const msg = ERROR_STATUS[errorCode];
+        // @ts-ignore
+        const msg = axiosError.response?.data?.message || ERROR_STATUS[errorCode] || DEFAULT_REQUEST_ERROR_MSG;
         Object.assign(error, { code: errorCode, msg });
       }
     ]
@@ -88,7 +89,7 @@ export function handleResponseError(response: AxiosResponse) {
   } else {
     // 请求成功的状态码非200的错误
     const errorCode: ErrorStatus = response.status as ErrorStatus;
-    const msg = ERROR_STATUS[errorCode] || DEFAULT_REQUEST_ERROR_MSG;
+    const msg = response.data.message || ERROR_STATUS[errorCode] || DEFAULT_REQUEST_ERROR_MSG;
     Object.assign(error, { type: 'http', code: errorCode, msg });
   }
 

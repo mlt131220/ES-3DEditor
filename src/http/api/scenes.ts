@@ -11,7 +11,7 @@ export function fetchGetAllScenes(params) {
 /**
  * 获取工程
  */
-export function fetchGetOneScene(id) {
+export function fetchGetOneScene(id:string) {
     return request.get<ISceneFetchData>(`/editor3d/scenes/get/${id}`);
 }
 
@@ -25,7 +25,7 @@ export function fetchAddScene(data) {
 /**
  * 更新工程
  */
-export function fetchUpdateScene(id:number,data:ISceneFetchData) {
+export function fetchUpdateScene(id:string,data:ISceneFetchData) {
     return request.put<ISceneFetchData>(`/editor3d/scenes/update/${id}`,data);
 }
 
@@ -33,6 +33,6 @@ export function fetchUpdateScene(id:number,data:ISceneFetchData) {
  * 删除工程
  * @param {number} id
  */
-export function fetchDeleteScenes(id: number) {
+export function fetchDeleteScenes(id: string) {
     return request.delete(`/editor3d/scenes/del/${id}`,{});
 }

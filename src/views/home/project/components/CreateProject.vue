@@ -95,14 +95,17 @@ function handleSubmit() {
       spin.value = true;
       const res = await fetchAddScene({
         ...data,
-        id: undefined,
+        id: "",
         zip: "",
+        coverPicture:"",
+        sceneVersion:1,
         exampleSceneId: data.id,
         cesiumConfig: cesiumData ? JSON.stringify(cesiumData) : undefined
       })
 
+      spin.value = false;
+
       if (res.error === null) {
-        spin.value = false;
         window.$dialog.success({
           title: t("other.Tips"),
           content: t("prompt['The project is created successfully. Do you want to enter?']"),

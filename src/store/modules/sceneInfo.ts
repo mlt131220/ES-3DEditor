@@ -9,7 +9,7 @@ interface ISceneInfo {
 }
 
 export const DefaultSceneData = {
-    id:0,
+    id:"",
     sceneName:"",
     sceneType:"其他",
     sceneIntroduction:"",

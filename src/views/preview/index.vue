@@ -51,7 +51,7 @@ onMounted(async () => {
 
 async function init(){
   // 获取路由参数
-  const id = route.params.id;
+  const id = route.params.id as string;
   if(!id){
     window.$message?.error(t("prompt['Parameter error!']"));
     return;

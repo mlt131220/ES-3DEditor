@@ -31,7 +31,7 @@ function save(){
       useDispatchSignal("toggleGlobalLoading", true);
 
       // 版本自动 +1
-      // sceneInfoStore.setDataFieldValue("sceneVersion",sceneInfoStore.data.sceneVersion + 1);
+      sceneInfoStore.setDataFieldValue("sceneVersion",sceneInfoStore.data.sceneVersion + 1);
 
       const biz = `${sceneInfoStore.data.id}-V${sceneInfoStore.data.sceneVersion}`;
 
