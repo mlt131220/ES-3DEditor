@@ -24,6 +24,8 @@
 ## 交流
 <img src="https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg" width="500px">
 
+点击[这里](https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg)查看最新群邀请图片。
+
 ***
 
 ## 后端

@@ -24,6 +24,8 @@
 ## WeChat Group
 <img src="https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg" width="500px">
 
+Click [here](https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg) view the latest group invitation pictures。
+
 ***
 
 ## Back-end code
