@@ -50,7 +50,7 @@ function loadCadFile(canvas:HTMLCanvasElement,parentElement:HTMLDivElement){
     });
 
     if (dxf.tables?.layer?.layers) {
-      const bgColor = window.editor.config.getKey('cad/options')?.bgColor;
+      const bgColor = window.editor.config.getKey('cad')?.bgColor;
 
       if (bgColor) {
         const color = Number(bgColor);
@@ -164,6 +164,11 @@ onBeforeUnmount(() => {
   :deep(.n-spin-container){
     width: 100%;
     height: 100%;
+
+    .n-spin-content{
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .drawing-container {

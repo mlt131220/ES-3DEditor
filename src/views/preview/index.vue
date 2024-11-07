@@ -2,30 +2,43 @@
   <EsCubeLoading v-model:visible="initLoading"/>
 
   <div id="preview" class="w-full h-full">
-    <div ref="viewportRef" class="w-full h-full"></div>
+    <splitpanes class="w-full h-full" @resize="onViewPortResize" @resized="onViewPortResize">
+      <pane min-size="10" v-if="drawingStore.getIsUploaded">
+        <Drawing />
+      </pane>
+      <pane min-size="10">
+        <div ref="viewportRef" class="relative w-full h-full">
+          <PreviewSceneTree />
 
-    <PreviewSceneTree />
-
-    <PreviewOperations />
+          <PreviewOperations />
+        </div>
+      </pane>
+    </splitpanes>
   </div>
 </template>
 
 <script setup lang="ts">
 import {nextTick, onMounted, ref} from "vue";
 import { useRoute } from 'vue-router';
+import {Pane, Splitpanes} from "splitpanes";
+import 'splitpanes/dist/splitpanes.css';
 import {t} from "@/language";
 import {fetchGetOneScene} from "@/http/api/scenes";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {Viewport} from "@/core/preview/Viewport";
 import {useSceneInfoStore} from "@/store/modules/sceneInfo";
 import {usePreviewOperationStore} from "@/store/modules/previewOperation";
+import {useDrawingStore} from "@/store/modules/drawing";
 import EsCubeLoading from "@/components/es/EsCubeLoading.vue";
 import PreviewSceneTree from "@/views/preview/components/PreviewSceneTree.vue";
 import PreviewOperations from "@/views/preview/components/Operations.vue";
+import Drawing from "@/components/drawing/Drawing.vue";
 
 const route = useRoute();
 const sceneInfoStore = useSceneInfoStore();
 const operationStore = usePreviewOperationStore();
+// 图纸组件相关
+const drawingStore = useDrawingStore();
 
 const viewportRef = ref();
 const initLoading = ref(true);
@@ -119,7 +132,51 @@ function getScene(sceneInfo){
   })
   return;
 }
+
+//监听视窗变化（节流）
+let timer: NodeJS.Timeout | null = null;
+function onViewPortResize(width: number, height: number) {
+  if (timer) return;
+  timer = setTimeout(function () {
+    useDispatchSignal("sceneResize",width,height);
+    timer = null;
+  }, 10)
+}
 </script>
 
 <style scoped lang="less">
+.splitpanes {
+  &__pane {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  &__splitter {
+    background-color: #ccc;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      transition: opacity 0.4s;
+      background-color: rgba(255, 0, 0, 0.3);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    &:hover:before {
+      opacity: 1;
+    }
+  }
+
+  &--vertical > .splitpanes__splitter:before {
+    left: -15px;
+    right: -15px;
+    height: 100%;
+  }
+}
 </style>
