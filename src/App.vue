@@ -56,7 +56,7 @@ onMounted(async () => {
   }
 
   // 启动websocket连接
-  connectWebSocket(import.meta.env.VITE_SOCKET_URL);
+  connectWebSocket(import.meta.env.VITE_GLOB_SOCKET_URL);
 })
 </script>
 

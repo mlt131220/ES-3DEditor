@@ -49,8 +49,8 @@ class Editor {
 		// 本地DB
 		this.storage = new Storage();
 
-		//localStorage
-		this.config = new Config();
+		// 配置项
+		this.config = new Config(this.storage);
 
 		this.selector = new Selector(this);
 
@@ -423,8 +423,8 @@ class Editor {
 		this.camera.copy(_DEFAULT_CAMERA);
 		dispatch('cameraResetted');
 		this.scene.name = window.$t("core.editor['Default Scene']");
-        this.scene.position.set(0,0,0);
-        this.scene.rotation.set(0,0,0);
+		this.scene.position.set(0,0,0);
+		this.scene.rotation.set(0,0,0);
 		this.scene.userData = {};
 		this.scene.background = null;
 		this.scene.environment = null;
@@ -517,14 +517,12 @@ class Editor {
 		return {
 			metadata: {},
 			project: {
-				shadows: this.config.getKey('project/renderer/shadows'),
-				shadowType: this.config.getKey('project/renderer/shadowType'),
-				xr: this.config.getKey('project/xr'),
-				physicallyCorrectLights: this.config.getKey(
-					'project/renderer/physicallyCorrectLights'
-				),
-				toneMapping: this.config.getKey('project/renderer/toneMapping'),
-				toneMappingExposure: this.config.getKey('project/renderer/toneMappingExposure'),
+				shadows: this.config.getRendererItem('shadows'),
+				shadowType: this.config.getRendererItem('shadowType'),
+				xr: this.config.getKey('xr'),
+				physicallyCorrectLights: this.config.getRendererItem('physicallyCorrectLights'),
+				toneMapping: this.config.getRendererItem('toneMapping'),
+				toneMappingExposure: this.config.getRendererItem('toneMappingExposure'),
 			},
 			camera: this.camera.toJSON(),
 			scene: this.scene.toJSON(),
