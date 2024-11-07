@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {h,ref} from "vue";
 import { NIcon, NTooltip } from "naive-ui";
-import {ChessBoard,GlobeAsia,Uncharted,Delicious,DrawPolygon,ImageRegular} from "@vicons/fa";
-import {ResultOld,Script,Draw,JoinOuter} from "@vicons/carbon";
+import {GlobeAsia,Uncharted,Delicious,DrawPolygon,ImageRegular} from "@vicons/fa";
+import {ResultOld,Script,Draw,JoinOuter,MagicWandFilled} from "@vicons/carbon";
 
 import {t} from "@/language";
-import SidebarRender from "@/components/sidebar/SidebarRender.vue";
 import SidebarScene from "@/components/sidebar/SidebarScene.vue";
+import SidebarEffect from "@/components/sidebar/SidebarEffect.vue";
 import SidebarHistory from "@/components/sidebar/SidebarHistory.vue";
 import SidebarObject from "@/components/sidebar/SidebarObject.vue";
 import SidebarGeometry from "@/components/sidebar/SidebarGeometry.vue";
@@ -17,8 +17,8 @@ import SidebarScript from "@/components/sidebar/SidebarScript.vue";
 import SidebarDrawing from "@/components/sidebar/SidebarDrawing.vue";
 
 const data = ref([
-  {name:"render",icon:{text:'Renderer config',component:ChessBoard},component:SidebarRender},
   {name:"scene",icon:{text:'Scene config',component:GlobeAsia},component:SidebarScene},
+  {name:"effect",icon:{text:'Post processing',component:MagicWandFilled},component:SidebarEffect},
   // {name:"styles",icon:{text:'Scene theme',component:JoinOuter},component:SidebarSceneTheme},
   {name:"history",icon:{text:'History',component:ResultOld},component:SidebarHistory},
   {name:"drawing",icon:{text:'Scene drawing',component:ImageRegular},component:SidebarDrawing},

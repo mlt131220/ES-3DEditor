@@ -2,14 +2,15 @@ import * as THREE from 'three';
 import CameraControls from 'camera-controls';
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 
-import ViewCube from "./Viewport.Cube";
 import {SetPositionCommand} from "@/core/commands/SetPositionCommand";
 import {SetRotationCommand} from "@/core/commands/SetRotationCommand";
 import {SetScaleCommand} from "@/core/commands/SetScaleCommand";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {GRID_COLORS_DARK, GRID_COLORS_LIGHT} from "@/utils/common/constant";
 import {getMousePosition} from "@/utils/common/scenes";
-import {XR} from './Viewport.XR';
+import {ViewportEffect} from "@/core/Viewport.Effect";
+import ViewCube from "@/core/Viewport.Cube";
+import {XR} from '@/core/Viewport.XR';
 import {ViewportSignals} from "@/core/Viewport.Signals";
 import {ViewportPathTracer} from './Viewport.PathTracer';
 import {ViewportCameraManage} from './Viewport.CameraManage';
@@ -17,7 +18,6 @@ import {TweenManger} from "@/core/utils/TweenManager";
 import {ShaderMaterialManager} from "@/core/shaderMaterial/ShaderMaterialManager";
 import {Package} from "@/core/loader/Package";
 import FlyTo from "@/core/utils/FlyTo";
-import {PluginManager} from "@/plugin/plugin";
 
 CameraControls.install({
     THREE: {
@@ -48,26 +48,26 @@ let startTime = 0;
 let endTime = 0;
 
 export class Viewport {
-    private container: HTMLDivElement;
-    private scene: THREE.Scene;
-    private camera: THREE.PerspectiveCamera;
+    container: HTMLDivElement;
+    scene: THREE.Scene;
+    camera: THREE.PerspectiveCamera;
     private sceneHelpers: THREE.Scene;
-    private renderer: THREE.WebGLRenderer | undefined;
+    renderer: THREE.WebGLRenderer | undefined;
     private pmremGenerator: THREE.PMREMGenerator | undefined;
     private pathtracer: ViewportPathTracer | undefined;
-    private showSceneHelpers: boolean = true;
 
+    private showSceneHelpers: boolean = true;
     private grid: THREE.Group;
     private box = new THREE.Box3();
     private selectionBox: THREE.Box3Helper;
     private raycaster: THREE.Raycaster;
 
     private modules: {
-        plugin: PluginManager,
         xr: XR,
         cameraManage: ViewportCameraManage,
         controls: CameraControls,
         transformControls: TransformControls,
+        effect:ViewportEffect,
         viewCube: ViewCube,
         fly: FlyTo,
         package: Package,
@@ -91,6 +91,7 @@ export class Viewport {
         /** helpers **/
         this.grid = new THREE.Group();
         this.initGrid();
+        this.sceneHelpers.add(this.grid);
 
         //选中时的包围框
         this.selectionBox = new THREE.Box3Helper(this.box);
@@ -117,13 +118,13 @@ export class Viewport {
             this.renderer.dispose();
             this.pmremGenerator?.dispose();
 
+            this.modules.controls.disconnect();
             this.container.removeChild(this.renderer.domElement);
         }
 
         this.renderer = newRenderer;
 
         this.renderer.setAnimationLoop(this.animate.bind(this));
-        this.renderer.setClearColor(0xaaaaaa, 1);
 
         if (window.matchMedia) {
             const grid1 = this.grid.children[0];
@@ -136,7 +137,7 @@ export class Viewport {
                 this.render();
             });
 
-            this.renderer.setClearColor(mediaQuery.matches ? 0x333333 : 0xaaaaaa);
+            this.renderer.setClearColor(mediaQuery.matches ? 0x333333 : 0xAAAAAA);
             updateGridColors(grid1, grid2, mediaQuery.matches ? GRID_COLORS_DARK : GRID_COLORS_LIGHT);
         }
 
@@ -151,10 +152,16 @@ export class Viewport {
 
         // 在container中最前面插入渲染器的dom元素
         this.container.insertBefore(this.renderer.domElement, this.container.firstChild);
+
         // 控制器绑定
         this.modules.controls.connect(this.renderer.domElement);
 
         this.loadDefaultEnvAndBackground();
+
+        // 初始化后处理
+        if(this.modules.effect.enabled){
+            this.modules.effect.createComposer();
+        }
 
         this.render();
     }
@@ -230,12 +237,11 @@ export class Viewport {
         this.sceneHelpers.add(transformControls);
 
         return {
-            // 插件系统
-            plugin: new PluginManager(),
             xr: new XR(transformControls),
             cameraManage: new ViewportCameraManage(this),
             controls,
             transformControls,
+            effect:new ViewportEffect(this),
             viewCube: new ViewCube(this.camera, this.container, controls),
             // viewHelper,
             // 相机飞行
@@ -429,16 +435,22 @@ export class Viewport {
         if (!this.renderer) return;
 
         startTime = performance.now();
+        const deltaTime = endTime - startTime;
 
-        this.renderer.setViewport(0, 0, this.container.offsetWidth, this.container.offsetHeight);
-        this.renderer.render(this.scene, window.editor.viewportCamera);
+        // this.renderer.autoClear = false;
+        // this.renderer.clear();
+
+        if(this.modules.effect.enabled){
+            this.modules.effect.render(deltaTime);
+        }else{
+            this.renderer.render(this.scene, window.editor.viewportCamera);
+        }
+
+        // this.renderer.clearDepth();
 
         // 非默认相机不渲染网格和辅助
         if (this.camera === window.editor.viewportCamera) {
-            this.renderer.autoClear = false;
-            if (this.grid.visible) this.renderer.render(this.grid, this.camera);
             if (this.showSceneHelpers) this.renderer.render(this.sceneHelpers, this.camera);
-            this.renderer.autoClear = true;
         }
 
         endTime = performance.now();

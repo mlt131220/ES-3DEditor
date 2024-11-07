@@ -18,6 +18,7 @@ export class ViewportSignals {
         useAddSignal("transformModeChanged", this.transformModeChanged.bind(this));
         useAddSignal("snapChanged", this.snapChanged.bind(this));
         useAddSignal("spaceChanged", this.spaceChanged.bind(this));
+        useAddSignal("effectEnabledChange", this.effectEnabledChange.bind(this));
 
         useAddSignal("rendererUpdated", this.rendererUpdated.bind(this));
         useAddSignal("rendererCreated", this.rendererCreated.bind(this));
@@ -46,6 +47,13 @@ export class ViewportSignals {
         useAddSignal("sceneResize", this.sceneResize.bind(this));
         useAddSignal("showGridChanged", this.showGridChanged.bind(this));
         useAddSignal("showHelpersChanged", this.showHelpersChanged.bind(this));
+    }
+
+    /**
+     * 判断对象是否是可射线选中的
+     */
+    objectIsCanPick(object:THREE.Object3D){
+        return object !== null && object !== this.viewport.scene && object !== this.viewport.camera;
     }
 
     /**
@@ -81,6 +89,30 @@ export class ViewportSignals {
      */
     spaceChanged(space:"world" | "local") {
         this.viewport.modules["transformControls"].setSpace(space);
+    }
+
+    /**
+     * 启用/禁用后处理
+     */
+    effectEnabledChange(enabled:boolean){
+        if(enabled){
+            this.viewport.selectionBox.visible = false;
+
+            if (this.objectIsCanPick(window.editor.selected)) {
+                this.viewport.modules.effect.outlinePass.selectedObjects = [window.editor.selected];
+            }
+        }else{
+            this.viewport.modules.effect.outlinePass.selectedObjects = [];
+
+            if (this.objectIsCanPick(window.editor.selected)) {
+                this.viewport.box.setFromObject(window.editor.selected, true);
+                if (this.viewport.box.isEmpty() === false) {
+                    this.viewport.selectionBox.visible = true;
+                }
+            }
+        }
+
+        this.render();
     }
 
     /**
@@ -300,11 +332,16 @@ export class ViewportSignals {
      */
     objectSelected(object){
         this.viewport.selectionBox.visible = false;
+
         this.viewport.modules["transformControls"].detach();
-        if (object !== null && object !== this.viewport.scene && object !== this.viewport.camera) {
-            this.viewport.box.setFromObject( object, true );
-            if (this.viewport.box.isEmpty() === false) {
-                this.viewport.selectionBox.visible = true;
+        if (this.objectIsCanPick(object)) {
+            if(this.viewport.modules.effect.enabled){
+                this.viewport.modules.effect.outlinePass.selectedObjects = [object];
+            }else{
+                this.viewport.box.setFromObject( object, true );
+                if (this.viewport.box.isEmpty() === false) {
+                    this.viewport.selectionBox.visible = true;
+                }
             }
             this.viewport.modules["transformControls"].attach(object);
         }
@@ -388,6 +425,14 @@ export class ViewportSignals {
     sceneResize(){
         this.viewport.updateAspectRatio();
         this.viewport.renderer?.setSize(this.viewport.container.offsetWidth,this.viewport.container.offsetHeight);
+        if(this.viewport.modules.effect.enabled){
+            this.viewport.modules.effect.composer.setSize(this.viewport.container.offsetWidth,this.viewport.container.offsetHeight);
+            if(this.viewport.modules.effect.pass.fxaa){
+                const pixelRatio = this.viewport.renderer.getPixelRatio();
+                this.viewport.modules.effect.pass.fxaa.material.uniforms[ 'resolution' ].value.x = 1 / (this.viewport.container.offsetWidth * pixelRatio);
+                this.viewport.modules.effect.pass.fxaa.material.uniforms[ 'resolution' ].value.y = 1 / (this.viewport.container.offsetHeight * pixelRatio);
+            }
+        }
         this.viewport.pathtracer.setSize();
         this.render();
     }

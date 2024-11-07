@@ -71,13 +71,8 @@ class Selector {
 
 	select( object ) {
 		if ( this.editor.selected === object ) return;
-		let uuid = null;
-		if ( object !== null ) {
-			uuid = object.uuid;
-		}
 
 		this.editor.selected = object;
-		this.editor.config.setKey( 'selected', uuid );
 
 		useDispatchSignal("objectSelected",object);
 		useDispatchSignal("sceneGraphChanged");

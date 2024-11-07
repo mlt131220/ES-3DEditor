@@ -1,10 +1,13 @@
 import * as Cesium from 'cesium';
+import {useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
 
 /**
  * @Date 2023-03-07
  * @Author 二三
  * @Description: cesium地图底图图层管理
  */
+const sceneInfoStore = useSceneInfoStoreWithOut();
+
 export default class MapLayer{
     viewer: Cesium.Viewer | null;
 
@@ -39,7 +42,7 @@ export default class MapLayer{
             },
             Tianditu:{//天地图
                 satellite: new Cesium.WebMapTileServiceImageryProvider({//球面墨卡托投影
-                    url:`http://t{s}.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=${window.editor.config.getKey('cesium/tiandituTk')}`,
+                    url:`http://t{s}.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=${sceneInfoStore.cesiumConfig.tiandituTk}`,
                     subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
                     layer: 'tdtImgLayer',
                     style: 'default',
@@ -47,12 +50,12 @@ export default class MapLayer{
                     tileMatrixSetID: 'GoogleMapsCompatible', //使用谷歌的瓦片切片方式
                 }),
                 mark: new Cesium.UrlTemplateImageryProvider({
-                    url: `http://t0.tianditu.gov.cn/cva_w/wmts?tk=${window.editor.config.getKey('cesium/tiandituTk')}`,
+                    url: `http://t0.tianditu.gov.cn/cva_w/wmts?tk=${sceneInfoStore.cesiumConfig.tiandituTk}`,
                     minimumLevel: 3,
                     maximumLevel: 18
                 }),
                 vector: new Cesium.UrlTemplateImageryProvider({
-                    url: `http://t0.tianditu.gov.cn/vec_w/wmts?tk=${window.editor.config.getKey('cesium/tiandituTk')}`,
+                    url: `http://t0.tianditu.gov.cn/vec_w/wmts?tk=${sceneInfoStore.cesiumConfig.tiandituTk}`,
                     minimumLevel: 3,
                     maximumLevel: 18
                 })
@@ -67,13 +70,13 @@ export default class MapLayer{
      * @param layer 底图类型，默认卫星影像图 enum: satellite | vector
      */
     getDefaultLayer(layer:'satellite' | 'vector' = "satellite"){
-        return this.layers[window.editor.config.getKey('cesium/defaultMap')][layer];
+        return this.layers[sceneInfoStore.cesiumConfig.map][layer];
     }
 
     /**
      * 获取默认底图对应得标记图
      */
     getMarkMapByDefaultLayer(){
-        return this.layers[window.editor.config.getKey('cesium/defaultMap')].mark || this.layers.Amap.mark;
+        return this.layers[sceneInfoStore.cesiumConfig.map].mark || this.layers.Amap.mark;
     }
 }

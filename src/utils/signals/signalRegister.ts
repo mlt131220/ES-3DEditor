@@ -104,6 +104,10 @@ const viewportSignals:SignalRegister = {
 	// 补间动画管理
 	tweenAdd:new Signal(),
 	tweenRemove:new Signal(),
+	// 启用/禁用后处理
+	effectEnabledChange:new Signal(),
+	// 后处理通道配置变更
+	effectPassConfigChange:new Signal(),
 	// 相机飞行
 	flyTo:new Signal(),
 }

@@ -40,7 +40,7 @@ let ignoreObjectSelectedSignal = false;
 const historyList = ref<Array<IHistoryItem>>([]);
 const selectedHistory = ref<IHistoryItem>({name: "", id: ''});
 //历史记录 -> 本地存储
-const persistent: boolean = ref(window.editor.config.getKey('settings/history'));
+const persistent: boolean = ref(window.editor.config.getKey('history'));
 
 onMounted(() => {
   refreshUI();
@@ -96,7 +96,7 @@ function historyItemClick(_key: string,item:IHistoryItem) {
 
 // 历史记录 -> 本地存储 change
 function persistentChange(value) {
-  window.editor.config.setKey('settings/history', value);
+  window.editor.config.setKey('history', value);
 
   if (value) {
     const tip = t("prompt['The history will be preserved across sessions. This can have an impact on performance when working with textures.']");

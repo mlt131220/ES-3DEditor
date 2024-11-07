@@ -44,19 +44,19 @@ import {useDispatchSignal} from "@/hooks/useSignal";
 const isValidKeyBinding = (key) => key.match(/^[A-Za-z0-9]$/i);
 const form = reactive({
   // shortcuts
-  translate: window.editor.config.getKey('settings/shortcuts/translate'),
-  rotate: window.editor.config.getKey('settings/shortcuts/rotate'),
-  scale: window.editor.config.getKey('settings/shortcuts/scale'),
-  undo: window.editor.config.getKey('settings/shortcuts/undo'),
-  focus: window.editor.config.getKey('settings/shortcuts/focus'),
+  translate: window.editor.config.getShortcutItem('translate'),
+  rotate: window.editor.config.getShortcutItem('rotate'),
+  scale: window.editor.config.getShortcutItem('scale'),
+  undo: window.editor.config.getShortcutItem('undo'),
+  focus: window.editor.config.getShortcutItem('focus'),
 })
 
 // 快捷键输入框keyup
-function shortcutsKeyup(event, varName) {
+function shortcutsKeyup(event:KeyboardEvent, varName:string) {
   //判断按下的是否是有效的键
   if (!isValidKeyBinding(event.key)) return;
   form[varName] = event.key;
-  window.editor.config.setKey(`settings/shortcuts/${varName}`, event.key.toLowerCase());
+  window.editor.config.setShortcutItem(varName, event.key.toLowerCase());
 }
 
 const IS_MAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -70,18 +70,18 @@ onMounted(() => {
         const parent = object.parent;
         if (parent !== null) window.editor.execute(new RemoveObjectCommand(object));
         break;
-      case window.editor.config.getKey('settings/shortcuts/translate'):
+      case window.editor.config.getShortcutItem('translate'):
         useDispatchSignal('transformModeChanged', 'translate');
         break;
-      case window.editor.config.getKey('settings/shortcuts/rotate'):
+      case window.editor.config.getShortcutItem('rotate'):
         useDispatchSignal('transformModeChanged', 'rotate');
         break;
-      case window.editor.config.getKey('settings/shortcuts/scale'):
+      case window.editor.config.getShortcutItem('scale'):
         useDispatchSignal('transformModeChanged', 'scale');
         break;
-      case window.editor.config.getKey('settings/shortcuts/undo'):
-        // windows下：ctrl + window.editor.config.getKey('settings/shortcuts/undo') 撤销，同时按下shift重做
-        // mac下：meta + window.editor.config.getKey('settings/shortcuts/undo') 撤销，同时按下shift重做
+      case window.editor.config.getShortcutItem('undo'):
+        // windows下：ctrl + window.editor.config.getShortcutItem('shortcuts/undo') 撤销，同时按下shift重做
+        // mac下：meta + window.editor.config.getShortcutItem('shortcuts/undo') 撤销，同时按下shift重做
         if (IS_MAC ? event.metaKey : event.ctrlKey) {
           //阻止特定于浏览器的热键
           event.preventDefault();
@@ -92,7 +92,7 @@ onMounted(() => {
           }
         }
         break;
-      case window.editor.config.getKey('settings/shortcuts/focus'):
+      case window.editor.config.getShortcutItem('focus'):
         if (window.editor.selected !== null) {
           window.editor.focus(window.editor.selected);
         }

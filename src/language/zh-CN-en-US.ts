@@ -172,7 +172,6 @@ export default {
 				assign: '应用',
 			},
 			// ------------- 20240325：重新布局 ----------------
-			"Renderer config": '渲染器配置',
 			"Scene config": '场景配置',
 			sceneConfig:{
 				"Project information":"项目信息",
@@ -181,7 +180,19 @@ export default {
 				Fog: '雾',
 				Grid: '网格',
 				Helpers: '辅助',
+				"Renderer config": '渲染器配置',
 				Video: '视频',
+			},
+			"Post processing":"后期处理",
+			postProcessing:{
+				"Anti-aliasing":"抗锯齿",
+				"Outline":"描边线",
+				"Edge Strength":"边缘强度",
+				"Edge Glow":"边缘发光",
+				"Edge Thickness":"边缘厚度",
+				"Pulse Period":"闪烁频率",
+				"Visible Edge":"可见边缘",
+				"Hidden Edge":"不可见边缘",
 			},
 			History: '历史记录',
 			history:{
@@ -361,6 +372,9 @@ export default {
 		Version:"版本",
 		Loading:"请稍后",
 		Load:"加载",
+		Open:"开启",
+		Close:"关闭",
+		Enable:"启用",
 		'Query failed':"查询失败",
 		'Related document':"相关文档"
 	},

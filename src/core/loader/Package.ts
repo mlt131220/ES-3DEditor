@@ -339,14 +339,12 @@ export class Package {
                 // 解包时需要还原的编辑器场景信息
                 metadata: window.editor.metadata,
                 project: {
-                    shadows: window.editor.config.getKey('project/renderer/shadows'),
-                    shadowType: window.editor.config.getKey('project/renderer/shadowType'),
-                    xr: window.editor.config.getKey('project/xr'),
-                    physicallyCorrectLights: window.editor.config.getKey(
-                        'project/renderer/physicallyCorrectLights'
-                    ),
-                    toneMapping: window.editor.config.getKey('project/renderer/toneMapping'),
-                    toneMappingExposure: window.editor.config.getKey('project/renderer/toneMappingExposure'),
+                    shadows: window.editor.config.getRendererItem('shadows'),
+                    shadowType: window.editor.config.getRendererItem('shadowType'),
+                    xr: window.editor.config.getKey('xr'),
+                    physicallyCorrectLights: window.editor.config.getRendererItem('physicallyCorrectLights'),
+                    toneMapping: window.editor.config.getRendererItem('toneMapping'),
+                    toneMappingExposure: window.editor.config.getRendererItem('toneMappingExposure'),
                 },
                 camera: window.viewer.camera.toJSON(),
                 scene: sceneJson,

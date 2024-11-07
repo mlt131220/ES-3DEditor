@@ -62,13 +62,11 @@ onMounted(() => {
 
   //保存渲染器配置
   useAddSignal("rendererUpdated", () => {
-    window.editor.config.setKey(
-        'project/renderer/antialias', renderModel.antialias,
-        'project/renderer/shadows', renderModel.shadows,
-        'project/renderer/shadowType', renderModel.shadowType,
-        'project/renderer/toneMapping', renderModel.toneMapping,
-        'project/renderer/toneMappingExposure', renderModel.toneMappingExposure
-    );
+    window.editor.config.setRendererItem('antialias',renderModel.antialias);
+    window.editor.config.setRendererItem('shadows',renderModel.shadows);
+    window.editor.config.setRendererItem('shadowType',renderModel.shadowType);
+    window.editor.config.setRendererItem('toneMapping',renderModel.toneMapping);
+    window.editor.config.setRendererItem('toneMappingExposure',renderModel.toneMappingExposure);
   })
 })
 
@@ -82,18 +80,31 @@ function createRenderer() {
   //   // @ts-ignore
   //   currentRenderer.useLegacyLights = false;
   // } else {
-    currentRenderer = new THREE.WebGLRenderer({
-      antialias: renderModel.antialias,
-      //TODO 想把canvas画布上内容下载到本地，需要设置为true。不清除画布缓存，费性能，SDK完善后设置为false
-      preserveDrawingBuffer: true
-    });
+  currentRenderer = new THREE.WebGLRenderer({
+    antialias: renderModel.antialias,
+    alpha: true,
+    //TODO 想把canvas画布上内容下载到本地，需要设置为true。不清除画布缓存，费性能，SDK完善后设置为false
+    preserveDrawingBuffer: false,
+    powerPreference: "high-performance",
+  });
   // }
+
+  // 禁止自动清理渲染数据收集
+  currentRenderer.info.autoReset = false;
+
+  currentRenderer.autoClear = false;
+  currentRenderer.setClearColor(0x272727, 1);
+  currentRenderer.outputColorSpace = THREE.SRGBColorSpace;
   // @ts-ignore
   currentRenderer.toneMapping = renderModel.toneMapping;
   currentRenderer.toneMappingExposure = renderModel.toneMappingExposure;
   currentRenderer.shadowMap.enabled = renderModel.shadows;
   // @ts-ignore
   currentRenderer.shadowMap.type = renderModel.shadowType;
+
+  // currentRenderer.autoClearColor = true;
+  // currentRenderer.autoClearDepth = true;
+  // currentRenderer.autoClearStencil = true;
 
   useDispatchSignal("rendererCreated", currentRenderer);
   useDispatchSignal("rendererUpdated");
@@ -121,11 +132,11 @@ function updateToneMapping() {
     </n-form-item>
     <n-form-item :label="t('layout.sider.project.shadows')">
       <n-checkbox v-model:checked="renderModel.shadows" @update:checked="updateShadows"></n-checkbox>
-      <n-select v-model:value="renderModel.shadowType" :options="shadowTypeOptions" class="ml-1" size="tiny"
+      <n-select v-model:value="renderModel.shadowType" :options="shadowTypeOptions" class="ml-1"
                 @update:value="updateShadows"/>
     </n-form-item>
     <n-form-item :label="t('layout.sider.project[\'tone mapping\']')">
-      <n-select v-model:value="renderModel.toneMapping" :options="toneMappingOptions" class="ml-1" size="tiny"
+      <n-select v-model:value="renderModel.toneMapping" :options="toneMappingOptions" class="ml-1"
                 :render-option="renderToneMappingOption" @update:value="updateToneMapping"/>
       <EsInputNumber v-if="renderModel.toneMapping !== 0" v-model:value="renderModel.toneMappingExposure"
                      :min="0.00" size="tiny" :step="0.01" :show-button="false" class="ml-1 w-100px"

@@ -4,12 +4,16 @@ import * as Cesium from 'cesium';
 import * as THREE from "three";
 import {useDispatchSignal} from "@/hooks/useSignal";
 import {render, VNode} from "vue";
+import {useSceneInfoStoreWithOut} from "@/store/modules/sceneInfo";
+import {getMousePosition} from "@/utils/common/scenes";
 
 /**
  * @Date 2023-03-07
  * @Author 二三
  * @Description: cesium核心
  */
+const sceneInfoStore = useSceneInfoStoreWithOut();
+
 const onDownPosition = new THREE.Vector2();
 const onUpPosition = new THREE.Vector2();
 
@@ -44,7 +48,7 @@ export default class CesiumApp {
             cameraUtils:new CameraUtils()
         };
 
-        Cesium.Ion.defaultAccessToken = window.editor.config.getKey('cesium/token');
+        Cesium.Ion.defaultAccessToken = sceneInfoStore.cesiumConfig.token;
         /**
          * 避免https://api.cesium.com/v1/assets/1/endpoint?access_token=xxxx请求
          * 1、baseLayerPicker: false必须添加
@@ -92,7 +96,7 @@ export default class CesiumApp {
             clock: new Cesium.Clock(), //用于控制当前时间的时钟对象
             selectedImageryProviderViewModel: undefined, //当前图像图层的显示模型，仅baseLayerPicker设为true有意义
             selectedTerrainProviderViewModel: undefined, //当前地形图层的显示模型，仅baseLayerPicker设为true有意义
-            imageryProvider: this.module.mapLayer.getDefaultLayer(window.editor.config.getKey('cesium/defaultMapType')),
+            imageryProvider: this.module.mapLayer.getDefaultLayer(sceneInfoStore.cesiumConfig.mapType),
             terrainProvider: new Cesium.EllipsoidTerrainProvider(), //地形图层提供者，仅baseLayerPicker设为false有意义
             fullscreenElement: document.body, //全屏时渲染的HTML元素,
             useDefaultRenderLoop: false, //如果需要控制渲染循环，则设为true
@@ -114,18 +118,13 @@ export default class CesiumApp {
         this.cesiumParentElement.addEventListener('pointerup', this.onMouseUp.bind(this),true);
     }
 
-    getMousePosition(dom, x, y) {
-        const rect = dom.getBoundingClientRect();
-        return [(x - rect.left)/rect.width, (y - rect.top)/rect.height];
-    }
-
     /**
      * 鼠标按下处理
      * @param event
      */
     onMouseDown(event) {
         event.preventDefault();
-        const array = this.getMousePosition(this.cesiumParentElement, event.clientX, event.clientY);
+        const array = getMousePosition(this.cesiumParentElement, event.clientX, event.clientY);
         onDownPosition.fromArray( array );
     }
 
@@ -134,7 +133,7 @@ export default class CesiumApp {
      * @param event
      */
     onMouseUp(event) {
-        const array = this.getMousePosition(this.cesiumParentElement, event.clientX, event.clientY );
+        const array = getMousePosition(this.cesiumParentElement, event.clientX, event.clientY );
         onUpPosition.fromArray(array);
         this.handleClick();
     }
@@ -160,7 +159,7 @@ export default class CesiumApp {
         this.viewer.cesiumWidget.creditContainer.style.display = 'none';
 
         //实例化完图层再添加标记图层
-        window.editor.config.getKey('cesium/markMap') && this.viewer.imageryLayers.addImageryProvider(this.module.mapLayer.getMarkMapByDefaultLayer() as Cesium.UrlTemplateImageryProvider);
+        sceneInfoStore.cesiumConfig.markMap && this.viewer.imageryLayers.addImageryProvider(this.module.mapLayer.getMarkMapByDefaultLayer() as Cesium.UrlTemplateImageryProvider);
 
         //为modules setViewer
         this.module.mapLayer.setViewer(this.viewer);

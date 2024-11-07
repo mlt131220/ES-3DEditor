@@ -1,7 +1,7 @@
 import localforage from 'localforage';
 
 export class Storage {
-    private dbs: { modelsDB: LocalForage,otherDB:LocalForage };
+    public dbs: { modelsDB: LocalForage,otherDB:LocalForage,configDB:LocalForage };
 
     constructor() {
         this.dbs = this.initDB();
@@ -14,6 +14,9 @@ export class Storage {
             }),
             otherDB: localforage.createInstance({
                 name: 'otherDB'
+            }),
+            configDB: localforage.createInstance({
+                name: 'configDB'
             })
         }
     }
@@ -32,5 +35,13 @@ export class Storage {
 
     async getOtherItem(key:string){
         return await this.dbs.otherDB.getItem(key);
+    }
+
+    setConfigItem(key: string, value: any){
+        return this.dbs.configDB.setItem(key, value);
+    }
+
+    async getConfigItem(key:string){
+        return await this.dbs.configDB.getItem(key);
     }
 }

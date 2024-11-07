@@ -62,7 +62,7 @@ class History {
 		cmd.execute();
 		cmd.inMemory = true;
 
-		if (window.editor.config.getKey('settings/history')) {
+		if (window.editor.config.getKey('history')) {
 			//在执行后立即序列化cmd，并将json附加到cmd
 			cmd.json = cmd.toJSON();
 		}
@@ -113,7 +113,7 @@ class History {
 		const history:{undos?:Array<string>,redos?:Array<string>} = {};
 		history.undos = [];
 		history.redos = [];
-		if (!window.editor.config.getKey('settings/history')) return history;
+		if (!window.editor.config.getKey('history')) return history;
 
 		//将Undos附加到历史记录
 		for ( let i = 0; i < this.undos.length; i ++ ) {
