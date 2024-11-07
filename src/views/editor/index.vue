@@ -7,7 +7,6 @@ import {useSceneInfoStore} from "@/store/modules/sceneInfo";
 import {t} from "@/language";
 import {fetchGetOneScene} from "@/http/api/scenes";
 import EsCubeLoading from "@/components/es/EsCubeLoading.vue";
-import EsPlugin from "@/components/es/EsPlugin.vue";
 
 const sceneInfoStore = useSceneInfoStore();
 
@@ -122,8 +121,6 @@ onMounted(() => {
       </n-layout-footer>
     </n-layout>
   </div>
-
-  <EsPlugin />
 </template>
 
 <style lang="less" scoped>
