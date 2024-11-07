@@ -5,6 +5,7 @@
  * @description 预览
  */
 import * as THREE from "three";
+import TWEEN from "@tweenjs/tween.js";
 import { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer";
 import WebGPURenderer from "three/examples/jsm/renderers/webgpu/WebGPURenderer";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -279,6 +280,74 @@ export class Viewport {
                 this.scene.background = texture;
             }
         })
+    }
+
+    /**
+     * orbitControls飞行至Camera位置
+     */
+    flyToCamera(initCamera: THREE.PerspectiveCamera, runTime: number, done = () => {
+    }) {
+        //设置相机的位置为与目标正面且距离distance的地方
+        const cameraToTarget = new TWEEN.Tween(this.camera.position);
+        cameraToTarget.to(initCamera.position, runTime);
+
+        let qa = new THREE.Quaternion().copy(this.camera.quaternion); // src quaternion
+        let qb = new THREE.Quaternion().setFromEuler(new THREE.Euler().copy(initCamera.rotation)); // dst quaternion
+        let qm = new THREE.Quaternion();
+
+        let o = {t: 0};
+        const cameraRotation = new TWEEN.Tween(o);
+        cameraRotation.to({t: 1}, runTime);
+
+        cameraToTarget.onComplete(() => {
+            useDispatchSignal("tweenRemove", cameraToTarget);
+        });
+        cameraRotation.onUpdate(() => {
+            // THREE.Quaternion.slerp(qa, qb, qm, o.t);
+            qm.slerpQuaternions(qa, qb, o.t)
+            this.camera.quaternion.set(qm.x, qm.y, qm.z, qm.w);
+        })
+        cameraRotation.onComplete(() => {
+            useDispatchSignal("tweenRemove", cameraRotation);
+            done();
+        })
+        //如果需要相机飞行完成时再调用旋转，则注释 cameraRotation.start()且取消cameraToTarget.chain(cameraRotation)的注释
+        // cameraToTarget.chain(cameraRotation);
+        cameraToTarget.start();
+        cameraRotation.start();
+        useDispatchSignal("tweenAdd", cameraToTarget);
+        useDispatchSignal("tweenAdd", cameraRotation);
+    }
+
+    /**
+     * orbitControls飞行至mesh
+     */
+    flyToMesh(mesh: THREE.Object3D, runTime: number, distanceCoefficient = 4, done = () => {
+    }) {
+        const center = new THREE.Vector3();
+        const delta = new THREE.Vector3();
+
+        const box = new THREE.Box3();
+        box.setFromObject(mesh);
+        box.getCenter(center);
+
+        const distance = box.getBoundingSphere(new THREE.Sphere()).radius;
+        delta.set(0, 0, 1);
+        delta.multiplyScalar(distance * distanceCoefficient);
+
+        const targetCamera = this.camera.clone();
+        delta.applyQuaternion(targetCamera.quaternion);
+        targetCamera.position.copy(center).add(delta);
+
+        const controlsToTarget = new TWEEN.Tween(this.modules.controls.target);
+        controlsToTarget.to(center, runTime / 2);
+        controlsToTarget.onComplete(() => {
+            useDispatchSignal("tweenRemove", controlsToTarget);
+        });
+        controlsToTarget.start();
+        useDispatchSignal("tweenAdd", controlsToTarget);
+
+        this.flyToCamera(targetCamera, runTime, done);
     }
 
     sceneResize() {

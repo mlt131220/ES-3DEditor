@@ -36,7 +36,7 @@ export class ViewportSignals {
             this.viewport.outlinePass.selectedObjects = [object];
 
             // 相机飞行
-            this.viewport.modules.fly.flyTo(object)
+            this.viewport.flyToMesh(object,800)
         }
     }
 
