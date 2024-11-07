@@ -259,6 +259,7 @@ function Bim2GltfWsHandle(data: WebSocketMessage<Bim2GltfWsData>) {
         setTimeout(() => {
           wsNotice?.destroy();
         }, 1500)
+        getBim2GltfList();
       }
     } else {
       if (data.data.conversionStatus !== "completed") return;

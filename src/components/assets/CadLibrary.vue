@@ -212,7 +212,7 @@ function CadWsHandle(data) {
     wsNotice.content = t("cad['CAD parse is in progress']") + "...";
   } else if (data.data.conversionStatus === "completed") {
     wsNotice.content = t("cad['CAD parse completed']");
-    getCadList();
+    // getCadList();
     setTimeout(() => {
       wsNotice?.destroy();
       window.$dialog.info({
@@ -231,6 +231,7 @@ function CadWsHandle(data) {
     setTimeout(() => {
       wsNotice?.destroy();
     }, 1500)
+    getCadList();
   }
 }
 
