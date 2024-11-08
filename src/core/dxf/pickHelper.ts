@@ -41,7 +41,6 @@ export class PickHelper {
 
         // 如果有被选中的物体，则恢复
         if (this.pickedObject) {
-            // this.pickedObject.layers.toggle(0);
             this.pickedObject.layers.toggle(this.bloomLayer);
 
             this.pickedObject = undefined;

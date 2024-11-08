@@ -103,7 +103,7 @@ export function main(d) {
         modules.drawRect.setControls(controls);
 
         const pickPosition = new THREE.Vector2(0, 0);
-        const pickHelper = new PickHelper(scene, camera, BLOOM_SCENE);
+        modules.pickHelper = new PickHelper(scene, camera, BLOOM_SCENE);
         clearPickPosition();
 
         function getCanvasRelativePosition(event) {
@@ -119,7 +119,7 @@ export function main(d) {
             pickPosition.x = (pos.x / state.width) * 2 - 1;
             pickPosition.y = (pos.y / state.height) * - 2 + 1;
 
-            pickHelper.pick(pickPosition);
+            modules.pickHelper.pick(pickPosition);
         }
 
         function clearPickPosition() {
@@ -266,9 +266,12 @@ function init() {
 
         if (obj) {
             if (layersGroupMap.has(entity.layer)) {
-                (layersGroupMap.get(entity.layer) || scene).add(obj);
+                const parent = layersGroupMap.get(entity.layer) || scene;
+                parent.add(obj);
+                obj.name = `${entity.type}-${entity.handle || 'noHandle'}-${parent.children.length}`
             } else {
                 scene.add(obj);
+                obj.name = `${entity.type}-${entity.handle || 'noHandle'}-${scene.children.length}`
             }
         }
         obj = null;
@@ -405,6 +408,18 @@ function initComposer() {
     finalComposer.addPass(ssaaRenderPass);
     finalComposer.addPass(mixPass);
     finalComposer.addPass(outputPass);
+}
+
+// 图元选中
+export function select({modelOrName}){
+    let model = modelOrName;
+    if(typeof modelOrName === 'string'){
+        model = scene.getObjectByProperty('name', modelOrName);
+    }
+
+    if(model){
+        modules.pickHelper.select(model);
+    }
 }
 
 /** ------------------------------------------实体解析部分-------------------------------------------------------- **/
