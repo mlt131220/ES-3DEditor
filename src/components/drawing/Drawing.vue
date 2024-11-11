@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, nextTick, computed, onBeforeUnmount} from "vue";
+import {onMounted, ref, nextTick, computed, onBeforeUnmount,watch} from "vue";
 import {useThemeVars} from 'naive-ui';
 import {useDrawingStore} from "@/store/modules/drawing";
 import {useAddSignal,useRemoveSignal} from "@/hooks/useSignal";
@@ -140,6 +140,20 @@ function objectSelected(object){
 
   window.DrawViewer?.selectRect(object.uuid);
 }
+
+watch(() => drawingStore.imgSrc, async () => {
+  if(!canvasRef.value) return;
+  const newCanvas = document.createElement("canvas");
+
+  window.DrawViewer?.dispose();
+  canvasRef.value.remove();
+  canvasRef.value = null;
+
+  containerRef.value.append(newCanvas);
+  canvasRef.value = newCanvas;
+
+  await initCanvas();
+})
 
 onMounted(async () => {
   await nextTick();

@@ -95,11 +95,11 @@ export function getMousePosition(dom: HTMLElement, x: number, y: number) {
 }
 
 // 屏幕坐标转世界坐标
-export function screenToWorld(x, y) {
+export function screenToWorld(x:number, y:number) {
 	const vector = new Vector3();
 	vector.set(
-		(x / window.innerWidth) * 2 - 1,
-		-(y / window.innerHeight) * 2 + 1,
+		(x / window.viewer.container.offsetWidth) * 2 - 1,
+		-(y / window.viewer.container.offsetHeight) * 2 + 1,
 		0.5
 	);
 	vector.unproject(window.editor.camera);

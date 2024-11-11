@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {onMounted, onBeforeUnmount, ref, nextTick} from 'vue';
 import {SunnyOutline, PlanetOutline} from '@vicons/ionicons5';
+import {Vector2} from "three";
 import {Viewport} from '@/core/Viewport';
 import ViewportInfo from '@/components/viewport/ViewportInfo.vue';
 import {useAddSignal, useDispatchSignal, useRemoveSignal} from "@/hooks/useSignal";
@@ -13,7 +14,10 @@ import Toolbar from "@/components/viewport/Toolbar.vue";
 import {useDragStore} from "@/store/modules/drag";
 import IFCProperties from "@/components/viewport/IFCProperties.vue";
 
+const viewerContainerRef = ref();
 const viewportRef = ref();
+const drawingRef = ref();
+
 const loading = ref(false);
 const loadingText = ref("");
 
@@ -40,6 +44,19 @@ const dragStore = useDragStore();
 function sceneDrop(event) {
   event.preventDefault();
 
+  // 设置鼠标释放时的区域屏幕坐标
+  dragStore.endPosition = new Vector2(event.layerX,event.layerY);
+
+  if(event.target){
+    if(viewportRef.value.contains(event.target)){
+      dragStore.endArea = "Scene";
+    }else if(drawingRef.value?.$el?.contains(event.target)){
+      dragStore.endArea = "Drawing";
+    }else{
+      dragStore.endArea = "";
+    }
+  }
+
   const dt = event.dataTransfer as DataTransfer;
 
   //拖拽大纲视图
@@ -63,7 +80,10 @@ function sceneDragEnter() {
   dragStore.setActionTarget("addToScene");
 }
 
-function sceneDragLeave() {
+function sceneDragLeave(e) {
+  // 确保移出了场景区+图纸区
+  if(e.fromElement && viewerContainerRef.value.$el.contains(e.fromElement)) return;
+
   dragStore.setActionTarget("");
 }
 
@@ -117,10 +137,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <n-spin :show="loading" @drop="sceneDrop" @dragover="sceneDragOver" @dragenter="sceneDragEnter"
+  <n-spin ref="viewerContainerRef" :show="loading" @drop="sceneDrop" @dragover="sceneDragOver"  @dragenter="sceneDragEnter"
           @dragleave="sceneDragLeave">
     <splitpanes class="h-full" @resize="onViewPortResize" @resized="onViewPortResize">
-      <pane min-size="10" v-if="drawingStore.getIsUploaded">
+      <pane min-size="10" ref="drawingRef" v-if="drawingStore.getIsUploaded">
         <Drawing />
       </pane>
       <pane min-size="10">

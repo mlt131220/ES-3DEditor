@@ -62,10 +62,10 @@ function dragStart(e,key){
   dragStore.setData(key)
 }
 
-function dragEnd(e){
-  if(dragStore.getActionTarget !== "addToScene") return;
+function dragEnd(){
+  if(dragStore.getActionTarget !== "addToScene" || dragStore.endArea !== "Scene") return;
 
-  const position = screenToWorld(e.clientX,e.clientY);
+  const position = screenToWorld(dragStore.endPosition.x,dragStore.endPosition.y);
   basicObject3D.init(dragStore.getData, {position:position});
   dragStore.setActionTarget("");
 }
