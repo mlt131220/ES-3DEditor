@@ -1,33 +1,44 @@
 import * as THREE from "three";
-import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry.js";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
-import {TTFLoader} from "three/examples/jsm/loaders/TTFLoader.js";
-import {SSAARenderPass} from "three/examples/jsm/postprocessing/SSAARenderPass.js";
-import { UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader.js";
+import { SSAARenderPass } from "three/examples/jsm/postprocessing/SSAARenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import {
     addTriangleFacingCamera,
     getBSplinePolyline, getBulgeCurvePoints,
     mtextContentAndFormattingToTextAndStyle
 } from "./drawUtils";
 // @ts-ignore
-import {parseDxfMTextContent} from "@dxfom/mtext";
-import {Font} from "three/examples/jsm/loaders/FontLoader.js";
-import {PickHelper} from "./pickHelper";
-import {DrawRect} from "./drawRect";
+import { parseDxfMTextContent } from "@dxfom/mtext";
+import { Font } from "three/examples/jsm/loaders/FontLoader.js";
+import { PickHelper } from "./pickHelper";
+import { DrawRect } from "./drawRect";
 
-let signal,middleObject;
-let scene,helpScene, camera, renderer,inputElement, font, data;
-let composer;
-let modules:any = {};
+let signal, middleObject;
+let scene, helpScene, camera, renderer, inputElement, font, data;
+
+// 渲染辉光图层
+let composer, finalComposer;
+const BLOOM_SCENE = 10;
+const bloomLayer = new THREE.Layers();
+bloomLayer.set(BLOOM_SCENE);
+const DarkMaterial = new THREE.MeshBasicMaterial({ color: 'black' });
+const materials = {};
+
+let modules: any = {};
+
 // TODO 当前解析模式会存在 data.blocks 中还有实体但未匹配解析的情况；
 // 记录已经解析的 data.blocks,data.entities遍历完成后处理
 let parsedBlocks: string[] = [];
 // 渲染配置项 && 对比度颜色实体集合
 let options = {
-    bgColor:0x000000,
-    contrastColor:0xffffff
-},contrastEntity:any = [];
+    bgColor: 0x000000,
+    contrastColor: 0xffffff
+}, contrastEntity: any = [];
 
 // canvas默认宽高
 export const state = {
@@ -40,7 +51,7 @@ export const state = {
  * 优先级：offScreenCanvas > canvas
  */
 export function main(d) {
-    const {canvas,onComplete} = d;
+    const { canvas, onComplete } = d;
     signal = d.signal;
     middleObject = d.middleObject;
     state.width = canvas.width;
@@ -48,9 +59,9 @@ export function main(d) {
     inputElement = d.inputElement;
     data = d.data;
     // cad配置项
-    options = Object.assign(options,d.options);
+    options = Object.assign(options, d.options);
     options.bgColor = Number(options.bgColor);
-    options.contrastColor = options.bgColor === 0x000000 ? 0xffffff : 0x000000; 
+    options.contrastColor = options.bgColor === 0x000000 ? 0xffffff : 0x000000;
 
     createLineTypeShaders();
 
@@ -61,12 +72,13 @@ export function main(d) {
         antialias: true,
     });
     // 第三个参数false代表不更新canvas dom style
-    renderer.setSize(canvas.width, canvas.height,false);
+    renderer.setSize(canvas.width, canvas.height, false);
     renderer.setClearColor(options.bgColor, 1);
-    renderer.autoClear = false;
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    // renderer.autoClear = false;
 
     const loader = new TTFLoader();
-    loader.loadAsync("/upyun/assets/font/Alimama_DongFangDaKai_Regular.ttf").then( function (response) {
+    loader.loadAsync("/upyun/assets/font/Alimama_DongFangDaKai_Regular.ttf").then(function (response) {
         font = new Font(response);
 
         init();
@@ -74,37 +86,24 @@ export function main(d) {
         // OrbitControls mousemove事件中未调用chang事件，所以需要一直渲染
         renderLoop();
 
+        // 添加灯光
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+
         // 后期通道
-        composer = new EffectComposer(renderer);
-        let ssaaRenderPass = new SSAARenderPass(scene, camera);
-        ssaaRenderPass.unbiased = true;
-        ssaaRenderPass.sampleLevel = 2;
-        const bloomPass = new UnrealBloomPass(
-            //参数一：泛光覆盖场景大小，二维向量类型
-            new THREE.Vector2(inputElement.width, inputElement.height),
-            //参数二：bloomStrength 泛光强度，值越大明亮的区域越亮，较暗区域变亮的范围越广
-            2,
-            //参数三：bloomRadius 泛光散发半径
-            10,
-            //参数四：bloomThreshold 泛光的光照强度阈值，如果照在物体上的光照强度大于该值就会产生泛光
-            0.5
-        );
-        bloomPass.renderToScreen = true;
-        composer.addPass(ssaaRenderPass);
-        composer.addPass(bloomPass);
+        initComposer();
 
         const controls = new OrbitControls(camera, inputElement);
         controls.target.x = camera.position.x;
         controls.target.y = camera.position.y;
         controls.target.z = 0;
-        controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT:  THREE.MOUSE.ROTATE };
+        controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
         controls.enableRotate = false;
         controls.update();
 
         modules.drawRect.setControls(controls);
 
-        const pickPosition = new THREE.Vector2(0,0);
-        const pickHelper = new PickHelper();
+        const pickPosition = new THREE.Vector2(0, 0);
+        modules.pickHelper = new PickHelper(scene, camera, BLOOM_SCENE);
         clearPickPosition();
 
         function getCanvasRelativePosition(event) {
@@ -117,10 +116,10 @@ export function main(d) {
 
         function setPickPosition(event) {
             const pos = getCanvasRelativePosition(event);
-            pickPosition.x = ( pos.x / state.width ) * 2 - 1;
-            pickPosition.y = ( pos.y / state.height ) * - 2 + 1;
+            pickPosition.x = (pos.x / state.width) * 2 - 1;
+            pickPosition.y = (pos.y / state.height) * - 2 + 1;
 
-            pickHelper.pick(pickPosition, scene, camera);
+            modules.pickHelper.pick(pickPosition);
         }
 
         function clearPickPosition() {
@@ -149,7 +148,7 @@ export function main(d) {
         font = undefined;
         data = undefined;
 
-        resize({width: inputElement.width, height: inputElement.height});
+        resize({ width: inputElement.width, height: inputElement.height });
     });
 }
 
@@ -179,9 +178,9 @@ function createDashedLineShader(pattern) {
 
         {
             // @ts-ignore
-            'pattern': {type: 'fv1', value: pattern},
+            'pattern': { type: 'fv1', value: pattern },
             // @ts-ignore
-            'patternLength': {type: 'f', value: totalLength}
+            'patternLength': { type: 'f', value: totalLength }
         }
     ]);
 
@@ -245,7 +244,7 @@ function init() {
     scene.background = new THREE.Color(options.bgColor);
     helpScene = new THREE.Scene();
 
-    const layersGroupMap:Map<string,THREE.Group> = new Map();
+    const layersGroupMap: Map<string, THREE.Group> = new Map();
     // 使用layers生成group
     for (let layerName in data.tables.layer.layers) {
         const layer = data.tables.layer.layers[layerName];
@@ -266,10 +265,13 @@ function init() {
         obj = drawEntity(entity);
 
         if (obj) {
-            if(layersGroupMap.has(entity.layer)){
-                (layersGroupMap.get(entity.layer) || scene).add(obj);
-            }else{
+            if (layersGroupMap.has(entity.layer)) {
+                const parent = layersGroupMap.get(entity.layer) || scene;
+                parent.add(obj);
+                obj.name = `${entity.type}-${entity.handle || 'noHandle'}-${parent.children.length}`
+            } else {
                 scene.add(obj);
+                obj.name = `${entity.type}-${entity.handle || 'noHandle'}-${scene.children.length}`
             }
         }
         obj = null;
@@ -305,8 +307,8 @@ function init() {
 
     const aspectRatio = state.width / state.height;
     const dims = new THREE.Box3().setFromObject(scene);
-    const upperRightCorner = {x: dims.max.x, y: dims.max.y};
-    const lowerLeftCorner = {x: dims.min.x, y: dims.min.y};
+    const upperRightCorner = { x: dims.max.x, y: dims.max.y };
+    const lowerLeftCorner = { x: dims.min.x, y: dims.min.y };
     //const lowerLeftCorner = data.header.$EXTMIN; // X、Y 和 Z 图形范围左下角（在 WCS 中）
     //const upperRightCorner = data.header.$EXTMAX; // X、Y 和 Z 图形范围右上角（在 WCS 中）
 
@@ -345,10 +347,79 @@ function init() {
     camera.userData.viewPort = viewPort;
 
     // 注册模块
-    modules.drawRect = new DrawRect(inputElement,helpScene,camera, signal,middleObject);
+    modules.drawRect = new DrawRect(inputElement, helpScene, camera, signal, middleObject);
 
     // 销毁中间变量
     layersGroupMap.clear();
+}
+
+function initComposer() {
+    const pixelRatio = renderer.getPixelRatio();
+
+    composer = new EffectComposer(renderer);
+    composer.renderToScreen = false;
+    composer.setPixelRatio(pixelRatio)
+
+    let ssaaRenderPass = new SSAARenderPass(scene, camera);
+    ssaaRenderPass.unbiased = false;
+    ssaaRenderPass.sampleLevel = 2;
+    composer.addPass(ssaaRenderPass);
+
+    const bloomPass = new UnrealBloomPass(
+        //参数一：泛光覆盖场景大小，二维向量类型
+        new THREE.Vector2(inputElement.width, inputElement.height),
+        //参数二：bloomStrength 泛光强度，值越大明亮的区域越亮，较暗区域变亮的范围越广
+        1.5,
+        //参数三：bloomRadius 泛光散发半径
+        0,
+        //参数四：bloomThreshold 泛光的光照强度阈值，如果照在物体上的光照强度大于该值就会产生泛光
+        0
+    );
+    composer.addPass(bloomPass);
+
+    const mixPass = new ShaderPass(
+        new THREE.ShaderMaterial({
+            uniforms: {
+                baseTexture: { value: null },
+                bloomTexture: { value: composer.renderTarget2.texture }
+            },
+            vertexShader: `
+            varying vec2 vUv;
+                void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+            }
+`,
+            fragmentShader: `
+            uniform sampler2D baseTexture;
+            uniform sampler2D bloomTexture;
+            varying vec2 vUv;
+            void main() {
+                gl_FragColor = ( texture2D( baseTexture, vUv ) + vec4( 1.0 ) * texture2D( bloomTexture, vUv ) );
+            }`,
+            defines: {}
+        }), 'baseTexture'
+    );
+    mixPass.needsSwap = true;
+
+    const outputPass = new OutputPass();
+
+    finalComposer = new EffectComposer(renderer);
+    finalComposer.addPass(ssaaRenderPass);
+    finalComposer.addPass(mixPass);
+    finalComposer.addPass(outputPass);
+}
+
+// 图元选中
+export function select({modelOrName}){
+    let model = modelOrName;
+    if(typeof modelOrName === 'string'){
+        model = scene.getObjectByProperty('name', modelOrName);
+    }
+
+    if(model){
+        modules.pickHelper.select(model);
+    }
 }
 
 /** ------------------------------------------实体解析部分-------------------------------------------------------- **/
@@ -424,10 +495,10 @@ function drawEntity(entity) {
             break;
     }
 
-    if(mesh?.material && mesh.material?.color.getHex() === options.contrastColor){
+    if (mesh?.material && mesh.material?.color.getHex() === options.contrastColor) {
         contrastEntity.push(mesh)
     }
-    
+
     return mesh;
 }
 
@@ -451,7 +522,7 @@ function drawArc(entity) {
     const points = curve.getPoints(32);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-    const material = new THREE.LineBasicMaterial({color: getColor(entity)});
+    const material = new THREE.LineBasicMaterial({ color: getColor(entity) });
 
     const arc = new THREE.Line(geometry, material);
     arc.position.x = entity.center.x;
@@ -494,9 +565,9 @@ function drawLine(entity) {
     }
 
     if (lineType && lineType.pattern && lineType.pattern.length !== 0) {
-        material = new THREE.LineDashedMaterial({color: color, gapSize: 4, dashSize: 4});
+        material = new THREE.LineDashedMaterial({ color: color, gapSize: 4, dashSize: 4 });
     } else {
-        material = new THREE.LineBasicMaterial({linewidth: 1, color: color});
+        material = new THREE.LineBasicMaterial({ linewidth: 1, color: color });
     }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -518,14 +589,14 @@ function drawText(entity) {
     // 当前使用的字体略宽，需要缩小一点
     // xScale: 相对 X 比例因子 — 宽度
     let fontSize = entity.xScale ? entity.xScale * entity.textHeight * 0.73 : entity.textHeight * 0.5;
-    geometry = new TextGeometry(entity.text, {font: font, height: 0, size: fontSize || 100});
+    geometry = new TextGeometry(entity.text, { font: font, height: 0, size: fontSize || 100 });
 
     if (entity.rotation) {
         const zRotation = entity.rotation * Math.PI / 180;
         geometry.rotateZ(zRotation);
     }
 
-    material = new THREE.MeshBasicMaterial({color: getColor(entity)});
+    material = new THREE.MeshBasicMaterial({ color: getColor(entity) });
 
     text = new THREE.Mesh(geometry, material);
     text.position.x = entity.startPoint.x;
@@ -549,7 +620,7 @@ function drawMtext(entity) {
     if (content.text == null || content.text == "") return null;
     if (content.style.textHeight == null || content.style.textHeight == 0) return null;
 
-    const geometry = new TextGeometry(content.text, {font: font, height: 0, size: content.style.textHeight || 100});
+    const geometry = new TextGeometry(content.text, { font: font, height: 0, size: content.style.textHeight || 100 });
     if (entity.rotation) {
         const zRotation = entity.rotation * Math.PI / 180;
         geometry.rotateZ(zRotation);
@@ -558,7 +629,7 @@ function drawMtext(entity) {
         const dv = entity.directionVector;
         geometry.rotateZ(new THREE.Vector3(1, 0, 0).angleTo(new THREE.Vector3(dv.x, dv.y, dv.z)));
     }
-    const material = new THREE.MeshBasicMaterial({color});
+    const material = new THREE.MeshBasicMaterial({ color });
     const text = new THREE.Mesh(geometry, material);
     text.position.x = entity.position.x;
     text.position.y = entity.position.y;
@@ -598,7 +669,7 @@ function drawSolid(entity) {
     addTriangleFacingCamera(verts, points[0], points[1], points[2]);
     addTriangleFacingCamera(verts, points[1], points[2], points[3]);
 
-    material = new THREE.MeshBasicMaterial({color: getColor(entity)});
+    material = new THREE.MeshBasicMaterial({ color: getColor(entity) });
     geometry.setFromPoints(verts);
 
     return new THREE.Mesh(geometry, material);
@@ -613,7 +684,7 @@ function drawPoint(entity) {
 
     const color = getColor(entity);
 
-    material = new THREE.PointsMaterial({size: 0.1, color: new THREE.Color(color)});
+    material = new THREE.PointsMaterial({ size: 0.1, color: new THREE.Color(color) });
     return new THREE.Points(geometry, material);
     // this.scene.add(point);
 }
@@ -660,7 +731,7 @@ function drawSpline(entity) {
     const points = getBSplinePolyline(entity.controlPoints, entity.degreeOfSplineCurve, entity.knotValues, 100, undefined);
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({linewidth: 1, color: color});
+    const material = new THREE.LineBasicMaterial({ linewidth: 1, color: color });
     return new THREE.Line(geometry, material);
 }
 
@@ -681,7 +752,7 @@ function drawEllipse(entity) {
 
     const points = curve.getPoints(50);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({linewidth: 1, color: color});
+    const material = new THREE.LineBasicMaterial({ linewidth: 1, color: color });
 
     // 创建要添加到场景中的最后一个对象
     return new THREE.Line(geometry, material);
@@ -722,24 +793,24 @@ function drawDimension(entity) {
 /** ------------------------------------------实体解析结束-------------------------------------------------------- **/
 
 // 设置图层可见性
-export function setLayerVisible(data:{layerName: string, visible: boolean}) {
+export function setLayerVisible(data: { layerName: string, visible: boolean }) {
     const group = scene.getObjectByName(data.layerName);
     if (group) group.visible = data.visible;
 }
 
 // 调用modules里的方法
-export function callModuleMethod(data:{moduleName: string, methodName: string}) {
+export function callModuleMethod(data: { moduleName: string, methodName: string }) {
     const module = modules[data.moduleName];
-    if(module && module[data.methodName]){
+    if (module && module[data.methodName]) {
         module[data.methodName](data);
     }
 }
 
 // 相机复位
-export function resetCamera(){
+export function resetCamera() {
     const viewPort = camera.userData.viewPort;
 
-    if(!viewPort) return;
+    if (!viewPort) return;
 
     camera.left = viewPort.left;
     camera.right = viewPort.right;
@@ -758,8 +829,8 @@ export function resetCamera(){
 }
 
 //let start;
-export function resize({width, height}) {
-    if(!camera || data) return;
+export function resize({ width, height }) {
+    if (!camera || data) return;
 
     const hscale = width / state.width;
     const vscale = height / state.height;
@@ -773,30 +844,40 @@ export function resize({width, height}) {
     camera.right = (hscale * camera.right);
 
     camera.updateProjectionMatrix();
-    renderer.setSize(width, height,false);
+
+    renderer.setSize(width, height, false);
+    composer.setSize(width, height);
+    finalComposer.setSize(width, height);
 
     render();
+}
 
-    // start = new Date().getTime();
-    // const timer = setInterval(()=>{
-    //     if(new Date().getTime() - start > 80){
-    //         clearInterval(timer);
-    //
-    //         camera.updateProjectionMatrix();
-    //         renderer.setSize(state.width, state.height,false);
-    //
-    //         render();
-    //         renderer.setAnimationLoop(render)
-    //     }
-    // },16)
+
+function darkenNonBloomed(obj) {
+    if (obj.material && bloomLayer.test(obj.layers) === false) {
+        materials[obj.uuid] = obj.material;
+        obj.material = DarkMaterial;
+    }
+}
+
+function restoreMaterial(obj) {
+    if (materials[obj.uuid]) {
+        obj.material = materials[obj.uuid];
+        delete materials[obj.uuid];
+    }
 }
 
 export function render() {
-    camera.layers.set(1);
+    renderer.autoClear = false;
+
+    scene.traverse(darkenNonBloomed);
     composer.render();
-    camera.layers.set(0);
-    renderer.render(scene, camera);
+    scene.traverse(restoreMaterial);
+    finalComposer.render();
+
     renderer.render(helpScene, camera);
+
+    renderer.autoClear = true;
 }
 
 export function stopRender() {
@@ -826,13 +907,13 @@ export function dispose() {
 }
 
 /** ---------------------------- 设置弹窗配置变化 ---------------------------------- */
-export function changeClearColor(color:0x000000 | 0xffffff){
+export function changeClearColor(color: 0x000000 | 0xffffff) {
     options.bgColor = color;
     options.contrastColor = options.bgColor === 0x000000 ? 0xffffff : 0x000000;
     scene.background = new THREE.Color(options.bgColor);
 
     contrastEntity.forEach(mesh => {
-        if(!mesh.material || !mesh.material.color) return;
+        if (!mesh.material || !mesh.material.color) return;
 
         mesh.material.color = new THREE.Color(options.contrastColor);
     })
