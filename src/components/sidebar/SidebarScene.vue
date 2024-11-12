@@ -28,9 +28,9 @@ import {ref,onMounted} from "vue";
 import {NCollapse, NCollapseItem} from "naive-ui";
 import {CaretForwardOutline} from "@vicons/ionicons5";
 import {t} from "@/language";
-import SidebarSceneProjectSetting from "@/components/sidebar/sidebarScene/SidebarSceneProjectSetting.vue";
-import SidebarSceneSetting from "@/components/sidebar/sidebarScene/SidebarSceneSetting.vue";
-import SidebarSceneRender from "@/components/sidebar/sidebarScene/SidebarSceneRender.vue";
+import SidebarSceneProjectSetting from "@/components/sidebar/scene/Sidebar.Scene.ProjectSetting.vue";
+import SidebarSceneSetting from "@/components/sidebar/scene/Sidebar.Scene.Setting.vue";
+import SidebarSceneRender from "@/components/sidebar/scene/Sidebar.Scene.Render.vue";
 
 //是否显示视频模块,默认false
 const videoIsShow = ref(true);
