@@ -1,11 +1,11 @@
 # ES 3DEditor
 
 🌍
-*[简体中文](README.md)*
+*[English](README.md)*
 🌍
-*[English](README.en.md)*
+*[简体中文](README.zh-cn.md)*
 
-### Based on vue3 and ThreeJs, see [Doc](http://editor-doc.mhbdng.cn/) for details
+### 基于vue3与ThreeJs，具体查看[Doc](http://editor-doc.mhbdng.cn/)
 
 <div style="text-align: center">
 
@@ -21,32 +21,32 @@
 
 ***
 
-## WeChat Group
+## 交流
 <img src="https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg" width="500px">
 
-Click [here](https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg) view the latest group invitation pictures。
+点击[这里](https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg)查看最新群邀请图片。
 
 ***
 
-## Back-end code
-* Golang's implementation: [ES3DEditorGoBack](https://github.com/mlt131220/ES3DEditorGoBack)
+## 后端
+* Go实现: [ES3DEditorGoBack](https://github.com/mlt131220/ES3DEditorGoBack)
 
-## Peculiarity：
-- [x] Model import display, support OBJ, FBX, GLTF, GLB, RVT, IFC, SEA, 3DM, 3DS, 3MF, AMF, DAE, DRC, PLY, SVG, JSON and other 30+ formats;
-- [x] BIM model (RVT, IFC) lightweight display;
-- [x] Analysis of CAD drawings (DWG, DXF);
-- [x] Scene subcontract store read;
-- [x] WebSocket collaboration;
-- [x] Upyun USS store;
-- [x] Golang + MySQL backend support;
-- [x] Run script;
-- [ ] Animation editor;
-- [ ] Physical engine support;
-- [ ] Particle system support;
-- [ ] WebGPU support;
-- [ ] Data components (tentatively support: API interface, WebSocket, not support: front-end SQL, GraphQL);
-- [ ] VUE / React components support;
-- [ ] Low code data large screen;
+## 特性：
+- [x] 模型导入展示，支持OBJ、FBX、GLTF、GLB、RVT、IFC、SEA、3DM、3DS、3MF、AMF、DAE、DRC、PLY、SVG、JSON等30+格式;
+- [x] BIM模型（RVT、IFC）轻量化展示;
+- [x] CAD图纸（DWG、DXF）解析关联;
+- [x] 场景分包存储读取;
+- [x] WebSocket 协作;
+- [x] 又拍云 USS 存储;
+- [x] Golang + MySQL 后端支持;
+- [x] 运行脚本;
+- [ ] 动画编辑器;
+- [ ] 物理引擎支持;
+- [ ] 粒子系统支持;
+- [ ] WebGPU 支持;
+- [ ] 数据组件 (暂定支持：API接口、WebSocket，不支持：前端SQL、GraphQL);
+- [ ] VUE / React 组件支持;
+- [ ] 低代码数据大屏;
 
 [//]: # (## 工程结构)
 [//]: # (```)
@@ -87,12 +87,12 @@ Click [here](https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg) view the lat
 [//]: # (|-- yarn.lock                    )
 [//]: # (```)
 
-## Quick start
+## 快速开始
 ```shell
    git clone https://github.com/mlt131220/ES-3DEditor.git
 ```
 
-## Run
+## 运行
 ```shell
     cd ES-3DEditor
     yarn install
@@ -101,23 +101,23 @@ Click [here](https://upyun.mhbdng.cn/static/images/WeChatGroup.jpg) view the lat
 Tips:
 * `Node > 18.0.0`;
 
-## Build
+## 打包
 ```shell
     yarn run build
 ```
 
-## Thanks for sponsoring🌹🌹🌹
-If the project is to help to you, please leave you in [here](https://github.com/mlt131220/ES-3DEditor/issues/2) site, let more people see. Your reply will be the motivation for me to continue updating and maintaining。 </br></br>
-This project code is completely open source and free to learn & use, if you are happy and want to donate, you can scan the QR code below：</br>
+## 感谢 || 赞助🌹🌹🌹
+如果本项目帮助到了你，请在[这里](https://github.com/mlt131220/ES-3DEditor/issues/2)留下你的网址，让更多的人看到。您的回复将会是我继续更新维护下去的动力。 </br></br>
+本项目代码完全开源并且免费学习&使用，如果你开心并且想要打赏赞助，可扫描下方二维码：</br>
 <img src="https://upyun.mhbdng.cn/static/images/alipay.jpg" width="320px">
 <img src="https://upyun.mhbdng.cn/static/images/wepay.jpg" width="320px">
 
-## Declaration of interest
-This project is open source based on the Apache-2.0 protocol, anyone can use it for free, but in any case, please do not use it for commercial purposes, please contact the author for authorization.
+## 权益声明
+本项目基于Apache-2.0协议开源，任何人可以免费使用，但任何情况下，请不要用于商业用途,商用用途请联系作者获得授权。
 
-## Disclaimer
-This project is only for learning and exchange, do not use for any illegal purposes, otherwise the consequences will be your own.
-The author assumes no legal responsibility for any problems arising from the use of this project (original project or after secondary creation).
+## 免责声明
+本项目仅供学习交流使用，请勿用于任何非法用途，否则后果自负。
+作者对使用本项目(原始项目或二次创作后)产生的任何问题不承担任何法律责任。
 
-## Star History
+## Star 历史
 [![Star History Chart](https://api.star-history.com/svg?repos=mlt131220/ES-3DEditor&type=Date)](https://star-history.com/#mlt131220/ES-3DEditor&Date)
