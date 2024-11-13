@@ -8,7 +8,7 @@ class Config {
 		this.storage = storage;
 
 		this.config = {
-			//历史记录功能是否启用
+			// 历史记录功能是否启用
 			history: false,
 			// 项目运行是否启用xr
 			xr: false,
@@ -25,7 +25,7 @@ class Config {
 			effect:{
 				enabled:true,
 				// 描边线
-				outline:{
+				Outline:{
 					enabled:true,
 					// 边缘的强度，值越高边框范围越大
 					edgeStrength: Number(3.0),
@@ -43,8 +43,60 @@ class Config {
 					hiddenEdgeColor:"#ff6a00"
 				},
 				// 抗锯齿
-				fxaa:{
+				FXAA:{
 					enabled:true,
+				},
+				// 辉光
+				UnrealBloom:{
+					enabled:false,
+					// 光晕阈值，值越小，效果越明显
+					threshold: 0,
+					// 光晕强度
+					strength: 1,
+					// 光晕半径
+					radius: 0
+				},
+				// 背景虚化
+				Bokeh:{
+					enabled:false,
+					// 焦距，调整远近，对焦时才会清晰
+					focus: 500.0,
+					// 孔径，类似相机孔径调节
+					aperture: 0.00005,
+					// 最大模糊程度
+					maxblur: 0.01
+				},
+				// 像素风
+				Pixelate: {
+					enabled:false,
+					// 像素大小
+					pixelSize: 6,
+					// 法向边缘强度
+					normalEdgeStrength: 0.3,
+					// 深度边缘强度
+					depthEdgeStrength: 0.4,
+				},
+				// 半色调
+				Halftone:{
+					enabled:false,
+					// 形状：点，椭圆，线，正方形
+					shape: 1,
+					// 半径
+					radius: 4,
+					// R色旋转
+					rotateR: Math.PI / 12,
+					// G色旋转
+					rotateG: Math.PI / 12 * 2,
+					// B色旋转
+					rotateB: Math.PI / 12 * 3,
+					// 分散度
+					scatter: 0,
+					// 混合度
+					blending: 1,
+					// 混合模式：线性，相乘，相加，明亮，昏暗
+					blendingMode: 1,
+					// 灰度
+					greyscale: false,
 				}
 			},
 			// 快捷键相关配置
@@ -64,7 +116,16 @@ class Config {
 				if(_value === null){
 					this.storage.setConfigItem(key, this.config[key])
 				}else{
-					this.config[key] = _value;
+					let newVal = _value;
+					// 有可能会在代码开发过程中增加新的配置项
+					if(this.config[key] && typeof this.config[key] === "object"){
+						newVal = Object.assign({},this.config[key],_value);
+					}
+					this.config[key] = newVal;
+
+					if(newVal !== _value){
+						this.storage.setConfigItem(key, newVal)
+					}
 				}
 			}).catch(() => {
 				this.storage.setConfigItem(key, this.config[key])

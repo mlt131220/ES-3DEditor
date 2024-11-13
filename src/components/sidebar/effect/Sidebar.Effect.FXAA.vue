@@ -10,12 +10,12 @@ withDefaults(defineProps<{
 })
 
 // 抗锯齿配置
-const fxaa = reactive(window.editor.config.getEffectItem('fxaa'));
+const fxaa = reactive(window.editor.config.getEffectItem('FXAA'));
 
 function handleFXAAConfigChange(){
   const raw = toRaw(fxaa);
-  window.editor.config.setEffectItem("fxaa",raw);
-  useDispatchSignal("effectPassConfigChange","fxaa",raw);
+  window.editor.config.setEffectItem("FXAA",raw);
+  useDispatchSignal("effectPassConfigChange","FXAA",raw);
 }
 </script>
 

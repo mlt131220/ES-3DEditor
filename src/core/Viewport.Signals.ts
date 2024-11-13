@@ -1,6 +1,8 @@
 import {useAddSignal} from "@/hooks/useSignal";
 import * as THREE from "three";
 import {RoomEnvironment} from "three/examples/jsm/environments/RoomEnvironment";
+import {ViewportEffect} from "@/core/Viewport.Effect";
+import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
 
 export class ViewportSignals {
     private readonly viewport: any;
@@ -427,10 +429,11 @@ export class ViewportSignals {
         this.viewport.renderer?.setSize(this.viewport.container.offsetWidth,this.viewport.container.offsetHeight);
         if(this.viewport.modules.effect.enabled){
             this.viewport.modules.effect.composer.setSize(this.viewport.container.offsetWidth,this.viewport.container.offsetHeight);
-            if(this.viewport.modules.effect.pass.fxaa){
+            if(ViewportEffect.PassMap.has("FXAA")){
+                const FXAA = ViewportEffect.PassMap.get("FXAA") as ShaderPass;
                 const pixelRatio = this.viewport.renderer.getPixelRatio();
-                this.viewport.modules.effect.pass.fxaa.material.uniforms[ 'resolution' ].value.x = 1 / (this.viewport.container.offsetWidth * pixelRatio);
-                this.viewport.modules.effect.pass.fxaa.material.uniforms[ 'resolution' ].value.y = 1 / (this.viewport.container.offsetHeight * pixelRatio);
+                FXAA.material.uniforms[ 'resolution' ].value.x = 1 / (this.viewport.container.offsetWidth * pixelRatio);
+                FXAA.material.uniforms[ 'resolution' ].value.y = 1 / (this.viewport.container.offsetHeight * pixelRatio);
             }
         }
         this.viewport.pathtracer.setSize();
