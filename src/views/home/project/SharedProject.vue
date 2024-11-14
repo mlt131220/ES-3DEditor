@@ -23,7 +23,7 @@ async function handleLoad() {
   const res = await fetchGetAllScenes({
     offset: paginationReactive.page * paginationReactive.pageSize,
     limit: paginationReactive.pageSize,
-    sortby:"id",
+    sortby:"updateTime",
     order:"desc",
     query:``
   });
