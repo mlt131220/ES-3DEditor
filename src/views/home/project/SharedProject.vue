@@ -44,7 +44,7 @@ async function refresh(){
   const res = await fetchGetAllScenes({
     offset: 0,
     limit: paginationReactive.page * paginationReactive.pageSize,
-    sortby:"id",
+    sortby:"updateTime",
     order:"desc",
     query:``
   });
