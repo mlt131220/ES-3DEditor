@@ -23,6 +23,9 @@ watch(() => props.value,(newVal) => {
     })
   }else{
     Object.keys(newVal).forEach(key => {
+      // createTime & updateTime no replace
+      if(["createTime","updateTime"].includes(key)) return;
+
       form.value[key] = newVal[key];
     })
   }
