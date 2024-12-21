@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { RequestQuote,Edit,Airplay,Information,OverflowMenuVertical,SendAlt,Export,Delete } from '@vicons/carbon';
+import {ref} from "vue";
+import { RequestQuote,Edit,Airplay,Information,OverflowMenuVertical,Delete } from '@vicons/carbon';
 import {t} from "@/language";
 import {renderIcon} from "@/utils/common/render";
 import {fetchDeleteScenes} from "@/http/api/scenes";
+import ProjectDetail from "@/views/home/project/components/ProjectDetail.vue";
 
 const props = withDefaults(defineProps<{
   data:ISceneFetchData
@@ -26,22 +28,18 @@ const options = [
     label: t("home.Delete"),
     key: 'delete',
     icon: renderIcon(Delete)
-  },
-  {
-    label: t("home.Release"),
-    key: 'release',
-    icon: renderIcon(SendAlt)
-  },
-  {
-    label: t("layout.header.Export"),
-    key: 'export',
-    icon: renderIcon(Export)
   }
 ]
+const detail = ref({});
+const detailVisible = ref(false);
 
 // 下拉菜单选中处理
 function handleOperation(key: string){
   switch (key){
+    case "details":
+      detail.value = props.data;
+      detailVisible.value = true;
+      break;
     case "delete":
       window.$dialog.warning({
         title: window.$t('other.warning'),
@@ -118,6 +116,9 @@ function previewScene(){
       </n-dropdown>
     </div>
   </div>
+
+  <!-- 详情 -->
+  <ProjectDetail :detail="detail" v-model:visible="detailVisible" />
 </template>
 
 <style scoped lang="less">

@@ -45,7 +45,7 @@ function handleScreenshot(){
     <!-- 项目类型 -->
     <n-form-item :label="t('scene.Project type')">
       <n-tag type="success" :bordered="false">
-        {{ t(data.projectType === 0 ? "Web3D" : "WebGIS") }}
+        {{ data.projectType === 0 ? "Web3D" : "WebGIS" }}
       </n-tag>
     </n-form-item>
 

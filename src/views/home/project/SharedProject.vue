@@ -62,7 +62,7 @@ function setLoadingProjectId(id:number){
 }
 
 // 编辑场景
-function editScene(id:number){
+function editScene(id:string){
   window.open(window.location.origin + "/#/editor/" + id, "_blank");
 }
 

@@ -449,6 +449,8 @@ export default {
 		'Screenshot':"截屏",
 		'Include drawings':"包含图纸",
 		'Scene data volume':"场景数据量",
+		'Create time':'创建时间',
+		'Update time':'更新时间',
 		'Get the scene data':"获取场景数据中",
 		'Failed to get scene data':"获取场景数据失败",
 		'Generate scene data, please wait':"生成场景数据，请稍后",
