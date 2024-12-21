@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import { RequestQuote,Edit,Airplay,Information,OverflowMenuVertical,Delete } from '@vicons/carbon';
-import {t} from "@/language";
+import { RequestQuote,Edit,Airplay,Information,OverflowMenuVertical,SendAlt,Export,Delete } from '@vicons/carbon';
+import {t,cpt} from "@/language";
 import {renderIcon} from "@/utils/common/render";
 import {fetchDeleteScenes} from "@/http/api/scenes";
 import ProjectDetail from "@/views/home/project/components/ProjectDetail.vue";
@@ -15,19 +15,29 @@ const emits = defineEmits(["refresh","setLoadingProjectId"]);
 
 const options = [
   {
-    label: t("home.Details"),
+    label: () => cpt("home.Details").value,
     key: 'details',
     icon: renderIcon(Information)
   },
   {
-    label: t("home.Rename"),
+    label: () => cpt("home.Rename").value,
     key: 'rename',
     icon: renderIcon(Edit)
   },
   {
-    label: t("home.Delete"),
+    label: () => cpt("home.Delete").value,
     key: 'delete',
     icon: renderIcon(Delete)
+  },
+  {
+    label: () => cpt("home.Release").value,
+    key: 'release',
+    icon: renderIcon(SendAlt)
+  },
+  {
+    label: () => cpt("layout.header.Export").value,
+    key: 'export',
+    icon: renderIcon(Export)
   }
 ]
 const detail = ref({});
